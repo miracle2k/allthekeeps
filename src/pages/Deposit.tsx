@@ -39,6 +39,7 @@ const DEPOSIT_QUERY = gql`
             collateralizationPercent,
             undercollateralizedThresholdPercent,
             severelyUndercollateralizedThresholdPercent,
+            
             bondedECDSAKeep {
                 id,
                 keepAddress,
@@ -222,6 +223,14 @@ export function Content() {
               value: <span>{formatter.format(data.deposit.bondedECDSAKeep.honestThreshold / data.deposit.bondedECDSAKeep.members.length)}</span>
             },
             {
+              key: 'thresholds',
+              label: "Thresholds",
+              tooltip: "The collateralization requirements for this deposit: Initial / Courtesy Call / Liquidation",
+              value: <span>
+                {formatter.format(data.deposit.initialCollateralizedPercent / 100)}<span style={{color: 'silver'}}> / </span>{formatter.format(data.deposit.undercollateralizedThresholdPercent / 100)}<span style={{color: 'silver'}}> / </span>{formatter.format(data.deposit.severelyUndercollateralizedThresholdPercent / 100)}
+              </span>
+            },
+            {
               key: 'keepAddress',
               label: "Contract Address",
               tooltip: "The contract managing the keep",
@@ -238,26 +247,6 @@ export function Content() {
               value: data.deposit.bondedECDSAKeep.status
             }
           ]} />
-          <table>
-            <tbody>
-              <tr>
-                <td>initialCollateralized Percent</td>
-                <td>{data.deposit.initialCollateralizedPercent}</td>
-              </tr>
-              <tr>
-                <td>collateralization Percent</td>
-                <td>{data.deposit.collateralizationPercent}</td>
-              </tr>
-              <tr>
-                <td>undercollateralized Threshold Percent</td>
-                <td>{data.deposit.undercollateralizedThresholdPercent}</td>
-              </tr>
-              <tr>
-                <td>severely Undercollateralized Threshold Percent</td>
-                <td>{data.deposit.severelyUndercollateralizedThresholdPercent}</td>
-              </tr>
-            </tbody>
-          </table>
         </Paper>
       </div>
     </div>

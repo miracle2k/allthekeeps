@@ -10,12 +10,13 @@ import {
 import { css, cx } from 'emotion'
 import {Operators} from "./pages/Operators";
 import {Operator} from "./pages/Operator";
-import {Deposits} from "./pages/Deposits";
+import {Index} from "./pages/Deposits";
 import {Deposit} from "./pages/Deposit";
 import {NavigationButton} from "./design-system/NavigationButton";
 import 'tippy.js/dist/tippy.css';
 import {About} from "./pages/About";
 import {Redirect} from "react-router";
+import {Helmet} from "react-helmet";
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/keep-network\n',
@@ -28,6 +29,8 @@ function App() {
       <ApolloProvider client={client}>
         <Router>
           <Header />
+          <Helmet titleTemplate="%s | AllTheKeeps">
+          </Helmet>
           <div className={css`            
           `}>
             <Switch>
@@ -35,7 +38,7 @@ function App() {
                 <Redirect to="/deposits" />
               </Route>
               <Route exact path="/deposits">
-                <Deposits />
+                <Index />
               </Route>
               <Route path="/about" exact>
                 <About />

@@ -1,20 +1,18 @@
 import {gql, useQuery} from "@apollo/client";
-import React from "react";
-import { Link } from "react-router-dom";
-import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {FormattedTime} from "../components/FormattedTime";
-import {hasDepositBeenUsedToMint, isVendingMachine} from "../utils/contracts";
-import {Paper} from "../design-system/Paper";
-import {css} from "emotion";
-import {getNiceStateLabel, getStateColor} from "../utils/depositStates";
-import { TBTCIcon } from "../design-system/tbtcIcon";
 import Tippy, {useSingleton} from "@tippyjs/react";
-import { InfoTooltip } from "../components/InfoTooltip";
-import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
-
+import {css} from "emotion";
+import {InfoTooltip} from "../../components/InfoTooltip";
+import {FormattedTime} from "../../components/FormattedTime";
+import {Link} from "react-router-dom";
+import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
+import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
+import {getNiceStateLabel, getStateColor} from "../../utils/depositStates";
+import {hasDepositBeenUsedToMint} from "../../utils/contracts";
+import {TBTCIcon} from "../../design-system/tbtcIcon";
+import React from "react";
 
 const DEPOSITS_QUERY = gql`
-    query GetExchangeRates {
+    query GetDeposits {
         deposits(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
             id,
             contractAddress,
@@ -25,24 +23,15 @@ const DEPOSITS_QUERY = gql`
             tdtToken {
                 owner
             }
-#            endOfTerm,
-                # you can redeem it if: you are the owner, it is at term, is in courtesy call
-                # thus the status is:  
-                # canBeRedeemedByAnyone = CourtesyFlag || atTerm
+            #            endOfTerm,
+            # you can redeem it if: you are the owner, it is at term, is in courtesy call
+            # thus the status is:  
+            # canBeRedeemedByAnyone = CourtesyFlag || atTerm
         }
     }
 `;
 
-export function Deposits() {
-  return  <div style={{padding: '20px'}}>
-    <h1 style={{marginTop: 0}}>Deposits</h1>
-    <Paper padding>
-      <DepositsTable />
-    </Paper>
-  </div>
-}
-
-function DepositsTable() {
+export function DepositsTable() {
   const { loading, error, data } = useQuery(DEPOSITS_QUERY);
   const [source, target] = useSingleton();
 
@@ -53,8 +42,8 @@ function DepositsTable() {
   return <>
     <Tippy singleton={source} delay={500} />
     <table
-      style={{width: '100%'}}
-      className={css`
+        style={{width: '100%'}}
+        className={css`
         & td, th {
           text-align: left;
         }
@@ -65,8 +54,8 @@ function DepositsTable() {
         <th>Date</th>
         <th>
           Contract <InfoTooltip>
-            Every deposit is represented on-chain by a contract.
-          </InfoTooltip>
+          Every deposit is represented on-chain by a contract.
+        </InfoTooltip>
         </th>
         <th>Lot Size</th>
         <th>State</th>

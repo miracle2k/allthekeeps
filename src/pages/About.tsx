@@ -37,6 +37,7 @@ export function About() {
         <li>Global Event Log</li>
         <li>Use <a href={"https://www.apollographql.com/docs/react/data/subscriptions/"}>subscriptions</a> to live-udpate.</li>
         <li>Filter & Sort lists</li>
+        <li>Switch to ropsten</li>
       </ul>
     </Paper>
 

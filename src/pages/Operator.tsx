@@ -3,6 +3,15 @@ import React from "react";
 import {useParams} from 'react-router';
 import {css} from "emotion";
 import { Paper } from "../design-system/Paper";
+import Tippy, {useSingleton} from "@tippyjs/react";
+import {InfoTooltip} from "../components/InfoTooltip";
+import {FormattedTime} from "../components/FormattedTime";
+import {Link} from "react-router-dom";
+import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
+import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
+import {getNiceStateLabel, getStateColor} from "../utils/depositStates";
+import {hasDepositBeenUsedToMint} from "../utils/contracts";
+import {TBTCIcon} from "../design-system/tbtcIcon";
 
 
 const OPERATOR_QUERY = gql`
@@ -11,7 +20,17 @@ const OPERATOR_QUERY = gql`
             id,
             address,
             keeps {
-                id
+                id,
+                deposit {
+                    contractAddress,
+                    lotSizeSatoshis,
+                    currentState,
+                    keepAddress,
+                    createdAt,
+                    tdtToken {
+                        owner
+                    }
+                }
             }
         }
     }
@@ -46,13 +65,80 @@ export function Content() {
 
 
     <Paper padding>
-      Address:
-      Keeps: {data.keepMember.keeps.map((keep: any) => {
-      return <li>
-        {keep.id}
-        {/* How many members, status, honest threshold, link to the deposit*/}
-      </li>
-    })}
+      <h3 style={{marginTop: 0}}>Deposits</h3>
+      <DepositsTable deposits={data.keepMember.keeps.map((keep: any) => keep.deposit)} />
     </Paper>
   </div>
+}
+
+
+export function DepositsTable(props: {
+  deposits: any
+}) {
+  const [source, target] = useSingleton();
+
+  return <>
+    <table
+        style={{width: '100%'}}
+        className={css`
+        & td, th {
+          text-align: left;
+        }
+      `}
+    >
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>
+          Contract <InfoTooltip>
+          Every deposit is represented on-chain by a contract.
+        </InfoTooltip>
+        </th>
+        <th>Lot Size</th>
+        <th>State</th>
+      </tr>
+      </thead>
+      <tbody>
+      {props.deposits.map((deposit: any) => {
+        return  <tr key={deposit.id}>
+          <td>
+            <FormattedTime time={deposit.createdAt} />
+          </td>
+          <td>
+            <Link to={`/deposit/${deposit.id}`}>
+              {deposit.contractAddress}
+            </Link>
+            <a title={"Open on Etherscan"} href={`https://etherscan.io/address/${deposit.contractAddress}`} className={css`
+                font-size: 0.8em;
+                padding-left: 0.2em;
+               `}>
+              <ExternalLinkIcon />
+            </a>
+          </td>
+          <td>
+            <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span>&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
+          </td>
+          <td>
+            <div className={css`
+              display: inline-block;
+              width: 1.2em;
+              height: 1.2em;
+              border-radius: 2px;
+              padding: 0.2em;
+              box-sizing: border-box;
+              background-color: ${getStateColor(deposit.currentState)}
+            `}>
+            </div>
+            &nbsp;
+            {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
+                ? <><Tippy content="Hello" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
+                : ""
+            }
+            {getNiceStateLabel(deposit.currentState)}
+          </td>
+        </tr>
+      })}
+      </tbody>
+    </table>
+  </>;
 }
