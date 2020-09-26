@@ -23,6 +23,7 @@ const OPERATOR_QUERY = gql`
             keeps {
                 id,
                 deposit {
+                    id,
                     contractAddress,
                     lotSizeSatoshis,
                     currentState,

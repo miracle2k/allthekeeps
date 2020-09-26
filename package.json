@@ -8,6 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "@tippyjs/react": "^4.2.0",
+    "bcoin": "git+https://github.com/bcoin-org/bcoin.git",
     "emotion": "^10.0.27",
     "graphql": "^15.3.0",
     "luxon": "^1.25.0",

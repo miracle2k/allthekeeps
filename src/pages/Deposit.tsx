@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../components/FormattedTime";
 import {css} from "emotion";
-import {Address} from "../components/Address";
+import {Address, Transaction} from "../components/Address";
 import { Paper } from "../design-system/Paper";
 import {getNiceStateLabel, getStateTooltip} from "../utils/depositStates";
 import {
@@ -17,6 +17,8 @@ import {
 import {InfoTooltip} from "../components/InfoTooltip";
 import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
+import {SetupFailed} from "../../../keep-subgraph/generated/TBTCSystem/TBTCSystem";
+import BitcoinHelpers from "../utils/BitcoinHelpers";
 
 
 const DEPOSIT_QUERY = gql`
@@ -32,6 +34,7 @@ const DEPOSIT_QUERY = gql`
             tbtcSystem,
             tdtToken {
                 id,
+                tokenID,
                 owner,
                 minter
             }
@@ -141,9 +144,11 @@ export function Content() {
                     This deposit has been used to mint <strong>tBTC</strong>. The corresponding TDT token is now
                     owned by the <a href={`https://etherscan.io/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
                   </div>
-                  : <div>
+                  : (data.deposit.tdtToken.owner == data.deposit.tdtToken.minter) ? <div>
                     The TDT Token representing ownership over this deposit is owned by the original
-                    deposit creator, <a href={`https://etherscan.io/address/${data.deposit.tdtToken.owner}`}>{data.deposit.tdtToken.owner}</a>.
+                    deposit creator, <Address address={data.deposit.tdtToken.owner} />.
+                  </div> : <div>
+                    The TDT Token representing ownership over this deposit is owned by <Address address={data.deposit.tdtToken.owner} />.
                   </div>
             }
           </div>
@@ -154,7 +159,7 @@ export function Content() {
               color: gray;
             }            
           `}>
-            <a href={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.id}`}>TDT Token on Etherscan</a>
+            <a href={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
           </div>
         </Paper>
 
@@ -259,7 +264,7 @@ export function Content() {
       <div className={css`           
         padding: 20px;
       `}>
-        <h3>Log</h3>
+        <h3 style={{marginTop: 0}}>Log</h3>
         <Log depositId={data.deposit.id} />
       </div>
     </Paper>
@@ -323,27 +328,155 @@ function Box(props: {
 }
 
 
-
-
 function Log(props: {
   depositId: string
 }) {
   const { loading, error, data } = useQuery(gql`
-      query GetDepositLogs($depositId: ID!) {
-          logEntries(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
-              message,
-              transactionHash,
-              timestamp
-          }
-      }
+      query GetDepositLogs($depositId: ID!)
+        {
+            events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
+                __typename,
+                id,
+                transactionHash,
+                timestamp,
+                
+                ...on RegisteredPubKeyEvent {
+                    signingGroupPubkeyX,
+                    signingGroupPubkeyY
+                }
+            }
+        }
   `, {variables: {depositId: props.depositId}});
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  return <ul>
-    {data.logEntries.map((logEntry: any) => {
-      return <li><TimeToNow time={logEntry.timestamp} />: {logEntry.message}</li>
-    })}
-  </ul>
+  return data.events.map((logEntry: any) => {
+    return <LogEntry event={logEntry} />
+  })
+}
+
+
+function LogEntry(props: {
+  event: any
+}) {
+  const {event} = props;
+
+  let Component = ({
+    'CreatedEvent': CreatedEvent,
+    'RegisteredPubKeyEvent': RegisteredPubKeyEvent,
+    'FundedEvent': FundedEvent,
+    'StartedLiquidationEvent': StartedLiquidationEvent,
+    'RedemptionRequestedEvent': RedemptionRequestedEvent,
+    'GotRedemptionSignatureEvent': GotRedemptionSignatureEvent,
+    'RedeemedEvent': RedeemedEvent,
+    'SetupFailedEvent': SetupFailedEvent,
+  } as any)[event.__typename] || UnknownEvent;
+
+
+  return <div style={{marginBottom: '20px'}}>
+    <div className={css`    
+      font-size: 0.85em;
+      margin-bottom: 0.4em;
+    `}>
+      <TimeToNow time={event.timestamp} /> @ <Transaction tx={event.transactionHash} />
+    </div>
+    <div>
+      <Component event={event} />
+    </div>
+  </div>
+}
+
+
+function UnknownEvent(props: {
+  event: any
+}) {
+  return <div>Unknown Event: {props.event.__typename}</div>
+}
+
+function CreatedEvent(props: {
+  event: any
+}) {
+  return <div>
+    <strong>Deposit created</strong>
+  </div>
+}
+
+function RegisteredPubKeyEvent(props: {
+  event: any
+}) {
+  // Triggered when retrieveSignerPubkey() is called
+  // TODO: Can we get this earlier?
+
+  const event = props.event;
+  const address = BitcoinHelpers.Address.publicKeyPointToP2WPKHAddress(event.signingGroupPubkeyX, event.signingGroupPubkeyY, "main")
+
+  return <div>
+    <strong>Bitcoin Address provided</strong>
+    <div>Signers have provided a Bitcoin address to deposit things in: {address}</div>
+  </div>
+}
+
+function FundedEvent(props: {
+  event: any
+}) {
+  return <div>
+    <strong>Funded</strong>
+  </div>
+}
+
+// TODO: This would happen multiple times if a fee increase is requested via increaseRedemptionFee()
+// Triggered via VM.tbtcToBtc(), or Deposit.transferAndRequestRedemption()
+function RedemptionRequestedEvent(props: {
+  event: any
+}) {
+
+  return <div>
+    <strong>Redemption Requested</strong>
+    <div>
+      sdf
+    </div>
+  </div>
+}
+
+function StartedLiquidationEvent(props: {
+  event: any
+}) {
+  return <div>
+    <strong>Liquidation Started</strong>
+  </div>
+}
+
+// For exampe, due to: notifyFundingTimedOut, provideFundingECDSAFraudProof, notifySignerSetupFailed
+function SetupFailedEvent(props: {
+  event: any
+}) {
+  return <div>
+    <strong>Setup Failed</strong>
+  </div>
+}
+
+function GotRedemptionSignatureEvent(props: {
+  event: any
+}) {
+  // Signers call provideRedemptionSignature(). They provide a signature over a pay-out transaction that would
+  // release the funds.
+  return <div>
+    <strong>
+      Signers provided a redemption signature
+    </strong>
+    <div>
+      The signers provided a signature for the redemption Bitcoin transaction.
+    </div>
+  </div>
+}
+
+
+function RedeemedEvent(props: {
+  event: any
+}) {
+  // # Triggered when provideRedemptionProof() is called - confirmations
+  return <div>
+    <strong>Redeemed</strong>
+  </div>
 }

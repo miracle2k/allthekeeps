@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {css} from "emotion";
 import {ExternalLinkIcon} from "./ExternalLinkIcon";
+import {isVendingMachine} from "../utils/contracts";
 
 
 export function Address(props: {
@@ -9,7 +10,18 @@ export function Address(props: {
   to?: string,
   includeExternalIcon?: boolean
 }) {
-  return <Hash hash={props.address} to={props.to || `https://etherscan.io/address/${props.address}`} includeExternalIcon={props.includeExternalIcon} />
+  let knownAddress: string|undefined;
+  if (isVendingMachine(props.address)) {debugger;
+
+    knownAddress = 'the Vending Machine'
+  }
+
+  return <Hash
+      hash={props.address}
+      to={props.to || `https://etherscan.io/address/${props.address}`}
+      includeExternalIcon={props.includeExternalIcon}
+      children={knownAddress}
+  />
 }
 
 
@@ -29,7 +41,8 @@ export function Transaction(props: {
 export function Hash(props: {
   hash: string,
   to?: string,
-  includeExternalIcon?: boolean
+  includeExternalIcon?: boolean,
+  children?: any
 }) {
   // #tokentxnsErc721
 
@@ -49,7 +62,7 @@ export function Hash(props: {
 
   let shortAddress = props.hash.slice(0,5) + "..." + props.hash.slice(props.hash.length-5);
   const el = React.createElement(C, linkProps, <span>
-    {shortAddress}
+    {props.children || shortAddress}
     {props.includeExternalIcon ? <span className={css`
         font-size: 0.8em;
         padding-left: 0.2em;

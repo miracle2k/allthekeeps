@@ -1,5 +1,5 @@
 export function isVendingMachine(address: string) {
-  return address == getVendingMachineAddress().toLowerCase();
+  return address.toLowerCase() == getVendingMachineAddress().toLowerCase();
 }
 
 export function getVendingMachineAddress() {
