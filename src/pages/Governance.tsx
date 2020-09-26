@@ -9,6 +9,7 @@ import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 import { Helmet } from "react-helmet";
 import { Table } from "../components/Table";
 import {FormattedTime, TimeToNow} from "../components/FormattedTime";
+import {ExplainerIcon} from "../components/ExplainerIcon";
 
 const GOVERNANCE_QUERY = gql`
     fragment Change on GovernanceChange {
@@ -18,22 +19,30 @@ const GOVERNANCE_QUERY = gql`
         
         newLotSizes,
         newFactorySelector,
-        newFullyBakedFactory,
+        newFullyBackedFactory,
         newKeepStakedFactory,
     }
     
     query GetGovernance {
         governance(id: "GOVERNANCE") {
+            newDepositsAllowed
+            
             lotSizes,
             pendingLotSizeChange { ...Change },
             
             factorySelector,
-            fullyBakedFactory,
+            fullyBackedFactory,
             keepStakedFactory,
             pendingFactoriesChange { ...Change },
 
             signerFeeDivisor,
-            signerFeeDivisorChange { ...Change },
+            pendingSignerFeeDivisorChange { ...Change },
+
+            initialCollateralizedPercent,
+            severelyUndercollateralizedThresholdPercent,
+            undercollateralizedThresholdPercent,
+            
+            priceFeeds,
         },
         
         governanceLogEntries(after: 0, first: 300, orderBy: timestamp, orderDirection: desc) {
@@ -56,8 +65,6 @@ export function Governance() {
       <title>Governance</title>
     </Helmet>
     <h1 style={{marginTop: 0}}>Governance</h1>
-    # XXX deposits disabled field
-    # xxx why is the date wrong? takesEffectAfter
     <Content />
   </div>
 }
@@ -70,42 +77,64 @@ export function Content() {
   if (error) return <p>Error :( {""+ error}</p>;
 
   return <div>
-    <Paper padding>
-      <Block title={"Lot Sizes"} tooltip={"The available sizes when creating a new deposit."}>
-        {formatLotSizes(data.governance.lotSizes)}
-      </Block>
+    <div  style={{
+      display: 'flex',
+      flexDirection: 'row'
+    }}>
+      <Paper padding>
+        <Block title={"Deposits Enabled"} tooltip={"New deposits can be paused for 10 days in an emergency."}>
+          {data.governance.newDepositsAllowed ? "Yes" : "Emergency Break in Effect"}
+        </Block>
 
-      <Block title={"Signer Fee"}>
-        {formatLotSizes(data.governance.lotSizes)}
-      </Block>
+        <Block title={"Lot Sizes"} tooltip={"The available sizes when creating a new deposit."}>
+          {formatLotSizes(data.governance.lotSizes)}
+        </Block>
 
-      <Block title={"Factory Contracts"}>
-        <div>
-          <span style={{color: 'gray'}}>Factory Selector: </span> <Address address={data.governance.factorySelector} />
-        </div>
-        <div>
-          <span style={{color: 'gray'}}>Fully Backed Factory: </span> <Address address={data.governance.fullyBakedFactory} />
-        </div>
-        <div>
-          <span style={{color: 'gray'}}>Keep Staked Factory: </span> <Address address={data.governance.keepStakedFactory} />
-        </div>
-      </Block>
+        <Block title={"Signer Fee"} tooltip={"The fee that goes to the signers who guarantee a deposit, cannot be set to a value <0.02% or >10%."}>
+          {formatter.format(1 / data.governance.signerFeeDivisor)}
+        </Block>
 
-      <Block title={"Collateralization Thresholds"}>
-        <div>
-          <span style={{color: 'gray'}}>Factory Selector: </span> <Address address={data.governance.factorySelector} />
+        <Block title={"Factory Contracts"}>
+          <div>
+            <span style={{color: 'gray'}}>Factory Selector: </span> <Address address={data.governance.factorySelector} />
+          </div>
+          <div>
+            <span style={{color: 'gray'}}>Fully Backed Factory: </span> <Address address={data.governance.fullyBackedFactory} />
+          </div>
+          <div>
+            <span style={{color: 'gray'}}>Keep Staked Factory: </span> <Address address={data.governance.keepStakedFactory} />
+          </div>
+        </Block>
+
+        <Block title={"Collateralization Thresholds"}>
+          <div>
+            <span style={{color: 'gray'}}>Initial: </span> {data.governance.initialCollateralizedPercent}%
+          </div>
+          <div>
+            <span style={{color: 'gray'}}>Undercollaterized: </span> {data.governance.severelyUndercollateralizedThresholdPercent}%
+          </div>
+          <div>
+            <span style={{color: 'gray'}}>Severly Undercollaterized: </span> {data.governance.undercollateralizedThresholdPercent}%
+          </div>
+        </Block>
+
+        <Block title={"Price Feeds"}>
+          {data.governance.priceFeeds.map((feed: any) => {
+            return <div><Address address={feed} /></div>
+          })}
+        </Block>
+      </Paper>
+
+      <div style={{flex: 0, minWidth: '400px', marginLeft: '40px'}}>
+        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <ExplainerIcon width={"2em"} height={"2em"}/>
+          <strong style={{marginTop: 0, paddingLeft: '0.3em', fontSize: '1.2em'}}>Governance Info</strong>
         </div>
-        <div>
-          <span style={{color: 'gray'}}>Fully Backed Factory: </span> <Address address={data.governance.fullyBakedFactory} />
-        </div>
-        <div>
-          <span style={{color: 'gray'}}>Keep Staked Factory: </span> <Address address={data.governance.keepStakedFactory} />
-        </div>
-      </Block>
-      <div>
-        <div><strong>Price Feeds</strong></div>
+        The admin key has the following abilities: <strong>a)</strong> emergency break: in the first 180 days only, it can stop new deposits for 10 days.
+        {" "}<strong>b)</strong> it can change the governance parameters on the left with 48 hours notice, but only new deposits are affected.
+
       </div>
-    </Paper>
+    </div>
 
     <Paper padding style={{marginTop: '20px'}}>
       <h3 style={{marginTop: 0}}>Log</h3>
@@ -142,6 +171,12 @@ function Block(props: {
     {props.children}
   </div>
 }
+
+
+const formatter = new Intl.NumberFormat("en-US", {
+  style: 'percent',
+  maximumFractionDigits: 2
+});
 
 function formatLotSizes(lotSizes: any) {
   return lotSizes.map((size: number) => {
