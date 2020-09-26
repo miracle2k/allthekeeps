@@ -2,7 +2,7 @@ import {gql, useQuery} from "@apollo/client";
 import Tippy, {useSingleton} from "@tippyjs/react";
 import {css} from "emotion";
 import {InfoTooltip} from "../../components/InfoTooltip";
-import {FormattedTime} from "../../components/FormattedTime";
+import {TimeToNow} from "../../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
@@ -65,7 +65,7 @@ export function DepositsTable() {
       {data.deposits.map((deposit: any) => {
         return  <tr key={deposit.id}>
           <td>
-            <FormattedTime time={deposit.createdAt} />
+            <TimeToNow time={deposit.createdAt} />
           </td>
           <td>
             <Link to={`/deposit/${deposit.id}`}>
@@ -94,7 +94,7 @@ export function DepositsTable() {
             </div>
             &nbsp;
             {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
-                ? <><Tippy content="Hello" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
+                ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
             {getNiceStateLabel(deposit.currentState)}

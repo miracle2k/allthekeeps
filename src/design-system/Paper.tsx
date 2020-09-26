@@ -3,9 +3,10 @@ import React from "react";
 
 export function Paper(props: {
   children: any,
-  padding?: boolean
+  padding?: boolean,
+  style?: any
 }) {
-  return <div className={css`
+  return <div style={props.style} className={css`
     background: #FFFFFF;
     box-shadow: 0px 4px 8px rgba(20, 20, 20, 0.04);
     border-radius: 4px;

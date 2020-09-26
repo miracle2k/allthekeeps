@@ -17,9 +17,10 @@ import 'tippy.js/dist/tippy.css';
 import {About} from "./pages/About";
 import {Redirect} from "react-router";
 import {Helmet} from "react-helmet";
+import {Governance} from "./pages/Governance";
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/keep-network\n',
+  uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/keep-network',
   cache: new InMemoryCache()
 });
 
@@ -42,6 +43,9 @@ function App() {
               </Route>
               <Route path="/about" exact>
                 <About />
+              </Route>
+              <Route path="/governance" exact>
+                <Governance />
               </Route>
               <Route path="/operators" exact>
                 <Operators />

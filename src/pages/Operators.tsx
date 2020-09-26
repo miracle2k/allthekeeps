@@ -5,6 +5,7 @@ import {css} from "emotion";
 import { Address } from "../components/Address";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
+import {Helmet} from "react-helmet";
 
 const OPERATOR_QUERY = gql`
     query GetOperators {
@@ -21,6 +22,9 @@ const OPERATOR_QUERY = gql`
 
 export function Operators() {
   return  <div style={{padding: '20px'}}>
+    <Helmet>
+      <title>Deposits</title>
+    </Helmet>
     <h1 style={{marginTop: 0}}>Deposits</h1>
     <Paper padding>
       <OperatorsTable />

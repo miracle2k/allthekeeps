@@ -3,7 +3,7 @@ import React from "react";
 import {useParams} from 'react-router';
 import { Link } from "react-router-dom";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {FormattedTime} from "../components/FormattedTime";
+import {TimeToNow} from "../components/FormattedTime";
 import {css} from "emotion";
 import {Address} from "../components/Address";
 import { Paper } from "../design-system/Paper";
@@ -16,6 +16,7 @@ import {
 } from "../utils/contracts";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {TBTCIcon} from "../design-system/tbtcIcon";
+import {Helmet} from "react-helmet";
 
 
 const DEPOSIT_QUERY = gql`
@@ -66,6 +67,9 @@ export function Deposit() {
   return <div className={css`
       padding: 1em;
     `}>
+    <Helmet>
+      <title>Deposit</title>
+    </Helmet>
     <Content />
   </div>
 }
@@ -110,7 +114,7 @@ export function Content() {
       </Box>
 
       <Box label={"creation date"}>
-        <FormattedTime time={data.deposit.createdAt} />
+        <TimeToNow time={data.deposit.createdAt} />
       </Box>
     </div>
 
@@ -339,7 +343,7 @@ function Log(props: {
 
   return <ul>
     {data.logEntries.map((logEntry: any) => {
-      return <li><FormattedTime time={logEntry.timestamp} />: {logEntry.message}</li>
+      return <li><TimeToNow time={logEntry.timestamp} />: {logEntry.message}</li>
     })}
   </ul>
 }

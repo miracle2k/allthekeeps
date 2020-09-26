@@ -5,13 +5,14 @@ import {css} from "emotion";
 import { Paper } from "../design-system/Paper";
 import Tippy, {useSingleton} from "@tippyjs/react";
 import {InfoTooltip} from "../components/InfoTooltip";
-import {FormattedTime} from "../components/FormattedTime";
+import {TimeToNow} from "../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 import {getNiceStateLabel, getStateColor} from "../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../utils/contracts";
 import {TBTCIcon} from "../design-system/tbtcIcon";
+import {Helmet} from "react-helmet";
 
 
 const OPERATOR_QUERY = gql`
@@ -41,6 +42,9 @@ export function Operator() {
   return <div className={css`
       padding: 1em;
     `}>
+    <Helmet>
+      <title>Operator</title>
+    </Helmet>
     <Content />
   </div>
 }
@@ -62,8 +66,6 @@ export function Content() {
   `}>
       Operator: {data.keepMember.address}
     </div>
-
-
     <Paper padding>
       <h3 style={{marginTop: 0}}>Deposits</h3>
       <DepositsTable deposits={data.keepMember.keeps.map((keep: any) => keep.deposit)} />
@@ -102,7 +104,7 @@ export function DepositsTable(props: {
       {props.deposits.map((deposit: any) => {
         return  <tr key={deposit.id}>
           <td>
-            <FormattedTime time={deposit.createdAt} />
+            <TimeToNow time={deposit.createdAt} />
           </td>
           <td>
             <Link to={`/deposit/${deposit.id}`}>
@@ -131,7 +133,7 @@ export function DepositsTable(props: {
             </div>
             &nbsp;
             {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
-                ? <><Tippy content="Hello" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
+                ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
             {getNiceStateLabel(deposit.currentState)}

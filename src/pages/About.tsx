@@ -24,7 +24,7 @@ export function About() {
         {" "} <a href={"https://github.com/miracle2k/allthekeeps-graph"}>on Github</a>.
       </p>
       <p>
-        Built my <a href={"http://twitter.com/elsdoerfer/"}>@elsdoerfer</a>
+        Built by <a href={"http://twitter.com/elsdoerfer/"}>@elsdoerfer</a>
       </p>
 
       <h3>Todos</h3>
