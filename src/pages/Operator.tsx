@@ -20,7 +20,7 @@ const OPERATOR_QUERY = gql`
         keepMember(id: $id) {
             id,
             address,
-            keeps {
+            keeps(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
                 deposit {
                     id,

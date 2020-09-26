@@ -23,9 +23,9 @@ const OPERATOR_QUERY = gql`
 export function Operators() {
   return  <div style={{padding: '20px'}}>
     <Helmet>
-      <title>Deposits</title>
+      <title>Operators</title>
     </Helmet>
-    <h1 style={{marginTop: 0}}>Deposits</h1>
+    <h1 style={{marginTop: 0}}>Operators</h1>
     <Paper padding>
       <OperatorsTable />
     </Paper>
