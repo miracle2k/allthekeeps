@@ -31,7 +31,7 @@ export function CollaterizationStatusWithPrice(props: {
   }
 
   // Given with 18 decimal places
-  const btcPerEth = parseInt(props.price.val) / 10**18;
+  const btcPerEth = props.price.val;
   const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
   const weiPerSat = 1 / satPerWei;
 

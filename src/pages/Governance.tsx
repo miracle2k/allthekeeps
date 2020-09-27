@@ -175,7 +175,7 @@ function PriceInfo() {
   }
   else {
     content = <div>
-      <div>{getWeiAsEth(parseInt(price.val)).toFixed(5)} ETH</div>
+      <div>{price.val.toFixed(5)} ETH</div>
       <div style={{
         marginTop: '0.5em',
         fontSize: '0.8em'

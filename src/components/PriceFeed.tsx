@@ -33,7 +33,7 @@ const subscription = client.request({query});
 
 
 export type PriceData = {
-  val: string,
+  val: number,
   timestamp: string,
   blockNumber: number,
   transactionHash: string
@@ -45,7 +45,12 @@ export function usePriceFeed() {
     const s = subscription.subscribe({
       next ({data}) {
         if (data) {
-          setData(data.price as PriceData);
+          const price = data.price;
+          setData({
+              ...price,
+            // Given with 18 decimal places
+            val: parseInt(price.val) / 10**18
+          });
         }
       }
     });
