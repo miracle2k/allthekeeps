@@ -15,6 +15,10 @@ code {
 
 a {
   color: #7850CD;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 a:visited {
   color: #AE96E1

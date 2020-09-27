@@ -313,7 +313,7 @@ function PropertyTable(props: {
     value: any
   }[]
 }) {
-  return <Table className={css`
+  return <table className={css`
       color: #0A0806;
       padding: 15px;
       
@@ -334,7 +334,7 @@ function PropertyTable(props: {
         </tr>
       })}
       </tbody>
-    </Table>
+    </table>
 }
 
 

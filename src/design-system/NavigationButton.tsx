@@ -21,6 +21,10 @@ export function NavigationButton(props: {
     display: flex;
     color: black !important;
     
+    &:hover {
+      text-decoration: none;
+    }
+    
     position: relative;
     &:hover::after {
       content: '';
