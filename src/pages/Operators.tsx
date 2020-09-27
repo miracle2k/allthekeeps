@@ -12,9 +12,10 @@ const OPERATOR_QUERY = gql`
         keepMembers(first: 100) {
             id,
             address,
-            keeps {
-                id
-            }
+            bonded,
+            unboundAvailable,
+            totalKeepCount,
+            activeKeepCount
         }
     }
 `;
@@ -66,7 +67,8 @@ export function OperatorsTable() {
             <ExternalLinkIcon />
           </a>
         </td>
-        <td>{member.keeps.length}</td>
+        <td>{member.activeKeepCount} / {member.totalKeepCount}</td>
+        <td>{member.bonded} / {member.unboundAvailable}</td>
       </tr>
     })}
     </tbody>
