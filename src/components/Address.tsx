@@ -11,16 +11,15 @@ export function Address(props: {
   includeExternalIcon?: boolean
 }) {
   let knownAddress: string|undefined;
-  if (isVendingMachine(props.address)) {debugger;
-
+  if (isVendingMachine(props.address)) {
     knownAddress = 'the Vending Machine'
   }
 
   return <Hash
-      hash={props.address}
-      to={props.to || `https://etherscan.io/address/${props.address}`}
-      includeExternalIcon={props.includeExternalIcon}
-      children={knownAddress}
+    hash={props.address}
+    to={props.to || `https://etherscan.io/address/${props.address}`}
+    includeExternalIcon={props.includeExternalIcon}
+    children={knownAddress}
   />
 }
 
@@ -28,12 +27,14 @@ export function Address(props: {
 export function Transaction(props: {
   tx: string,
   to?: string,
-  includeExternalIcon?: boolean
+  includeExternalIcon?: boolean,
+  children?: any
 }) {
   return <Hash
     hash={props.tx}
     to={props.to || `https://etherscan.io/tx/${props.tx}`}
     includeExternalIcon={props.includeExternalIcon}
+    children={props.children}
   />
 }
 

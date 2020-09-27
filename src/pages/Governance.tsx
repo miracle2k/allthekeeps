@@ -10,6 +10,8 @@ import { Helmet } from "react-helmet";
 import { Table } from "../components/Table";
 import {FormattedTime, TimeToNow} from "../components/FormattedTime";
 import {ExplainerIcon} from "../components/ExplainerIcon";
+import {usePriceFeed} from "../components/PriceFeed";
+import {getWeiAsEth} from "../utils/getWeiAsEth";
 
 const GOVERNANCE_QUERY = gql`
     fragment Change on GovernanceChange {
@@ -96,25 +98,25 @@ export function Content() {
 
         <Block title={"Factory Contracts"}>
           <div>
-            <span style={{color: 'gray'}}>Factory Selector: </span> <Address address={data.governance.factorySelector} />
+            <span style={{color: '#rgb(62 62 62)'}}>Factory Selector: </span> <Address address={data.governance.factorySelector} />
           </div>
           <div>
-            <span style={{color: 'gray'}}>Fully Backed Factory: </span> <Address address={data.governance.fullyBackedFactory} />
+            <span style={{color: '#rgb(62 62 62)'}}>Fully Backed Factory: </span> <Address address={data.governance.fullyBackedFactory} />
           </div>
           <div>
-            <span style={{color: 'gray'}}>Keep Staked Factory: </span> <Address address={data.governance.keepStakedFactory} />
+            <span style={{color: '#rgb(62 62 62)'}}>Keep Staked Factory: </span> <Address address={data.governance.keepStakedFactory} />
           </div>
         </Block>
 
         <Block title={"Collateralization Thresholds"}>
           <div>
-            <span style={{color: 'gray'}}>Initial: </span> {data.governance.initialCollateralizedPercent}%
+            <span style={{color: '#rgb(62 62 62)'}}>Initial: </span> {data.governance.initialCollateralizedPercent}%
           </div>
           <div>
-            <span style={{color: 'gray'}}>Undercollaterized: </span> {data.governance.severelyUndercollateralizedThresholdPercent}%
+            <span style={{color: '#rgb(62 62 62)'}}>Undercollaterized: </span> {data.governance.severelyUndercollateralizedThresholdPercent}%
           </div>
           <div>
-            <span style={{color: 'gray'}}>Severly Undercollaterized: </span> {data.governance.undercollateralizedThresholdPercent}%
+            <span style={{color: '#rgb(62 62 62)'}}>Severly Undercollaterized: </span> {data.governance.undercollateralizedThresholdPercent}%
           </div>
         </Block>
 
@@ -132,7 +134,10 @@ export function Content() {
         </div>
         The admin key has the following abilities: <strong>a)</strong> emergency break: in the first 180 days only, it can stop new deposits for 10 days.
         {" "}<strong>b)</strong> it can change the governance parameters on the left with 48 hours notice, but only new deposits are affected.
+      </div>
 
+      <div style={{marginLeft: 20}}>
+        <PriceInfo />
       </div>
     </div>
 
@@ -158,6 +163,33 @@ export function Content() {
       </Table>
     </Paper>
   </div>
+}
+
+
+function PriceInfo() {
+  const price = usePriceFeed();
+
+  let content: any;
+  if (!price) {
+    content = '-';
+  }
+  else {
+    content = <div>
+      <div>{getWeiAsEth(price.val).toFixed(5)} ETH</div>
+      <div style={{
+        marginTop: '0.5em',
+        fontSize: '0.8em'
+      }}>
+        <TimeToNow time={price.timestamp} /> in block <Transaction tx={price.transactionHash}>{price.blockNumber}</Transaction>.
+      </div>
+    </div>
+  }
+
+  return <Paper padding>
+    <Block title={"Price Feed"} tooltip={"The price of a Bitcoin in ETH - affects collateralization ratios. Updates live."}>
+      {content}
+    </Block>
+  </Paper>
 }
 
 

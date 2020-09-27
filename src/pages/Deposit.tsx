@@ -19,6 +19,7 @@ import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
 import {SetupFailed} from "../../../keep-subgraph/generated/TBTCSystem/TBTCSystem";
 import BitcoinHelpers from "../utils/BitcoinHelpers";
+import {getWeiAsEth} from "../utils/getWeiAsEth";
 
 
 const DEPOSIT_QUERY = gql`
@@ -223,7 +224,7 @@ export function Content() {
               key: 'bondedAmount',
               label: "Bond",
               tooltip: "The total value the signers have bonded to guarantee this deposit.",
-              value: <span>{(data.deposit.bondedECDSAKeep.totalBondAmount * 0.000000000000000001).toFixed(2)} ETH</span>
+              value: <span>{getWeiAsEth(data.deposit.bondedECDSAKeep.totalBondAmount).toFixed(2)} ETH</span>
             },
             {
               key: 'honestThreshold',

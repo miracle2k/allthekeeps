@@ -2,9 +2,9 @@ import {DateTime} from "luxon";
 import React from "react";
 
 export function TimeToNow(props: {
-  time: string
+  time: string|number
 }) {
-  const dateTime = DateTime.fromSeconds(parseInt(props.time));
+  const dateTime = DateTime.fromSeconds(typeof props.time === 'string' ? parseInt(props.time) : props.time);
   return <span title={dateTime.toLocaleString(DateTime.DATETIME_FULL)}>{dateTime.toRelative()}</span>
 }
 

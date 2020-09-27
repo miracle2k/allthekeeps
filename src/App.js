@@ -20,7 +20,7 @@ import {Helmet} from "react-helmet";
 import {Governance} from "./pages/Governance";
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/keep-network',
+  uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps',
   cache: new InMemoryCache()
 });
 
