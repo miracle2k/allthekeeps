@@ -33,8 +33,8 @@ const subscription = client.request({query});
 
 
 export type PriceData = {
-  val: number,
-  timestamp: number,
+  val: string,
+  timestamp: string,
   blockNumber: number,
   transactionHash: string
 }

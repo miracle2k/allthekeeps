@@ -10,6 +10,8 @@ import {getNiceStateLabel, getStateColor} from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
 import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
+import {CollaterizationStatus, CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
+import {usePriceFeed} from "../../components/PriceFeed";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits {
@@ -27,6 +29,14 @@ const DEPOSITS_QUERY = gql`
             # you can redeem it if: you are the owner, it is at term, is in courtesy call
             # thus the status is:  
             # canBeRedeemedByAnyone = CourtesyFlag || atTerm
+
+
+            undercollateralizedThresholdPercent,
+            severelyUndercollateralizedThresholdPercent,
+            bondedECDSAKeep {
+                id,
+                totalBondAmount
+            }
         }
     }
 `;
@@ -34,6 +44,7 @@ const DEPOSITS_QUERY = gql`
 export function DepositsTable() {
   const { loading, error, data } = useQuery(DEPOSITS_QUERY);
   const [source, target] = useSingleton();
+  const price = usePriceFeed();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
@@ -101,6 +112,9 @@ export function DepositsTable() {
 
 
             {/* warning sign if it can be redeemed by anyone (at-term or courtesy call */}
+          </td>
+          <td>
+            <CollaterizationStatusWithPrice deposit={deposit} price={price} />
           </td>
         </tr>
       })}

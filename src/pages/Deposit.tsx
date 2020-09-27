@@ -12,14 +12,14 @@ import {
   getTDTTokenAddress,
   getVendingMachineAddress,
   hasDepositBeenUsedToMint,
-  isVendingMachine
 } from "../utils/contracts";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
-import {SetupFailed} from "../../../keep-subgraph/generated/TBTCSystem/TBTCSystem";
 import BitcoinHelpers from "../utils/BitcoinHelpers";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
+import {usePriceFeed} from "../components/PriceFeed";
+import { CollaterizationStatus } from "../components/CollateralizationStatus";
 
 
 const DEPOSIT_QUERY = gql`
@@ -41,7 +41,6 @@ const DEPOSIT_QUERY = gql`
             }
 
             initialCollateralizedPercent,
-            collateralizationPercent,
             undercollateralizedThresholdPercent,
             severelyUndercollateralizedThresholdPercent,
             
@@ -227,10 +226,10 @@ export function Content() {
               value: <span>{getWeiAsEth(data.deposit.bondedECDSAKeep.totalBondAmount).toFixed(2)} ETH</span>
             },
             {
-              key: 'honestThreshold',
-              label: "Honest Threshold",
-              tooltip: "How many signers must be honest for the bond not be lost.",
-              value: <span>{formatter.format(data.deposit.bondedECDSAKeep.honestThreshold / data.deposit.bondedECDSAKeep.members.length)}</span>
+              key: 'collateralization',
+              label: "Collaterialization",
+              tooltip: "If ETH loses value, the keep may become undercollaterized",
+              value: <CollaterizationStatus deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
             },
             {
               key: 'thresholds',
@@ -239,6 +238,12 @@ export function Content() {
               value: <span>
                 {formatter.format(data.deposit.initialCollateralizedPercent / 100)}<span style={{color: 'silver'}}> / </span>{formatter.format(data.deposit.undercollateralizedThresholdPercent / 100)}<span style={{color: 'silver'}}> / </span>{formatter.format(data.deposit.severelyUndercollateralizedThresholdPercent / 100)}
               </span>
+            },
+            {
+              key: 'honestThreshold',
+              label: "Honest Threshold",
+              tooltip: "How many signers must be honest for the bond not be lost.",
+              value: <span>{formatter.format(data.deposit.bondedECDSAKeep.honestThreshold / data.deposit.bondedECDSAKeep.members.length)}</span>
             },
             {
               key: 'keepAddress',
@@ -271,6 +276,7 @@ export function Content() {
     </Paper>
   </div>
 }
+
 
 function PropertyTable(props: {
   data: {
