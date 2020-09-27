@@ -110,7 +110,6 @@ export function DepositsTable() {
             }
             {getNiceStateLabel(deposit.currentState)}
 
-
             {/* warning sign if it can be redeemed by anyone (at-term or courtesy call */}
           </td>
           <td>

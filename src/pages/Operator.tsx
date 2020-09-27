@@ -9,10 +9,14 @@ import {TimeToNow} from "../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateColor} from "../utils/depositStates";
+import {getNiceStateLabel, getStateColor, getStateTooltip} from "../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../utils/contracts";
 import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
+import {getWeiAsEth} from "../utils/getWeiAsEth";
+import { Box } from "../components/Box";
+import {CollaterizationStatusWithPrice} from "../components/CollateralizationStatus";
+import {usePriceFeed} from "../components/PriceFeed";
 
 
 const OPERATOR_QUERY = gql`
@@ -20,8 +24,12 @@ const OPERATOR_QUERY = gql`
         keepMember(id: $id) {
             id,
             address,
+            bonded,
+            unboundAvailable,
             keeps(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
+                # TODO: How much is bonded in this keep for this operator?
+                totalBondAmount,
                 deposit {
                     id,
                     contractAddress,
@@ -31,6 +39,13 @@ const OPERATOR_QUERY = gql`
                     createdAt,
                     tdtToken {
                         owner
+                    }
+
+                    undercollateralizedThresholdPercent,
+                    severelyUndercollateralizedThresholdPercent,
+                    bondedECDSAKeep {
+                        id,
+                        totalBondAmount
                     }
                 }
             }
@@ -50,6 +65,10 @@ export function Operator() {
   </div>
 }
 
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2
+});
+
 
 export function Content() {
   let { operatorId } = useParams<any>();
@@ -57,6 +76,9 @@ export function Content() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
+
+  const total = (parseFloat(data.keepMember.unboundAvailable) + parseFloat(data.keepMember.bonded));
+  const bonded = parseFloat(data.keepMember.bonded);
 
   return <div>
     <div className={css`
@@ -67,18 +89,51 @@ export function Content() {
   `}>
       Operator: {data.keepMember.address}
     </div>
+
+
+    <div className={css`
+      display: flex;
+      flex-direction: row;
+      & > * {
+        margin-right: 20px;
+      }
+  `}>
+      <Box label={"bonded"}>
+        <div>{formatter.format(data.keepMember.bonded)} ETH</div>
+      </Box>
+
+      <Box label={"available to bond"}>
+        <div>
+          {formatter.format(data.keepMember.unboundAvailable)} ETH
+        </div>
+        <div style={{fontSize: '20px', color: 'gray'}}>
+          {formatter.format(100 - (bonded / total * 100))}% of {formatter.format(total)} ETH
+        </div>
+      </Box>
+    </div>
+
+
     <Paper padding>
-      <h3 style={{marginTop: 0}}>Deposits</h3>
-      <DepositsTable deposits={data.keepMember.keeps.map((keep: any) => keep.deposit)} />
+      <h3 style={{marginTop: 0}}>Keeps</h3>
+      <KeepsTable keeps={data.keepMember.keeps} />
     </Paper>
   </div>
 }
 
 
-export function DepositsTable(props: {
-  deposits: any
+export function KeepsTable(props: {
+  keeps: any
 }) {
   const [source, target] = useSingleton();
+  const price = usePriceFeed();
+
+  // const totalActive = props.keeps.filter((keep: any) => {
+  //   return (
+  //       keep.deposit.currentState == 'ACTIVE' ||
+  //       keep.deposit.currentState == 'AWAITING_SIGNER_SETUP' ||
+  //       keep.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF'
+  //   )
+  // }).map((keep: any) => parseFloat(keep.totalBondAmount) / 3).reduce((a: any, b: any) => a + b, 0)
 
   return <>
     <table
@@ -99,10 +154,13 @@ export function DepositsTable(props: {
         </th>
         <th>Lot Size</th>
         <th>State</th>
+        <th>Collateralization</th>
+        <th>Bond</th>
       </tr>
       </thead>
       <tbody>
-      {props.deposits.map((deposit: any) => {
+      {props.keeps.map((keep: any) => {
+        const deposit = keep.deposit;
         return  <tr key={deposit.id}>
           <td>
             <TimeToNow time={deposit.createdAt} />
@@ -138,6 +196,17 @@ export function DepositsTable(props: {
                 : ""
             }
             {getNiceStateLabel(deposit.currentState)}
+            {" "} {deposit.currentState}
+            {" "} {deposit.currentState}
+          </td>
+
+          <td>
+            <CollaterizationStatusWithPrice deposit={deposit} price={price} highlightNormal={true} />
+          </td>
+
+          <td>
+            {/*Get the real number from the contract. */}
+            <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(getWeiAsEth(keep.totalBondAmount / 3))}
           </td>
         </tr>
       })}

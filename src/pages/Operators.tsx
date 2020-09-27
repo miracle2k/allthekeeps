@@ -34,6 +34,15 @@ export function Operators() {
 }
 
 
+const formatter = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2
+});
+
+const formatterSimple = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 0
+});
+
+
 export function OperatorsTable() {
   const { loading, error, data } = useQuery(OPERATOR_QUERY);
 
@@ -53,10 +62,16 @@ export function OperatorsTable() {
       <th>
         # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
       </th>
+      <th>
+        Amount Bonded <InfoTooltip>Total amount bounded, and percentage of available bonds provided for bonding.</InfoTooltip>
+      </th>
     </tr>
     </thead>
     <tbody>
     {data.keepMembers.map((member: any) => {
+      const total = (parseFloat(member.unboundAvailable) + parseFloat(member.bonded));
+      const bonded = parseFloat(member.bonded);
+
       return  <tr>
         <td>
           <Address address={member.address} to={`/operator/${member.address}`} />
@@ -68,7 +83,13 @@ export function OperatorsTable() {
           </a>
         </td>
         <td>{member.activeKeepCount} / {member.totalKeepCount}</td>
-        <td>{member.bonded} / {member.unboundAvailable}</td>
+        <td>
+          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(bonded)}
+          {" "}
+          <span title={`Total: ${formatter.format(member.unboundAvailable)}`} style={{color: 'gray', fontSize: '0.8em'}}>
+            ({formatterSimple.format(bonded / total * 100)}%)
+          </span>
+        </td>
       </tr>
     })}
     </tbody>

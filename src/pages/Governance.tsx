@@ -113,10 +113,10 @@ export function Content() {
             <span style={{color: '#rgb(62 62 62)'}}>Initial: </span> {data.governance.initialCollateralizedPercent}%
           </div>
           <div>
-            <span style={{color: '#rgb(62 62 62)'}}>Undercollaterized: </span> {data.governance.severelyUndercollateralizedThresholdPercent}%
+            <span style={{color: '#rgb(62 62 62)'}}>Undercollaterized: </span> {data.governance.undercollateralizedThresholdPercent}%
           </div>
           <div>
-            <span style={{color: '#rgb(62 62 62)'}}>Severly Undercollaterized: </span> {data.governance.undercollateralizedThresholdPercent}%
+            <span style={{color: '#rgb(62 62 62)'}}>Severly Undercollaterized: </span> {data.governance.severelyUndercollateralizedThresholdPercent}%
           </div>
         </Block>
 

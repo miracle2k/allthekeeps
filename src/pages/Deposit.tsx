@@ -20,6 +20,7 @@ import BitcoinHelpers from "../utils/BitcoinHelpers";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {usePriceFeed} from "../components/PriceFeed";
 import { CollaterizationStatus } from "../components/CollateralizationStatus";
+import { Box } from "../components/Box";
 
 
 const DEPOSIT_QUERY = gql`
@@ -308,30 +309,6 @@ function PropertyTable(props: {
       })}
       </tbody>
     </table>
-}
-
-function Box(props: {
-  label: string,
-  children: any
-}) {
-  return (
-    <div className={css`
-      font-size: 35px;           
-      padding: 20px;
-      color: #0A0806;
-      
-      font-feature-settings: 'zero' on;
-    `}>
-        <div className={css`                         
-          font-size: 16px;
-        `}>
-          {props.label}
-        </div>
-        <div>
-          {props.children}
-        </div>
-    </div>
-  )
 }
 
 
