@@ -18,9 +18,9 @@ import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
 import BitcoinHelpers from "../utils/BitcoinHelpers";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
-import {usePriceFeed} from "../components/PriceFeed";
 import { CollaterizationStatus } from "../components/CollateralizationStatus";
 import { Box } from "../components/Box";
+import {Button} from "../design-system/Button";
 
 
 const DEPOSIT_QUERY = gql`
@@ -32,6 +32,7 @@ const DEPOSIT_QUERY = gql`
             createdAt,
             keepAddress,
             lotSizeSatoshis,
+            endOfTerm,
 
             tbtcSystem,
             tdtToken {
@@ -84,6 +85,10 @@ export function Content() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
+
+  const canBeRedeemed = ['ACTIVE', 'COURTESY_CALL'].indexOf(data.deposit.currentState) > -1;
+  const isAtTerm = true;
+  const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm);
 
   return <div>
     <div className={css`
@@ -142,7 +147,7 @@ export function Content() {
             {
               hasDepositBeenUsedToMint(data.deposit.tdtToken.owner, data.deposit.currentState)
                   ? <div>
-                    This deposit has been used to mint <strong>tBTC</strong>. The corresponding TDT token is now
+                    This deposit has been used to mint tBTC. The corresponding TDT token is now
                     owned by the <a href={`https://etherscan.io/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
                   </div>
                   : (data.deposit.tdtToken.owner == data.deposit.tdtToken.minter) ? <div>
@@ -162,6 +167,15 @@ export function Content() {
           `}>
             <a href={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
           </div>
+
+          {(canBeRedeemed) ?
+            <div style={{marginTop: 20}}>
+              This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange tBTC for the Bitcoin deposited here.</InfoTooltip>
+              <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://dapp.tbtc.network/deposit/${data.deposit.contractAddress}/redeem`}>
+                Redeem
+              </Button></div>
+            </div>
+          : null }
         </Paper>
 
         <div style={{marginTop: '20px'}}>
@@ -171,14 +185,25 @@ export function Content() {
                   {
                     key: 'tokenOwner',
                     label: "Current Owner",
-                    tooltip: "Deposit owner as represented by ownership over the TDT token",
+                    tooltip: "Deposit owner as represented by ownership over the TDT token.",
                     value: <Address address={data.deposit.tdtToken.owner} />
                   },
                   {
                     key: 'tokenMinter',
                     label: "Creator",
-                    tooltip: "Original creator of this deposit",
+                    tooltip: "Original creator of this deposit.",
                     value: <Address address={data.deposit.tdtToken.minter}  />
+                  },
+                  {
+                    key: 'tokenId',
+                    label: "Token ID",
+                    value: <Address address={data.deposit.tdtToken.tokenID} to={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
+                  },
+                  {
+                    key: 'endOfTerm',
+                    label: "End Of Term",
+                    tooltip: "Within the term, only the owner can redeem the deposit or mint tBTC.",
+                    value: <TimeToNow time={data.deposit.endOfTerm} />
                   },
                   {
                     key: 'depositContract',
@@ -396,8 +421,8 @@ function RegisteredPubKeyEvent(props: {
   const address = BitcoinHelpers.Address.publicKeyPointToP2WPKHAddress(event.signingGroupPubkeyX, event.signingGroupPubkeyY, "main")
 
   return <div>
-    <strong>Bitcoin Address provided</strong>
-    <div>Signers have provided a Bitcoin address to deposit things in: {address}</div>
+    <strong>Bitcoin address provided</strong>
+    <div>Signers have provided a Bitcoin address to receive the funds: <Address address={address} to={`https://www.blockchain.com/btc/address/${address}`} /></div>
   </div>
 }
 
@@ -418,7 +443,6 @@ function RedemptionRequestedEvent(props: {
   return <div>
     <strong>Redemption Requested</strong>
     <div>
-      sdf
     </div>
   </div>
 }
