@@ -196,8 +196,6 @@ export function KeepsTable(props: {
                 : ""
             }
             {getNiceStateLabel(deposit.currentState)}
-            {" "} {deposit.currentState}
-            {" "} {deposit.currentState}
           </td>
 
           <td>
