@@ -12,6 +12,7 @@ import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
 import {CollaterizationStatus, CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {usePriceFeed} from "../../components/PriceFeed";
+import { Table } from "../../components/Table";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits {
@@ -49,16 +50,10 @@ export function DepositsTable() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-
   return <>
     <Tippy singleton={source} delay={500} />
-    <table
+    <Table
         style={{width: '100%'}}
-        className={css`
-        & td, th {
-          text-align: left;
-        }
-      `}
     >
       <thead>
       <tr>
@@ -120,6 +115,6 @@ export function DepositsTable() {
         </tr>
       })}
       </tbody>
-    </table>
+    </Table>
   </>;
 }

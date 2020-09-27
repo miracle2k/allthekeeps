@@ -17,6 +17,7 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 import { Box } from "../components/Box";
 import {CollaterizationStatusWithPrice} from "../components/CollateralizationStatus";
 import {usePriceFeed} from "../components/PriceFeed";
+import { Table } from "../components/Table";
 
 
 const OPERATOR_QUERY = gql`
@@ -136,13 +137,8 @@ export function KeepsTable(props: {
   // }).map((keep: any) => parseFloat(keep.totalBondAmount) / 3).reduce((a: any, b: any) => a + b, 0)
 
   return <>
-    <table
+    <Table
         style={{width: '100%'}}
-        className={css`
-        & td, th {
-          text-align: left;
-        }
-      `}
     >
       <thead>
       <tr>
@@ -211,6 +207,6 @@ export function KeepsTable(props: {
         </tr>
       })}
       </tbody>
-    </table>
+    </Table>
   </>;
 }

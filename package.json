@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.1.2",
     "@tippyjs/react": "^4.2.0",
     "bcoin": "git+https://github.com/bcoin-org/bcoin.git",
+    "classnames": "^2.2.6",
     "emotion": "^10.0.27",
     "graphql": "^15.3.0",
     "luxon": "^1.25.0",
@@ -43,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/luxon": "^1.25.0",
     "@types/react-helmet": "^6.1.0",
     "@types/react-router": "^5.1.8",

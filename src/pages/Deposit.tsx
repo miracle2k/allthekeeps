@@ -21,6 +21,7 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 import { CollaterizationStatus } from "../components/CollateralizationStatus";
 import { Box } from "../components/Box";
 import {Button} from "../design-system/Button";
+import { Table } from "../components/Table";
 
 
 const DEPOSIT_QUERY = gql`
@@ -312,7 +313,7 @@ function PropertyTable(props: {
     value: any
   }[]
 }) {
-  return <table className={css`
+  return <Table className={css`
       color: #0A0806;
       padding: 15px;
       
@@ -333,7 +334,7 @@ function PropertyTable(props: {
         </tr>
       })}
       </tbody>
-    </table>
+    </Table>
 }
 
 

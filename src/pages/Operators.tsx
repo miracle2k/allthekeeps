@@ -6,6 +6,7 @@ import { Address } from "../components/Address";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Helmet} from "react-helmet";
+import { Table } from "../components/Table";
 
 const OPERATOR_QUERY = gql`
     query GetOperators {
@@ -49,13 +50,8 @@ export function OperatorsTable() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  return <table
-      style={{width: '100%'}}
-      className={css`
-        & td, th {
-          text-align: left;
-        }
-      `}>
+  return <Table
+      style={{width: '100%'}}>
     <thead>
     <tr>
       <th>Address</th>
@@ -72,7 +68,7 @@ export function OperatorsTable() {
       const total = (parseFloat(member.unboundAvailable) + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);
 
-      return  <tr>
+      return  <tr key={member.id}>
         <td>
           <Address address={member.address} to={`/operator/${member.address}`} />
           <a title={"Open on Etherscan"} href={`https://etherscan.io/address/${member.address}`} className={css`
@@ -93,5 +89,5 @@ export function OperatorsTable() {
       </tr>
     })}
     </tbody>
-  </table>
+  </Table>
 }
