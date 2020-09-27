@@ -9,7 +9,7 @@ import {TimeToNow} from "../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateColor, getStateTooltip} from "../utils/depositStates";
+import {getNiceStateLabel, getStateBoxStyle, getStateTooltip} from "../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../utils/contracts";
 import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
@@ -179,7 +179,10 @@ export function KeepsTable(props: {
           <td>
             <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span>&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
           </td>
-          <td>
+          <td className={css`
+            display: flex;
+            align-items: center;
+          `}>
             <div className={css`
               display: inline-block;
               width: 1.2em;
@@ -187,8 +190,7 @@ export function KeepsTable(props: {
               border-radius: 2px;
               padding: 0.2em;
               box-sizing: border-box;
-              background-color: ${getStateColor(deposit.currentState)}
-            `}>
+            `} style={getStateBoxStyle(deposit.currentState)}>
             </div>
             &nbsp;
             {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)

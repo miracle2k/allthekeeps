@@ -7,28 +7,37 @@ export function getNiceStateLabel(state: string) {
     'AWAITING_WITHDRAWAL_SIGNATURE': 'Awaiting Withdrawal Signature',
     'REDEEMED': 'Redeemed',
     'ACTIVE': "Active",
-    'FAILED_SETUP': "Failed Setup",
+    'FAILED_SETUP': "Setup Failed",
     "LIQUIDATED": "Liquidated",
     "LIQUIDATION_IN_PROGRESS": "Liquidation In Progress"
   } as any)[state] || state;
 }
 
-export function getStateColor(state: string) {
+export function getStateBoxStyle(state: string) {
   let inProgress = '#ffb74d';
   let failed = '#F44336';
   let redeemed = 'silver';
   let active = '#4caf50';
 
-  return ({
+  const color = ({
     'AWAITING_SIGNER_SETUP': inProgress,
     'AWAITING_BTC_FUNDING_PROOF': inProgress,
     'AWAITING_WITHDRAWAL_SIGNATURE': inProgress,
     'REDEEMED': redeemed,
     'ACTIVE': active,
-    'FAILED_SETUP': failed,
+    'FAILED_SETUP': 'transparent',
     "LIQUIDATED": failed,
     "LIQUIDATION_IN_PROGRESS": inProgress
   } as any)[state] || "transparent";
+
+  const borderColor = ({
+    'FAILED_SETUP': failed,
+  } as any)[state] || color;
+
+  return {
+    backgroundColor: color,
+    border: `1px solid ${borderColor}`
+  };
 }
 
 export function getStateTooltip(state: string) {
