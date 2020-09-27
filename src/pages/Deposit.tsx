@@ -11,7 +11,7 @@ import {getNiceStateLabel, getStateTooltip} from "../utils/depositStates";
 import {
   getTDTTokenAddress,
   getVendingMachineAddress,
-  hasDepositBeenUsedToMint,
+  hasDepositBeenUsedToMint, isVendingMachine,
 } from "../utils/contracts";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {TBTCIcon} from "../design-system/tbtcIcon";
@@ -88,8 +88,8 @@ export function Content() {
   if (error) return <p>Error :( {""+ error}</p>;
 
   const canBeRedeemed = ['ACTIVE', 'COURTESY_CALL'].indexOf(data.deposit.currentState) > -1;
-  const isAtTerm = true;
-  const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm);
+  const isAtTerm = false;  // XXX still needs to be fixed
+  const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm || isVendingMachine(data.deposit.tdtToken.owner));
 
   return <div>
     <div className={css`
@@ -169,7 +169,7 @@ export function Content() {
             <a href={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
           </div>
 
-          {(canBeRedeemed) ?
+          {(canBeRedeemedByAnyone) ?
             <div style={{marginTop: 20}}>
               This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange tBTC for the Bitcoin deposited here.</InfoTooltip>
               <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://dapp.tbtc.network/deposit/${data.deposit.contractAddress}/redeem`}>
