@@ -3,7 +3,7 @@ import React from "react";
 
 export function Button(props: {
   type?: 'primary'|'secondary',
-  size?: 'default'|'small',
+  size?: 'default'|'small'|'tiny',
   to?: any,
   children?: any
 }) {
@@ -18,6 +18,16 @@ export function Button(props: {
     Component = "button";
   }
 
+  let fontSize = 16;
+  let paddingFactor = 1;
+  if (props.size === 'small') {
+    fontSize = 13;
+  }
+  else if (props.size === 'tiny') {
+    fontSize = 11;
+    paddingFactor = 0.8;
+  }
+
   return <Component className={css`
     display: flex;
     flex-direction: row;
@@ -25,13 +35,18 @@ export function Button(props: {
     outline: none;
     display: inline-block;
     text-decoration: none;
+    &:visited {
+      color: inherit;
+    }
+    &:hover {
+      text-decoration: none;
+    }
     cursor: pointer;
     
     font-family: Work Sans;
     font-weight: 500;    
     line-height: 1.2;
-    
-    padding: 0.9em 1.2em;    
+        
     background: #FFFFFF;    
     border: 1px solid #0A0806;    
     color: #0A0806;
@@ -64,7 +79,8 @@ export function Button(props: {
       }
     }
     
-    font-size: ${props.size === 'small' ? '13' : '16'}px;
+    font-size: ${fontSize}px;
+    padding: ${0.9 * paddingFactor}em ${1.2 * paddingFactor}em;
   `}
                     {...extraProps}
   >
