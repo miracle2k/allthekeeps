@@ -1,10 +1,10 @@
 import {gql, useQuery, useSubscription} from "@apollo/client";
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../components/FormattedTime";
 import {css} from "emotion";
-import {Address, Transaction} from "../components/Address";
+import {Address, BitcoinAddress, Transaction} from "../components/Address";
 import { Paper } from "../design-system/Paper";
 import {getNiceStateLabel, getStateTooltip} from "../utils/depositStates";
 import {
@@ -22,6 +22,7 @@ import { Box } from "../components/Box";
 import {Button} from "../design-system/Button";
 import { useWallet } from 'use-wallet'
 import {Loading} from "../components/Loading";
+import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 
 
 const DEPOSIT_QUERY = gql`
@@ -102,6 +103,15 @@ export function Content() {
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
 
+  BitcoinHelpers.setElectrumConfig({
+    "server": "electrumx-server.tbtc.network",
+    "port": 8443,
+    "protocol": "wss"
+  })
+  const btcAddress = data? BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main") : "";
+  const shouldShowConfirmationInfo = data?.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
+  const btcTxState = useBitcoinTxState(btcAddress, parseInt(data?.deposit.lotSizeSatoshis), shouldShowConfirmationInfo)
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
@@ -140,7 +150,20 @@ export function Content() {
               : null
         }
         {
-          <div style={{lineHeight: 1}}>
+          <div style={{lineHeight: 1, alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
+            {shouldShowConfirmationInfo ? <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
+              {btcTxState?.numConfirmations} confirmations
+              <a title={"Open on blockchain.info"} href={
+                btcTxState.transactionHash
+                    ? `https://www.blockchain.com/btc/tx/${btcTxState.transactionHash}`
+                    : `https://www.blockchain.com/btc/address/${btcAddress}`
+              } className={css`
+                  font-size: 0.8em;
+                  padding-left: 0.2em;
+                 `}>
+                <ExternalLinkIcon />
+              </a> <span style={{fontSize: 12}}><Loading /></span>
+            </span> : null}
             <NotifyButton data={data} />
           </div>
         }
@@ -263,7 +286,7 @@ export function Content() {
               tooltip: "The node operators collectively holding the Bitcoin private key",
               value: <div>
                 {data.deposit.bondedECDSAKeep.members.map((m: any) => {
-                  return <div>
+                  return <div key={m.address}>
                     <Address address={m.address} to={`/operator/${m.address}`} />
                   </div>
                 })}
@@ -303,8 +326,8 @@ export function Content() {
             },
             {
               key: 'publicKey',
-              label: "Public Key",
-              value: data.deposit.bondedECDSAKeep.publicKey
+              label: "BTC Address",
+              value: <BitcoinAddress address={btcAddress} />
             },
             {
               key: 'status',
@@ -438,7 +461,7 @@ function Log(props: {
   if (error) return <p>Error :( {""+ error}</p>;
 
   return data.events.map((logEntry: any) => {
-    return <LogEntry event={logEntry} />
+    return <LogEntry key={logEntry.id} event={logEntry} />
   })
 }
 
@@ -488,6 +511,53 @@ function CreatedEvent(props: {
   </div>
 }
 
+function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: boolean) {
+  const [txHash, setTxHash] = useState("");
+  const [confirmations, setConfirmations] = useState(0);
+
+  const waitForTxAndConfirmations = useCallback(async (cancelToken: {set: boolean}) => {
+    // Would be much nicer to get a cancel token from those helper functions
+    const tx = await BitcoinHelpers.Transaction.findOrWaitFor(
+        address,
+        lotSizeSatoshis
+    )
+    if (cancelToken.set) { return; }
+    setTxHash(tx.transactionID);
+
+    // Now ensure we have enough confirmations
+    const confirmations = await BitcoinHelpers.Transaction.waitForConfirmations(
+        tx.transactionID,
+        6,
+        ({ transactionID, confirmations, requiredConfirmations }) => {
+          // Stop watching by returning a positive value.
+          if (cancelToken.set) {
+            return true;
+          }
+        });
+    if (cancelToken.set) { return; }
+
+    setConfirmations(confirmations);
+  }, [address, lotSizeSatoshis, setConfirmations, setTxHash]);
+
+  useEffect(() => {
+    if (!address || !lotSizeSatoshis || !isEnabled) {
+      return;
+    }
+
+    const cancelToken = {set: false};
+    waitForTxAndConfirmations(cancelToken);
+    return () => {
+      cancelToken.set = true;
+    }
+  }, [address, lotSizeSatoshis]);
+
+  return {
+    hasTransaction: !!txHash,
+    transactionHash: txHash,
+    numConfirmations: confirmations
+  }
+}
+
 function RegisteredPubKeyEvent(props: {
   event: any
 }) {
@@ -495,11 +565,11 @@ function RegisteredPubKeyEvent(props: {
   // TODO: Can we get this earlier?
 
   const event = props.event;
-  const address = BitcoinHelpers.Address.publicKeyPointToP2WPKHAddress(event.signingGroupPubkeyX, event.signingGroupPubkeyY, "main")
+  const address = BitcoinHelpers.Address.publicKeyPointToP2WPKHAddress(event.signingGroupPubkeyX, event.signingGroupPubkeyY, "main");
 
   return <div>
     <strong>Bitcoin address provided</strong>
-    <div>Signers have provided a Bitcoin address to receive the funds: <Address address={address} to={`https://www.blockchain.com/btc/address/${address}`} /></div>
+    <div>Signers have provided a Bitcoin address to receive the funds: <BitcoinAddress address={address} /></div>
   </div>
 }
 

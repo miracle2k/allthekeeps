@@ -24,6 +24,13 @@ export function Address(props: {
 }
 
 
+export function BitcoinAddress(props: {
+  address: string
+}) {
+  return <Address address={props.address} to={`https://www.blockchain.com/btc/address/${props.address}`} />;
+}
+
+
 export function Transaction(props: {
   tx: string,
   to?: string,

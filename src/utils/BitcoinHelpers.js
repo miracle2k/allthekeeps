@@ -11,7 +11,7 @@ import BcoinScript from "bcoin/lib/script/index.js"
 //import { BitcoinSPV } from "./lib/BitcoinSPV.js"
 /** @typedef { import("./lib/BitcoinSPV.js").Proof } Proof */
 //import { BitcoinTxParser } from "./lib/BitcoinTxParser.js"
-//import ElectrumClient from "./lib/ElectrumClient.js"
+import ElectrumClient from "./ElectrumClient.js"
 /** @typedef { import("./lib/ElectrumClient.js").Config } ElectrumConfig */
 
 //import BN from "bn.js"
@@ -282,27 +282,27 @@ const BitcoinHelpers = {
    *        completes (successfully or unsuccessfully).
    * @template T
    */
-  // withElectrumClient: async function(block) {
-  //   if (BitcoinHelpers.electrumConfig === null) {
-  //     throw new Error("Electrum client not configured.")
-  //   }
-  //
-  //   const electrumClient = new ElectrumClient(BitcoinHelpers.electrumConfig)
-  //
-  //   await electrumClient.connect()
-  //
-  //   const result = block(electrumClient)
-  //   result.then(
-  //       () => {
-  //         electrumClient.close()
-  //       },
-  //       () => {
-  //         electrumClient.close()
-  //       }
-  //   )
-  //
-  //   return result
-  // },
+  withElectrumClient: async function(block) {
+    if (BitcoinHelpers.electrumConfig === null) {
+      throw new Error("Electrum client not configured.")
+    }
+
+    const electrumClient = new ElectrumClient(BitcoinHelpers.electrumConfig)
+
+    await electrumClient.connect()
+
+    const result = block(electrumClient)
+    result.then(
+        () => {
+          electrumClient.close()
+        },
+        () => {
+          electrumClient.close()
+        }
+    )
+
+    return result
+  },
   Transaction: {
     /**
      * Finds a transaction to the given `bitcoinAddress` of the given

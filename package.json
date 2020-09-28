@@ -11,6 +11,7 @@
     "@web3-react/core": "^6.1.1",
     "bcoin": "git+https://github.com/bcoin-org/bcoin.git",
     "classnames": "^2.2.6",
+    "electrum-client-js": "git+https://github.com/keep-network/electrum-client-js.git#v0.1.0",
     "emotion": "^10.0.27",
     "ethers": "^5.0.14",
     "graphql": "^15.3.0",
