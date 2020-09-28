@@ -18,6 +18,8 @@ import {About} from "./pages/About";
 import {Redirect} from "react-router";
 import {Helmet} from "react-helmet";
 import {Governance} from "./pages/Governance";
+import { UseWalletProvider } from 'use-wallet'
+
 
 const client = new ApolloClient({
   // DEV:
@@ -27,41 +29,48 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+// function getLibrary(provider: any, connector: any) {
+//   return new ethers.providers.Web3Provider(provider, ethers.providers.getNetwork("main"));
+// }
 
 function App() {
   return (
       <ApolloProvider client={client}>
-        <Router>
-          <Header />
-          <Helmet titleTemplate="%s | AllTheKeeps">
-          </Helmet>
-          <div className={css`            
-          `}>
-            <Switch>
-              <Route path="/" exact>
-                <Redirect to="/deposits" />
-              </Route>
-              <Route exact path="/deposits">
-                <Index />
-              </Route>
-              <Route path="/about" exact>
-                <About />
-              </Route>
-              <Route path="/governance" exact>
-                <Governance />
-              </Route>
-              <Route path="/operators" exact>
-                <Operators />
-              </Route>
-              <Route path="/operator/:operatorId" exact>
-                <Operator />
-              </Route>
-              <Route path="/deposit/:depositId" exact>
-                <Deposit />
-              </Route>
-            </Switch>
-          </div>
-        </Router>
+        <UseWalletProvider
+            chainId={1}
+        >
+          <Router>
+            <Header />
+            <Helmet titleTemplate="%s | AllTheKeeps">
+            </Helmet>
+            <div className={css`            
+            `}>
+              <Switch>
+                <Route path="/" exact>
+                  <Redirect to="/deposits" />
+                </Route>
+                <Route exact path="/deposits">
+                  <Index />
+                </Route>
+                <Route path="/about" exact>
+                  <About />
+                </Route>
+                <Route path="/governance" exact>
+                  <Governance />
+                </Route>
+                <Route path="/operators" exact>
+                  <Operators />
+                </Route>
+                <Route path="/operator/:operatorId" exact>
+                  <Operator />
+                </Route>
+                <Route path="/deposit/:depositId" exact>
+                  <Deposit />
+                </Route>
+              </Switch>
+            </div>
+          </Router>
+        </UseWalletProvider>
       </ApolloProvider>
   );
 }

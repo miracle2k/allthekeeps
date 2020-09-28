@@ -1,7 +1,6 @@
 import {gql, useQuery} from "@apollo/client";
-import React from "react";
+import React, {useState} from "react";
 import {useParams} from 'react-router';
-import { Link } from "react-router-dom";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../components/FormattedTime";
 import {css} from "emotion";
@@ -21,7 +20,9 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 import { CollaterizationStatus } from "../components/CollateralizationStatus";
 import { Box } from "../components/Box";
 import {Button} from "../design-system/Button";
-import { Table } from "../components/Table";
+import { useWallet } from 'use-wallet'
+import {ethers} from "ethers";
+import {Loading} from "../components/Loading";
 
 
 const DEPOSIT_QUERY = gql`
@@ -80,6 +81,14 @@ export function Deposit() {
   </div>
 }
 
+
+const depositAbi = [
+  "function notifyFundingTimedOut()",
+  "function notifySignerSetupFailed()"
+];
+
+
+
 export function Content() {
   let { depositId } = useParams<any>();
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
@@ -120,6 +129,11 @@ export function Content() {
                 <TBTCIcon /> <span style={{paddingLeft: 5}}>tBTC minted</span>
                 </div>
               : null
+        }
+        {
+          <div style={{lineHeight: 1}}>
+            <NotifyButton data={data} />
+          </div>
         }
       </Box>
 
@@ -302,6 +316,57 @@ export function Content() {
       </div>
     </Paper>
   </div>
+}
+
+
+function NotifyButton(props: {
+  data: any
+}) {
+  const wallet = useWallet()
+  const data = props.data;
+  const [isBusy, setBusy] = useState(false);
+
+  let func: string;
+  if (data.deposit.currentState == 'AWAITING_SIGNER_SETUP') {
+    func = 'notifySignerSetupFailed';
+  } else if (data.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF') {
+    func = 'notifyFundingTimedOut';
+  }
+  else {
+    return null;
+  }
+
+  return <Button size={"tiny"} onClick={async () => {
+    setBusy(true)
+    try {
+      // This is what shoes the metamask popup (could support different providers)
+      // await returns only when the user took action, but unfortunately it does not tell us the result
+      // (we'd have to wait for a state update).
+      await wallet.connect("injected")
+
+      // TODO: We should use wallet.ethereum here I think, but again, it is not filled until the
+      // component re-renders.
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum as any);
+
+      const contract = new ethers.Contract(data.deposit.contractAddress, depositAbi, provider);
+      const daiWithSigner = contract.connect(provider.getSigner());
+
+      // gas estimation fails, why?
+      //alert(await daiWithSigner.estimateGas.notifyFundingTimedOut());
+
+      // limit based on: https://etherscan.io/tx/0x35d1a7e9d25bb1aefb4a0ed5237854a12440a4748091b9f16474b7a2d5ac5251, but can vary widely, I also saw 246,750
+      const tx = await daiWithSigner[func]({gasLimit: 593800})
+      const receipt = await tx.wait();
+    }
+    finally {
+      setBusy(false)
+    }
+  }}>
+    Notify Timeout {isBusy ? <Loading /> : <InfoTooltip>
+    If the deposit process was not completed in time. Notifying the contract of this will release
+    the bonded funds back to the signers.
+  </InfoTooltip>}
+  </Button>
 }
 
 

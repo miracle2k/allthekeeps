@@ -1,12 +1,19 @@
 import {css} from "emotion";
-import React from "react";
+import React, {useCallback} from "react";
 
 export function Button(props: {
   type?: 'primary'|'secondary',
   size?: 'default'|'small'|'tiny',
   to?: any,
+  onClick?: any,
   children?: any
 }) {
+  const handleClick = useCallback((e: any) => {
+    if (props.onClick) {
+      e.preventDefault();
+      props.onClick();
+    }
+  }, [props.onClick]);
 
   let Component: any;
   let extraProps: any = {};
@@ -83,6 +90,7 @@ export function Button(props: {
     padding: ${0.9 * paddingFactor}em ${1.2 * paddingFactor}em;
   `}
                     {...extraProps}
+      onClick={handleClick}
   >
     {props.children}
   </Component>
