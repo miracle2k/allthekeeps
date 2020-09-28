@@ -1,5 +1,5 @@
 import React from 'react';
-import {ApolloProvider, useQuery} from '@apollo/client';
+import {ApolloProvider, HttpLink, split, useQuery} from '@apollo/client';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import {
   BrowserRouter as Router,
@@ -19,19 +19,43 @@ import {Redirect} from "react-router";
 import {Helmet} from "react-helmet";
 import {Governance} from "./pages/Governance";
 import { UseWalletProvider } from 'use-wallet'
+import {WebSocketLink} from "@apollo/client/link/ws";
+import {getMainDefinition} from "@apollo/client/utilities";
 
 
-const client = new ApolloClient({
-  // DEV:
-  //uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/keep-network',
-  // LIVE
-  uri: 'https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps',
-  cache: new InMemoryCache()
+// DEV:
+const uri = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
+// LIVE
+//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+
+
+const httpLink = new HttpLink({
+  uri: 'https://' + uri
 });
 
-// function getLibrary(provider: any, connector: any) {
-//   return new ethers.providers.Web3Provider(provider, ethers.providers.getNetwork("main"));
-// }
+const wsLink = new WebSocketLink({
+  uri: `wss://` + uri,
+  options: {
+    reconnect: true
+  }
+});
+
+const splitLink = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+      );
+    },
+    wsLink,
+    httpLink,
+);
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: splitLink
+});
 
 function App() {
   return (

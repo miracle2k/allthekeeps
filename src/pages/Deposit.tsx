@@ -1,4 +1,4 @@
-import {gql, useQuery} from "@apollo/client";
+import {gql, useQuery, useSubscription} from "@apollo/client";
 import React, {useState} from "react";
 import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
@@ -64,6 +64,15 @@ const DEPOSIT_QUERY = gql`
     }
 `;
 
+const DEPOSIT_SUBSCRIPTION = gql`
+    subscription WatchDeposit($id: String!) {
+        deposit(id: $id) {
+            id
+            currentState
+        }
+    }
+`;
+
 const formatter = new Intl.NumberFormat("en-US", {
   style: 'percent',
   maximumFractionDigits: 2
@@ -92,6 +101,7 @@ const depositAbi = [
 export function Content() {
   let { depositId } = useParams<any>();
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
+  useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
