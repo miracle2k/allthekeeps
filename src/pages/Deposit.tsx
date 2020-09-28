@@ -21,7 +21,6 @@ import { CollaterizationStatus } from "../components/CollateralizationStatus";
 import { Box } from "../components/Box";
 import {Button} from "../design-system/Button";
 import { useWallet } from 'use-wallet'
-import {ethers} from "ethers";
 import {Loading} from "../components/Loading";
 
 
@@ -349,6 +348,8 @@ function NotifyButton(props: {
   return <Button size={"tiny"} onClick={async () => {
     setBusy(true)
     try {
+      const ethers = await import("ethers");
+
       // This is what shoes the metamask popup (could support different providers)
       // await returns only when the user took action, but unfortunately it does not tell us the result
       // (we'd have to wait for a state update).
