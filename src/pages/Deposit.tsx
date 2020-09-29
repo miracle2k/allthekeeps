@@ -151,8 +151,11 @@ export function Content() {
         }
         {
           <div style={{lineHeight: 1, alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
-            {shouldShowConfirmationInfo ? <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
-              {btcTxState?.numConfirmations} confirmations
+            {(shouldShowConfirmationInfo && btcTxState) ? <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
+              {btcTxState.hasTransaction
+                  ? <>{btcTxState?.numConfirmations} confirmations</>
+                  : <>waiting for transaction</>
+              }
               <a title={"Open on blockchain.info"} href={
                 btcTxState.transactionHash
                     ? `https://www.blockchain.com/btc/tx/${btcTxState.transactionHash}`
@@ -509,19 +512,34 @@ function CreatedEvent(props: {
 
 function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: boolean) {
   const [txHash, setTxHash] = useState("");
+  const [isInitialized, setInitialized] = useState(false);
   const [confirmations, setConfirmations] = useState(0);
 
   const waitForTxAndConfirmations = useCallback(async (cancelToken: {set: boolean}) => {
-    // Would be much nicer to get a cancel token from those helper functions
-    const tx = await BitcoinHelpers.Transaction.findOrWaitFor(
-        address,
-        lotSizeSatoshis
-    )
+    let tx = await BitcoinHelpers.Transaction.findScript(address, lotSizeSatoshis);
     if (cancelToken.set) { return; }
+
+    if (!tx) {
+      setInitialized(true);
+
+      // Would be much nicer to get a cancel token from those helper functions
+      tx = await BitcoinHelpers.Transaction.findOrWaitFor(
+          address,
+          lotSizeSatoshis
+      )
+    }
+    if (cancelToken.set) { return; }
+
     setTxHash(tx.transactionID);
 
     // Now ensure we have enough confirmations
-    const confirmations = await BitcoinHelpers.Transaction.waitForConfirmations(
+    let confirmations = await BitcoinHelpers.Transaction.checkForConfirmations(tx.transactionID, 0);
+    if (cancelToken.set) { return; }
+
+    setConfirmations(confirmations!);
+    setInitialized(true);
+
+    confirmations = await BitcoinHelpers.Transaction.waitForConfirmations(
         tx.transactionID,
         6,
         ({ transactionID, confirmations, requiredConfirmations }) => {
@@ -547,11 +565,12 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
     }
   }, [address, lotSizeSatoshis]);
 
-  return {
+  // isInitialized makes sure we do not return "no tx" if we really don't know yet.
+  return isInitialized ? {
     hasTransaction: !!txHash,
     transactionHash: txHash,
     numConfirmations: confirmations
-  }
+  } : null;
 }
 
 function RegisteredPubKeyEvent(props: {
