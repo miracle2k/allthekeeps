@@ -10,16 +10,17 @@ import {getNiceStateLabel, getStateBoxStyle} from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
 import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
-import {CollaterizationStatus, CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
+import {CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {usePriceFeed} from "../../components/PriceFeed";
 import { Table } from "../../components/Table";
+import {DateTime} from "luxon";
 
 const DEPOSITS_QUERY = gql`
-    query GetDeposits {
+    query GetDeposits($where: Deposit_filter) {
         deposits(
             after: 0, first: 300, 
-            orderBy: createdAt, orderDirection: desc,
-            where: {currentState: "ACTIVE"}
+            orderBy: createdAt, orderDirection: desc
+            where: $where
         ) {
             id,
             contractAddress,
@@ -46,8 +47,18 @@ const DEPOSITS_QUERY = gql`
     }
 `;
 
-export function DepositsTable() {
-  const { loading, error, data } = useQuery(DEPOSITS_QUERY);
+export function DepositsTable(props: {
+  view: 'all'|'active'|'liquidations'|'redeemable'|'unminted'
+}) {
+  const where = ({
+    all: {},
+    active: {'filter_activeLikeState': true},
+    liquidations: {'filter_liquidationLikeState': true},
+    redeemable: {'filter_redeemableAsOf_gt': Math.round(DateTime.utc().toMillis() / 1000)},
+    unminted: {'filter_unmintedTDT': true},
+  } as any)[props.view || 'all'];
+
+  const { loading, error, data } = useQuery(DEPOSITS_QUERY, {variables: {where: where}});
   const [source, target] = useSingleton();
   const price = usePriceFeed();
 

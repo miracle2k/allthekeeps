@@ -115,13 +115,14 @@ export function Index() {
                 { value: 'active', title: 'Active Only' },
                 { value: 'liquidations', title: 'Liquidations' },
                 { value: 'redeemable', title: 'Redeemable' },
-                { value: 'unminted', title: 'Unminted tBTC' }
+                { value: 'unminted', title: 'Unminted TDTs' }
               ]}
           />
         </div>
       </div>
 
       <DepositsTable
+          view={view as any}
       />
     </Paper>
   </div>
