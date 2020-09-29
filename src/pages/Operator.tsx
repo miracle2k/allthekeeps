@@ -159,7 +159,9 @@ export function KeepsTable(props: {
         const deposit = keep.deposit;
         return  <tr key={deposit.id}>
           <td>
-            <TimeToNow time={deposit.createdAt} />
+            <TimeToNow
+                time={deposit.createdAt}
+            />
           </td>
           <td>
             <Link to={`/deposit/${deposit.id}`}>

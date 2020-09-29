@@ -246,12 +246,12 @@ export function Content() {
                     label: "Token ID",
                     value: <Address address={data.deposit.tdtToken.tokenID} to={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
                   },
-                  {
+                  data.deposit.endOfTerm ? {
                     key: 'endOfTerm',
                     label: "End Of Term",
                     tooltip: "Within the term, only the owner can redeem the deposit or mint tBTC.",
                     value: <TimeToNow time={data.deposit.endOfTerm} />
-                  },
+                  } : undefined,
                   {
                     key: 'depositContract',
                     label: "Deposit Contract",
@@ -400,12 +400,12 @@ function NotifyButton(props: {
 
 
 function PropertyTable(props: {
-  data: {
+  data: (undefined|{
     key: string,
     label: string,
     tooltip?: string,
     value: any
-  }[]
+  })[]
 }) {
   return <table className={css`
       color: #0A0806;
@@ -420,6 +420,7 @@ function PropertyTable(props: {
     `}>
       <tbody>
       {props.data.map(row => {
+        if (!row) { return null; }
         return <tr key={row.key}>
           <th>
             {row.label} {row.tooltip ? <InfoTooltip>{row.tooltip}</InfoTooltip> : null}
