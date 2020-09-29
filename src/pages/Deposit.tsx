@@ -256,11 +256,6 @@ export function Content() {
                     key: 'depositContract',
                     label: "Deposit Contract",
                     value: <Address address={data.deposit.contractAddress}  />
-                  },
-                  {
-                    key: 'tbtcSystem',
-                    label: "tBTC contract",
-                    value: <Address address={data.deposit.tbtcSystem} />
                   }
                 ]}
             />
