@@ -24,6 +24,10 @@ export function About() {
         {" "} <a href={"https://github.com/miracle2k/allthekeeps-graph"}>on Github</a>.
       </p>
       <p>
+        <a href={"https://github.com/miracle2k/keep-pricefeed"}>A second subgraph</a> is providing the on-chain
+        price feed.
+      </p>
+      <p>
         Built by <a href={"http://twitter.com/elsdoerfer/"}>@elsdoerfer</a>
       </p>
 
