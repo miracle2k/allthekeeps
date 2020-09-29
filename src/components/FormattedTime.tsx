@@ -13,7 +13,7 @@ export function TimeToNow(props: {
   // You can define a padding, but this does seem to only work right if your padding matches the time, i.e. you
   // have to know you are dealing with "months ago", for you to pad up to 10 days, say.
   const relString = dateTime.toRelative()
-  
+
   // Or, we can use diffNow?
   // const diff = dateTime.diffNow(['days', 'hours', 'minutes', 'months', 'years'])
   // console.log(diff)

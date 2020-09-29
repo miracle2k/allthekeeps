@@ -16,7 +16,11 @@ import { Table } from "../../components/Table";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits {
-        deposits(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
+        deposits(
+            after: 0, first: 300, 
+            orderBy: createdAt, orderDirection: desc,
+            where: {currentState: "ACTIVE"}
+        ) {
             id,
             contractAddress,
             lotSizeSatoshis,
