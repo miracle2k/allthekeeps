@@ -7,11 +7,11 @@ import Input from "bcoin/lib/primitives/input.js"
 import Output from "bcoin/lib/primitives/output.js"
 import TX from "bcoin/lib/primitives/tx.js"
 import BcoinScript from "bcoin/lib/script/index.js"
-
 //import { BitcoinSPV } from "./lib/BitcoinSPV.js"
 /** @typedef { import("./lib/BitcoinSPV.js").Proof } Proof */
 //import { BitcoinTxParser } from "./lib/BitcoinTxParser.js"
 import ElectrumClient from "./ElectrumClient.js"
+
 /** @typedef { import("./lib/ElectrumClient.js").Config } ElectrumConfig */
 
 //import BN from "bn.js"
@@ -360,33 +360,29 @@ const BitcoinHelpers = {
      * @return {Promise<TransactionInBlock>} A promise to the found
      *         transaction once it is seen on the chain.
      */
-    findOrWaitFor: async function(bitcoinAddress, expectedValue) {
-      return await BitcoinHelpers.withElectrumClient(async electrumClient => {
-        const script = BitcoinHelpers.Address.toScript(bitcoinAddress)
+    findOrWaitFor: async function(electrumClient, bitcoinAddress, expectedValue) {
+      const script = BitcoinHelpers.Address.toScript(bitcoinAddress)
 
-        // This function is used as a callback to electrum client. It is
-        // invoked when an existing or a new transaction is found.
-        const checkTransactions = async function(
-            /** @type {string?} */ status
-        ) {
-          // If the status is set, transactions were seen for the
-          // script.
-          if (status) {
-            const result = BitcoinHelpers.Transaction.findWithClient(
-                electrumClient,
-                script,
-                expectedValue
-            )
-
-            return result
-          }
-
-          // Return null if status is unset so we continue receiving events.
-          return null
+      // This function is used as a callback to electrum client. It is
+      // invoked when an existing or a new transaction is found.
+      const checkTransactions = async function(
+          /** @type {string?} */ status
+      ) {
+        // If the status is set, transactions were seen for the
+        // script.
+        if (status) {
+          return BitcoinHelpers.Transaction.findWithClient(
+              electrumClient,
+              script,
+              expectedValue
+          )
         }
 
-        return electrumClient.onTransactionToScript(script, checkTransactions)
-      })
+        // Return null if status is unset so we continue receiving events.
+        return null
+      }
+
+      return electrumClient.onTransactionToScript(script, checkTransactions)
     },
     /**
      * Checks the given Bitcoin `transactionID` to ensure it has at least
@@ -403,19 +399,18 @@ const BitcoinHelpers = {
      *         has at least `requiredConfirmations` confirmations.
      */
     checkForConfirmations: async function(
+        electrumClient,
         transactionID,
         requiredConfirmations
     ) {
-      return BitcoinHelpers.withElectrumClient(async electrumClient => {
-        const { confirmations } = await electrumClient.getTransaction(
-            transactionID
-        )
-        if (confirmations >= requiredConfirmations) {
-          return confirmations
-        }
+      const { confirmations } = await electrumClient.getTransaction(
+          transactionID
+      )
+      if (confirmations >= requiredConfirmations) {
+        return confirmations
+      }
 
-        return null
-      })
+      return null
     },
     /**
      * Watches the Bitcoin chain until the given `transactionID` has the given
@@ -431,37 +426,34 @@ const BitcoinHelpers = {
      *         observed that was at least equal to the required confirmations.
      */
     waitForConfirmations: async function(
+        electrumClient,
         transactionID,
         requiredConfirmations,
         onReceivedConfirmation
     ) {
-      return BitcoinHelpers.withElectrumClient(async electrumClient => {
-        const checkConfirmations = async function() {
-          return BitcoinHelpers.withElectrumClient(async electrumClient => {
-            const { confirmations } = await electrumClient.getTransaction(
-                transactionID
-            )
+      const checkConfirmations = async function() {
+        const { confirmations } = await electrumClient.getTransaction(
+            transactionID
+        )
 
-            if (typeof onReceivedConfirmation === "function" && confirmations) {
-              onReceivedConfirmation({
-                transactionID,
-                confirmations,
-                requiredConfirmations
-              })
-            }
-
-            if (confirmations >= requiredConfirmations) {
-              return confirmations
-            }
-
-            // Return null if required confirmations have not been reached so we
-            // continue to receive notifications.
-            return null
+        if (typeof onReceivedConfirmation === "function" && confirmations) {
+          onReceivedConfirmation({
+            transactionID,
+            confirmations,
+            requiredConfirmations
           })
         }
 
-        return electrumClient.onNewBlock(checkConfirmations)
-      })
+        if (confirmations >= requiredConfirmations) {
+          return confirmations
+        }
+
+        // Return null if required confirmations have not been reached so we
+        // continue to receive notifications.
+        return null
+      }
+
+      return electrumClient.onNewBlock(checkConfirmations)
     },
     /**
      * Estimates the fee that would be needed for a given transaction.

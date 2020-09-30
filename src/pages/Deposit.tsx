@@ -23,6 +23,7 @@ import {Button} from "../design-system/Button";
 import { useWallet } from 'use-wallet'
 import {Loading} from "../components/Loading";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
+import {useElectrumClient} from "../utils/useElectrumClient";
 
 
 const DEPOSIT_QUERY = gql`
@@ -103,11 +104,6 @@ export function Content() {
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
 
-  BitcoinHelpers.setElectrumConfig({
-    "server": "electrumx-server.tbtc.network",
-    "port": 8443,
-    "protocol": "wss"
-  })
   const btcAddress = data? BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main") : "";
   const shouldShowConfirmationInfo = data?.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
   const btcTxState = useBitcoinTxState(btcAddress, parseInt(data?.deposit.lotSizeSatoshis), shouldShowConfirmationInfo)
@@ -510,13 +506,16 @@ function CreatedEvent(props: {
   </div>
 }
 
+// A bug:
+// - first findScript() does return null even though findorWaitfor() finds one.
 function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: boolean) {
+  const client = useElectrumClient();
   const [txHash, setTxHash] = useState("");
   const [isInitialized, setInitialized] = useState(false);
   const [confirmations, setConfirmations] = useState(0);
 
   const waitForTxAndConfirmations = useCallback(async (cancelToken: {set: boolean}) => {
-    let tx = await BitcoinHelpers.Transaction.findScript(address, lotSizeSatoshis);
+    let tx = await BitcoinHelpers.Transaction.findWithClient(client!, address, lotSizeSatoshis);
     if (cancelToken.set) { return; }
 
     if (!tx) {
@@ -524,6 +523,7 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
 
       // Would be much nicer to get a cancel token from those helper functions
       tx = await BitcoinHelpers.Transaction.findOrWaitFor(
+          client,
           address,
           lotSizeSatoshis
       )
@@ -533,13 +533,14 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
     setTxHash(tx.transactionID);
 
     // Now ensure we have enough confirmations
-    let confirmations = await BitcoinHelpers.Transaction.checkForConfirmations(tx.transactionID, 0);
+    let confirmations = await BitcoinHelpers.Transaction.checkForConfirmations(client, tx.transactionID, 0);
     if (cancelToken.set) { return; }
 
     setConfirmations(confirmations!);
     setInitialized(true);
 
     confirmations = await BitcoinHelpers.Transaction.waitForConfirmations(
+        client,
         tx.transactionID,
         6,
         ({ transactionID, confirmations, requiredConfirmations }) => {
@@ -551,10 +552,10 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
     if (cancelToken.set) { return; }
 
     setConfirmations(confirmations);
-  }, [address, lotSizeSatoshis, setConfirmations, setTxHash]);
+  }, [address, lotSizeSatoshis, setConfirmations, setTxHash, client]);
 
   useEffect(() => {
-    if (!address || !lotSizeSatoshis || !isEnabled) {
+    if (!address || !lotSizeSatoshis || !isEnabled || !client) {
       return;
     }
 
@@ -563,7 +564,7 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
     return () => {
       cancelToken.set = true;
     }
-  }, [address, lotSizeSatoshis]);
+  }, [address, lotSizeSatoshis, client]);
 
   // isInitialized makes sure we do not return "no tx" if we really don't know yet.
   return isInitialized ? {
