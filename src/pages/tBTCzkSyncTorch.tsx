@@ -1,13 +1,11 @@
-import {gql, useQuery} from "@apollo/client";
 import React, {useEffect, useState} from "react";
-import {useParams} from 'react-router';
 import {css} from "emotion";
 import { Paper } from "../design-system/Paper";
 import {Helmet} from "react-helmet";
+import {TwitterTweetEmbed} from 'react-twitter-embed';
+import {TimeToNow} from "../components/FormattedTime";
+import {TorchMapping} from "../torchAccountMapping";
 
-import { Box } from "../components/Box";
-import {FormattedTime, TimeToNow} from "../components/FormattedTime";
-import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
 
 export function ZksyncTorch() {
   return <div className={css`
@@ -68,7 +66,7 @@ export function Content() {
           return <div className={css`
             margin-bottom: 10px;
           `}>
-            <Step from={item.from} amount={item.amount} time={item.timestamp} />
+            <Step from={item.to} amount={item.amount} time={item.timestamp} />
             <div style={{
               textAlign: 'center',
               margin: 20
@@ -78,7 +76,7 @@ export function Content() {
           </div>
         })
       }
-      <Step from={chain[chain.length - 1].to} amount={0} />
+      <Step from={chain[chain.length - 1].from} amount={0} />
     </div>
   </div>
 }
@@ -90,6 +88,13 @@ function Step(props: {
 }) {
   const {from, amount, time} = props;
 
+  const tweetUrl = (TorchMapping as any)[from];
+  let tweetId;
+  if (tweetUrl) {
+    const match = tweetUrl.match(/status\/(\d+)$/);
+    tweetId = match[1];
+  }
+
   return <Paper padding>
     <div style={{color: 'gray', fontSize: '0.9em'}}><TimeToNow time={time} /></div>
     <div>
@@ -98,5 +103,14 @@ function Step(props: {
     {props.amount ? <div>
       <strong>{amount / 1000000000000000000} tBTC</strong>
     </div> : null}
+
+    {tweetId ? <TwitterTweetEmbed
+        tweetId={tweetId}
+        options={{
+          conversation: "none"
+        }}
+        placeholder={<div>...</div>}
+    /> : null}
   </Paper>;
 }
+

@@ -1,4 +1,4 @@
-export Mapping = {
+export const TorchMapping = {
     '0xb6f512124d8ddb8d7ef8559318de92531af32f6f': 'https://twitter.com/ercwl/status/1311452208127447044',
     '0xc2c00cfaf708b44932a3172b10b2f22b891b95c9': 'https://twitter.com/bcmakes/status/1311482851469094914',
     '0x6d64c48259056248e7629f2f8b306a8dec6ebc84': 'https://twitter.com/calebtebbe/status/1311486631610707968',
