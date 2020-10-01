@@ -21,6 +21,7 @@ import {Governance} from "./pages/Governance";
 import { UseWalletProvider } from 'use-wallet'
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
+import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
 
 
 // DEV:
@@ -78,6 +79,9 @@ function App() {
                 </Route>
                 <Route path="/about" exact>
                   <About />
+                </Route>
+                <Route path="/torch" exact>
+                  <ZksyncTorch />
                 </Route>
                 <Route path="/governance" exact>
                   <Governance />
