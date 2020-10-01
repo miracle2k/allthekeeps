@@ -16,5 +16,5 @@ export Mapping = {
     '0x725e86fe265e61b6ac4f87e36d7f353282800721': 'https://twitter.com/Obstropolos/status/1311770680707473409',
     '0x07C6f80d694Db95E697Aea80708D6FE7DCF1e8e8': 'https://twitter.com/wycdd/status/1311773359802286092',
     '0x13C0DabEb938c21524C59CDc40BCB6fDB3618754': 'https://twitter.com/ti_bi_ke/status/1311784527648391169',
-    '0x72a0d01ab425b9337f1c156cca9cdc42ea66d03c': 'https://twitter.com/ti_bi_ke/status/1311787176502398977'
+    '0x72a0d01ab425b9337f1c156cca9cdc42ea66d03c': 'https://twitter.com/protocollayer/status/1311797470792429569'
 }
