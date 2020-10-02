@@ -28,6 +28,7 @@ const DEPOSITS_QUERY = gql`
             currentState,
             keepAddress,
             createdAt,
+            
             tdtToken {
                 owner
             }

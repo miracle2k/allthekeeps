@@ -1,29 +1,31 @@
 import {gql, useQuery, useSubscription} from "@apollo/client";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router';
-import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {TimeToNow} from "../components/FormattedTime";
+import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
+import {TimeToNow} from "../../components/FormattedTime";
 import {css} from "emotion";
-import {Address, BitcoinAddress, Transaction} from "../components/Address";
-import { Paper } from "../design-system/Paper";
-import {getNiceStateLabel, getStateTooltip} from "../utils/depositStates";
+import {Address, BitcoinAddress} from "../../components/Address";
+import {Paper} from "../../design-system/Paper";
+import {getNiceStateLabel, getStateTooltip} from "../../utils/depositStates";
 import {
   getTDTTokenAddress,
   getVendingMachineAddress,
-  hasDepositBeenUsedToMint, isVendingMachine,
-} from "../utils/contracts";
-import {InfoTooltip} from "../components/InfoTooltip";
-import {TBTCIcon} from "../design-system/tbtcIcon";
+  hasDepositBeenUsedToMint,
+  isVendingMachine,
+} from "../../utils/contracts";
+import {InfoTooltip} from "../../components/InfoTooltip";
+import {TBTCIcon} from "../../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
-import BitcoinHelpers from "../utils/BitcoinHelpers";
-import {getWeiAsEth} from "../utils/getWeiAsEth";
-import { CollaterizationStatus } from "../components/CollateralizationStatus";
-import { Box } from "../components/Box";
-import {Button} from "../design-system/Button";
-import { useWallet } from 'use-wallet'
-import {Loading} from "../components/Loading";
-import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
-import {useElectrumClient} from "../utils/useElectrumClient";
+import BitcoinHelpers from "../../utils/BitcoinHelpers";
+import {getWeiAsEth} from "../../utils/getWeiAsEth";
+import {CollaterizationStatus} from "../../components/CollateralizationStatus";
+import {Box} from "../../components/Box";
+import {Button} from "../../design-system/Button";
+import {useWallet} from 'use-wallet'
+import {Loading} from "../../components/Loading";
+import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
+import {useElectrumClient} from "../../utils/useElectrumClient";
+import {Log} from "./log";
 
 
 const DEPOSIT_QUERY = gql`
@@ -104,7 +106,9 @@ export function Content() {
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
 
-  const btcAddress = data? BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main") : "";
+  const btcAddress = data?.deposit.bondedECDSAKeep.publicKey ?
+      BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main")
+      : "";
   const shouldShowConfirmationInfo = data?.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
   const btcTxState = useBitcoinTxState(btcAddress, parseInt(data?.deposit.lotSizeSatoshis), shouldShowConfirmationInfo)
 
@@ -318,11 +322,11 @@ export function Content() {
               tooltip: "The contract managing the keep",
               value: <Address address={data.deposit.keepAddress} />
             },
-            {
+            btcAddress ? {
               key: 'publicKey',
               label: "BTC Address",
               value: <BitcoinAddress address={btcAddress} />
-            },
+            } : undefined,
             {
               key: 'status',
               label: "Status",
@@ -432,80 +436,6 @@ function PropertyTable(props: {
 }
 
 
-function Log(props: {
-  depositId: string
-}) {
-  const { loading, error, data } = useQuery(gql`
-      query GetDepositLogs($depositId: ID!)
-        {
-            events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
-                __typename,
-                id,
-                transactionHash,
-                timestamp,
-                
-                ...on RegisteredPubKeyEvent {
-                    signingGroupPubkeyX,
-                    signingGroupPubkeyY
-                }
-            }
-        }
-  `, {variables: {depositId: props.depositId}});
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :( {""+ error}</p>;
-
-  return data.events.map((logEntry: any) => {
-    return <LogEntry key={logEntry.id} event={logEntry} />
-  })
-}
-
-
-function LogEntry(props: {
-  event: any
-}) {
-  const {event} = props;
-
-  let Component = ({
-    'CreatedEvent': CreatedEvent,
-    'RegisteredPubKeyEvent': RegisteredPubKeyEvent,
-    'FundedEvent': FundedEvent,
-    'StartedLiquidationEvent': StartedLiquidationEvent,
-    'RedemptionRequestedEvent': RedemptionRequestedEvent,
-    'GotRedemptionSignatureEvent': GotRedemptionSignatureEvent,
-    'RedeemedEvent': RedeemedEvent,
-    'SetupFailedEvent': SetupFailedEvent,
-  } as any)[event.__typename] || UnknownEvent;
-
-
-  return <div style={{marginBottom: '20px'}}>
-    <div className={css`    
-      font-size: 0.85em;
-      margin-bottom: 0.4em;
-    `}>
-      <TimeToNow time={event.timestamp} /> @ <Transaction tx={event.transactionHash} />
-    </div>
-    <div>
-      <Component event={event} />
-    </div>
-  </div>
-}
-
-
-function UnknownEvent(props: {
-  event: any
-}) {
-  return <div>Unknown Event: {props.event.__typename}</div>
-}
-
-function CreatedEvent(props: {
-  event: any
-}) {
-  return <div>
-    <strong>Deposit created</strong>
-  </div>
-}
-
 // A bug:
 // - first findScript() does return null even though findorWaitfor() finds one.
 function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: boolean) {
@@ -574,80 +504,6 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
   } : null;
 }
 
-function RegisteredPubKeyEvent(props: {
-  event: any
-}) {
-  // Triggered when retrieveSignerPubkey() is called
-  // TODO: Can we get this earlier?
-
-  const event = props.event;
-  const address = BitcoinHelpers.Address.publicKeyPointToP2WPKHAddress(event.signingGroupPubkeyX, event.signingGroupPubkeyY, "main");
-
-  return <div>
-    <strong>Bitcoin address provided</strong>
-    <div>Signers have provided a Bitcoin address to receive the funds: <BitcoinAddress address={address} /></div>
-  </div>
-}
-
-function FundedEvent(props: {
-  event: any
-}) {
-  return <div>
-    <strong>Funded</strong>
-  </div>
-}
-
 // TODO: This would happen multiple times if a fee increase is requested via increaseRedemptionFee()
-// Triggered via VM.tbtcToBtc(), or Deposit.transferAndRequestRedemption()
-function RedemptionRequestedEvent(props: {
-  event: any
-}) {
-
-  return <div>
-    <strong>Redemption Requested</strong>
-    <div>
-    </div>
-  </div>
-}
-
-function StartedLiquidationEvent(props: {
-  event: any
-}) {
-  return <div>
-    <strong>Liquidation Started</strong>
-  </div>
-}
-
-// For exampe, due to: notifyFundingTimedOut, provideFundingECDSAFraudProof, notifySignerSetupFailed
-function SetupFailedEvent(props: {
-  event: any
-}) {
-  return <div>
-    <strong>Setup Failed</strong>
-  </div>
-}
-
-function GotRedemptionSignatureEvent(props: {
-  event: any
-}) {
-  // Signers call provideRedemptionSignature(). They provide a signature over a pay-out transaction that would
-  // release the funds.
-  return <div>
-    <strong>
-      Signers provided a redemption signature
-    </strong>
-    <div>
-      The signers provided a signature for the redemption Bitcoin transaction.
-    </div>
-  </div>
-}
 
 
-function RedeemedEvent(props: {
-  event: any
-}) {
-  // # Triggered when provideRedemptionProof() is called - confirmations
-  return <div>
-    <strong>Redeemed</strong>
-  </div>
-}

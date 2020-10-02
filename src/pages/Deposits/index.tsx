@@ -77,7 +77,7 @@ const style: DropdownStyle = {
 };
 
 
-export function Index() {
+export function Deposits() {
   const [view, setView] = useState("all");
 
   return  <div style={{padding: '20px'}}>

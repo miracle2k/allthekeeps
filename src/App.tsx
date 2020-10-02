@@ -5,12 +5,11 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 import { css, cx } from 'emotion'
 import {Operators} from "./pages/Operators";
 import {Operator} from "./pages/Operator";
-import {Index} from "./pages/Deposits";
+import {Deposits} from "./pages/Deposits";
 import {Deposit} from "./pages/Deposit";
 import {NavigationButton} from "./design-system/NavigationButton";
 import 'tippy.js/dist/tippy.css';
@@ -75,7 +74,7 @@ function App() {
                   <Redirect to="/deposits" />
                 </Route>
                 <Route exact path="/deposits">
-                  <Index />
+                  <Deposits />
                 </Route>
                 <Route path="/about" exact>
                   <About />
