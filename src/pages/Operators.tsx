@@ -10,13 +10,14 @@ import { Table } from "../components/Table";
 
 const OPERATOR_QUERY = gql`
     query GetOperators {
-        keepMembers(first: 100) {
+        operators(first: 1000, orderBy: activeKeepCount, orderDirection: desc) {
             id,
             address,
             bonded,
             unboundAvailable,
             totalKeepCount,
-            activeKeepCount
+            activeKeepCount,
+            stakedAmount
         }
     }
 `;
@@ -59,12 +60,15 @@ export function OperatorsTable() {
         # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
       </th>
       <th>
-        Amount Bonded <InfoTooltip>Total amount bounded, and percentage of available bonds provided for bonding.</InfoTooltip>
+        Amount Bonded <InfoTooltip>Total amount bounded, and bonding capacity level.</InfoTooltip>
+      </th>
+      <th>
+        Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
       </th>
     </tr>
     </thead>
     <tbody>
-    {data.keepMembers.map((member: any) => {
+    {data.operators.map((member: any) => {
       const total = (parseFloat(member.unboundAvailable) + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);
 
@@ -78,13 +82,16 @@ export function OperatorsTable() {
             <ExternalLinkIcon />
           </a>
         </td>
-        <td>{member.activeKeepCount} / {member.totalKeepCount}</td>
+        <td>{member.activeKeepCount}<span style={{color: 'gray', fontSize: '0.8em'}}> / {member.totalKeepCount}</span></td>
         <td>
           <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(bonded)}
           {" "}
-          <span title={`Total: ${formatter.format(member.unboundAvailable)}`} style={{color: 'gray', fontSize: '0.8em'}}>
+          {total > 0 ? <span title={`Total: ${formatter.format(member.unboundAvailable)}`} style={{color: 'gray', fontSize: '0.8em'}}>
             ({formatterSimple.format(bonded / total * 100)}%)
-          </span>
+          </span> : null}
+        </td>
+        <td>
+          <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatter.format(member.stakedAmount)}
         </td>
       </tr>
     })}

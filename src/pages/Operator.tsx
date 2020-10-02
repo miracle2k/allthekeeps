@@ -22,11 +22,12 @@ import { Table } from "../components/Table";
 
 const OPERATOR_QUERY = gql`
     query GetOperator($id: String!) {
-        keepMember(id: $id) {
+        operator(id: $id) {
             id,
             address,
             bonded,
             unboundAvailable,
+            stakedAmount,
             keeps(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
                 # TODO: How much is bonded in this keep for this operator?
@@ -78,8 +79,8 @@ export function Content() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  const total = (parseFloat(data.keepMember.unboundAvailable) + parseFloat(data.keepMember.bonded));
-  const bonded = parseFloat(data.keepMember.bonded);
+  const total = (parseFloat(data.operator.unboundAvailable) + parseFloat(data.operator.bonded));
+  const bonded = parseFloat(data.operator.bonded);
 
   return <div>
     <div className={css`
@@ -88,7 +89,7 @@ export function Content() {
       font-size: 30px;
       margin-bottom: 15px;
   `}>
-      Operator: {data.keepMember.address}
+      Operator: {data.operator.address}
     </div>
 
 
@@ -100,15 +101,22 @@ export function Content() {
       }
   `}>
       <Box label={"bonded"}>
-        <div>{formatter.format(data.keepMember.bonded)} ETH</div>
+        <div>{formatter.format(data.operator.bonded)} ETH</div>
+
+        {total > 0 ? <div style={{fontSize: '20px', color: 'gray'}}>
+          {formatter.format((bonded / total * 100))}% of {formatter.format(total)} ETH
+        </div> : null}
       </Box>
 
       <Box label={"available to bond"}>
         <div>
-          {formatter.format(data.keepMember.unboundAvailable)} ETH
+          {formatter.format(data.operator.unboundAvailable)} ETH
         </div>
-        <div style={{fontSize: '20px', color: 'gray'}}>
-          {formatter.format(100 - (bonded / total * 100))}% of {formatter.format(total)} ETH
+      </Box>
+
+      <Box label={"staked"}>
+        <div>
+          {formatter.format(data.operator.stakedAmount)} KEEP
         </div>
       </Box>
     </div>
@@ -116,7 +124,7 @@ export function Content() {
 
     <Paper padding>
       <h3 style={{marginTop: 0}}>Keeps</h3>
-      <KeepsTable keeps={data.keepMember.keeps} />
+      <KeepsTable keeps={data.operator.keeps} />
     </Paper>
   </div>
 }
