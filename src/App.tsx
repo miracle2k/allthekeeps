@@ -24,9 +24,10 @@ import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
 
 
 // DEV:
-const uri = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
+//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps-ropsten'
+//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
 // LIVE
-//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
 
 
 const httpLink = new HttpLink({
