@@ -19,7 +19,7 @@ const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter) {
         deposits(
             after: 0, first: 1000, 
-            orderBy: createdAt, orderDirection: desc
+            orderBy: updatedAt, orderDirection: desc
             where: $where
         ) {
             id,
@@ -27,11 +27,16 @@ const DEPOSITS_QUERY = gql`
             lotSizeSatoshis,
             currentState,
             keepAddress,
-            createdAt,
+            updatedAt,
             
             tdtToken {
                 owner
             }
+            
+            depositSetup {
+              failureReason
+            }
+            
             #            endOfTerm,
             # you can redeem it if: you are the owner, it is at term, is in courtesy call
             # thus the status is:  
@@ -73,7 +78,9 @@ export function DepositsTable(props: {
     >
       <thead>
       <tr>
-        <th>Date</th>
+        <th>Updated <InfoTooltip>
+          When this deposit last changed state, during the funding, redemption or liquidation processes.
+        </InfoTooltip></th>
         <th>
           Contract <InfoTooltip>
           Every deposit is represented on-chain by a contract.
@@ -87,7 +94,7 @@ export function DepositsTable(props: {
       {data.deposits.map((deposit: any) => {
         return  <tr key={deposit.id}>
           <td>
-            <TimeToNow time={deposit.createdAt} />
+            <TimeToNow time={deposit.updatedAt} />
           </td>
           <td>
             <Link to={`/deposit/${deposit.id}`}>
@@ -121,7 +128,7 @@ export function DepositsTable(props: {
                 ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
-            {getNiceStateLabel(deposit.currentState)}
+            {getNiceStateLabel(deposit.currentState, deposit.depositSetup?.failureReason)}
 
             {/* warning sign if it can be redeemed by anyone (at-term or courtesy call */}
           </td>

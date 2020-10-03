@@ -1,6 +1,13 @@
 import React from "react";
 
-export function getNiceStateLabel(state: string) {
+export function getNiceStateLabel(state: string, failedSetupReason?: string) {
+  if (state == 'FAILED_SETUP' && failedSetupReason) {
+    return ({
+      'FUNDING_TIMEOUT': 'Funding Timeout',
+      'SIGNER_SETUP_FAILED': 'Signer Setup Failed',
+    } as any)[failedSetupReason];
+  }
+
   return ({
     'AWAITING_SIGNER_SETUP': "Awaiting Signer Setup",
     'AWAITING_BTC_FUNDING_PROOF': "Awaiting BTC Funding Proof",
