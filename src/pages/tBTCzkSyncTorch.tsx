@@ -62,11 +62,11 @@ export function Content() {
         }
     `}>
       {
-        chain!.map((item: any) => {
+        chain!.map((item: any, idx: number) => {
           return <div className={css`
             margin-bottom: 10px;
           `}>
-            <Step from={item.to} amount={item.amount} time={item.timestamp} />
+            <Step num={chain!.length - idx + 1} from={item.to} amount={item.amount} time={item.timestamp} />
             <div style={{
               textAlign: 'center',
               margin: 20
@@ -76,12 +76,13 @@ export function Content() {
           </div>
         })
       }
-      <Step from={chain[chain.length - 1].from} amount={0} />
+      <Step num={1} from={chain[chain.length - 1].from} amount={0} />
     </div>
   </div>
 }
 
 function Step(props: {
+  num: number,
   from: any,
   amount: any,
   time?: any
@@ -96,7 +97,22 @@ function Step(props: {
   }
 
   return <Paper padding>
-    <div style={{color: 'gray', fontSize: '0.9em'}}><TimeToNow time={time} /></div>
+    <div style={{color: 'gray', fontSize: '0.9em', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+      <span className={css`
+          background: #48DBB4;
+          color: black;
+          width: 25px;
+          height: 25px;
+          border: 1px solid transparent;
+          border-radius: 50%;
+          display: inline-block;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 10px;
+      `}>{props.num}</span>
+      <TimeToNow time={time} /></div>
     <div>
       <a href={`https://zkscan.io/explorer/accounts/${from}`}>{from}</a>
     </div>
