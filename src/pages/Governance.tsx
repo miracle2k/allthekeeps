@@ -47,7 +47,7 @@ const GOVERNANCE_QUERY = gql`
             priceFeeds,
         },
         
-        governanceLogEntries(after: 0, first: 300, orderBy: timestamp, orderDirection: desc) {
+        governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc) {
             id,
             timestamp,
             transactionHash,

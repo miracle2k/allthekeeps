@@ -1,0 +1,13 @@
+overwrite: true
+schema: "https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps"
+documents: "src/**/!(*.d).{ts,tsx}"
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+      - "typescript-document-nodes"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

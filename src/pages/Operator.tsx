@@ -21,14 +21,14 @@ import { Table } from "../components/Table";
 
 
 const OPERATOR_QUERY = gql`
-    query GetOperator($id: String!) {
+    query GetOperator($id: ID!) {
         operator(id: $id) {
             id,
             address,
             bonded,
             unboundAvailable,
             stakedAmount,
-            keeps(after: 0, first: 300, orderBy: createdAt, orderDirection: desc) {
+            keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
                 # TODO: How much is bonded in this keep for this operator?
                 totalBondAmount,

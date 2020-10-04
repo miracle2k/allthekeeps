@@ -9,7 +9,7 @@ export function Log(props: {
   depositId: string
 }) {
   const {loading, error, data} = useQuery(gql`
-      query GetDepositLogs($depositId: ID!)
+      query GetDepositLogs($depositId: String!)
       {
           events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
               __typename,

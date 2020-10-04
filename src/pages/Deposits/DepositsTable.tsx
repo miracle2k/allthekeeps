@@ -18,7 +18,7 @@ import {DateTime} from "luxon";
 const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter) {
         deposits(
-            after: 0, first: 1000, 
+            first: 1000, 
             orderBy: updatedAt, orderDirection: desc
             where: $where
         ) {

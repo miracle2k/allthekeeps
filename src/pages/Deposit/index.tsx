@@ -29,7 +29,7 @@ import {Log} from "./log";
 
 
 const DEPOSIT_QUERY = gql`
-    query GetDeposit($id: String!) {
+    query GetDeposit($id: ID!) {
         deposit(id: $id) {
             id,
             contractAddress,
@@ -68,7 +68,7 @@ const DEPOSIT_QUERY = gql`
 `;
 
 const DEPOSIT_SUBSCRIPTION = gql`
-    subscription WatchDeposit($id: String!) {
+    subscription WatchDeposit($id: ID!) {
         deposit(id: $id) {
             id
             currentState
