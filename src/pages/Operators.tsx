@@ -86,6 +86,7 @@ export function OperatorsTable(props: {
   data: any
 }) {
   const {data} = props;
+  const price = usePriceFeed();
 
   return <Table
       style={{width: '100%'}}>
@@ -96,7 +97,10 @@ export function OperatorsTable(props: {
         # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
       </th>
       <th>
-        Amount Bonded <InfoTooltip>Total amount bounded, and bonding capacity level.</InfoTooltip>
+        Amount Bonded <InfoTooltip>Collateral backing active deposits.</InfoTooltip>
+      </th>
+      <th>
+        Amount Available <InfoTooltip>Collateral available for further deposits.</InfoTooltip>
       </th>
       <th>
         Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
@@ -105,8 +109,10 @@ export function OperatorsTable(props: {
     </thead>
     <tbody>
     {data.operators.map((member: any) => {
-      const total = (parseFloat(member.unboundAvailable) + parseFloat(member.bonded));
+      const unbound = parseFloat(member.unboundAvailable);
+      const total = (unbound + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);
+      const capacityBTC = price?.val ? unbound / 1.5 * price.val : null;
 
       return  <tr key={member.id}>
         <td>
@@ -122,8 +128,15 @@ export function OperatorsTable(props: {
         <td>
           <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(bonded)}
           {" "}
-          {total > 0 ? <span title={`Total: ${formatter.format(member.unboundAvailable)}`} style={{color: 'gray', fontSize: '0.8em'}}>
+          {total > 0 ? <span style={{color: 'gray', fontSize: '0.8em'}}>
             ({formatterSimple.format(bonded / total * 100)}%)
+          </span> : null}
+        </td>
+        <td>
+          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(unbound)}
+          {" "}
+          {capacityBTC != null ? <span style={{color: 'gray', fontSize: '0.8em'}}>
+            (~{formatter.format(capacityBTC)} BTC)
           </span> : null}
         </td>
         <td>
