@@ -7,9 +7,15 @@ import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Helmet} from "react-helmet";
 import { Table } from "../components/Table";
+import {usePriceFeed} from "../components/PriceFeed";
+import {Box} from "../components/Box";
 
 const OPERATOR_QUERY = gql`
     query GetOperators {
+        stats(id: "current") {
+            availableToBeBonded,
+            totalBonded
+        }
         operators(first: 1000, orderBy: activeKeepCount, orderDirection: desc) {
             id,
             address,
@@ -24,13 +30,44 @@ const OPERATOR_QUERY = gql`
 
 
 export function Operators() {
+  const { loading, error, data } = useQuery(OPERATOR_QUERY);
+  const price = usePriceFeed();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :( {""+ error}</p>;
+
+  const remainingCapacityBTC = price?.val ? parseFloat(data.stats.availableToBeBonded) / 1.5 * price.val : null;
+
   return  <div style={{padding: '20px'}}>
     <Helmet>
       <title>Operators</title>
     </Helmet>
     <h1 style={{marginTop: 0}}>Operators</h1>
+    <div className={css`
+      display: flex;
+      flex-direction: row;
+      & > * {
+        margin-right: 20px;
+      }
+  `}>
+      <Box
+        label={"total bonded"}
+        tooltip={"The amount of collateral backing active deposits."}
+      >
+        <div>{formatterSimple.format(data.stats.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+      </Box>
+      <Box
+        label={"available for bonding"}
+        tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
+      >
+        <div>{formatterSimple.format(data.stats.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
+          capacity ~{formatter.format(remainingCapacityBTC)} BTC
+        </div> : null}
+      </Box>
+    </div>
     <Paper padding>
-      <OperatorsTable />
+      <OperatorsTable data={data} />
     </Paper>
   </div>
 }
@@ -45,11 +82,10 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
 });
 
 
-export function OperatorsTable() {
-  const { loading, error, data } = useQuery(OPERATOR_QUERY);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :( {""+ error}</p>;
+export function OperatorsTable(props: {
+  data: any
+}) {
+  const {data} = props;
 
   return <Table
       style={{width: '100%'}}>

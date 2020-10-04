@@ -1,8 +1,10 @@
 import {css} from "emotion";
 import React from "react";
+import {InfoTooltip} from "./InfoTooltip";
 
 export function Box(props: {
   label: string,
+  tooltip?: string,
   children: any
 }) {
   return (
@@ -16,7 +18,7 @@ export function Box(props: {
         <div className={css`                         
           font-size: 16px;
         `}>
-          {props.label}
+          {props.label} {props.tooltip ? <InfoTooltip>{props.tooltip}</InfoTooltip> : null}
         </div>
         <div>
           {props.children}

@@ -145,12 +145,12 @@ function SetupFailedEvent(props: {
   event: any
 }) {
   let content: any;
-  if (props.event.reason == 'FUNDING_TIMEOUT') {
+  if (props.event.reason == 'FUNDING_TIMEOUT' || props.event.reason == 'SIGNER_SETUP_FAILED_DEPOSITOR') {
     content = <>
       <LogTitle>Failed: Not funded</LogTitle>
       <div>
-        The depositor did not send the required amount of Bitcoin to the deposit address, and the deposit has now timed
-        out.
+        The depositor did not send the required amount of Bitcoin to the deposit address,
+        and the deposit has now timed out.
       </div>
       {/*<div style={{color: 'gray', fontSize: '0.9em'}}>*/}
       {/*  The depositor has 3 hours to send the desired amount of Bitcoins to the address provided by the signers.*/}

@@ -4,8 +4,9 @@ export function getNiceStateLabel(state: string, failedSetupReason?: string) {
   if (state == 'FAILED_SETUP' && failedSetupReason) {
     return ({
       'FUNDING_TIMEOUT': 'Funding Timeout',
+      'SIGNER_SETUP_FAILED_DEPOSITOR': 'Funding Timeout',
       'SIGNER_SETUP_FAILED': 'Signer Setup Failed',
-    } as any)[failedSetupReason];
+    } as any)[failedSetupReason] || "Setup Failed";
   }
 
   return ({
