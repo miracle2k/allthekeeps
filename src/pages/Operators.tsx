@@ -15,7 +15,7 @@ const OPERATOR_QUERY = gql`
         $orderBy: Operator_orderBy,
         $direction: OrderDirection
     ) {
-        stats(id: "current") {
+        stats: statsRecords(id: "current") {
             availableToBeBonded,
             totalBonded
         }
