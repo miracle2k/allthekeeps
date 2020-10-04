@@ -6,7 +6,7 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateBoxStyle} from "../../utils/depositStates";
+import {getNiceStateLabel, getStateBoxStyle, NiceStateLabel} from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
 import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
@@ -33,24 +33,23 @@ const DEPOSITS_QUERY = gql`
                 owner
             }
             
-            depositSetup {
-              failureReason
-            }
-            
             #            endOfTerm,
             # you can redeem it if: you are the owner, it is at term, is in courtesy call
             # thus the status is:  
             # canBeRedeemedByAnyone = CourtesyFlag || atTerm
-
-
+            
             undercollateralizedThresholdPercent,
             severelyUndercollateralizedThresholdPercent,
             bondedECDSAKeep {
                 id,
                 totalBondAmount
             }
+            
+            ...NiceStateLabel
         }
     }
+  
+    ${NiceStateLabel}
 `;
 
 export function DepositsTable(props: {
@@ -128,7 +127,7 @@ export function DepositsTable(props: {
                 ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
-            {getNiceStateLabel(deposit.currentState, deposit.depositSetup?.failureReason)}
+            {getNiceStateLabel(deposit)}
 
             {/* warning sign if it can be redeemed by anyone (at-term or courtesy call */}
           </td>

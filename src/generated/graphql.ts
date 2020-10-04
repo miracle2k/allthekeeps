@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
@@ -3608,13 +3607,11 @@ export type GetDepositsQuery = (
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'owner'>
-    ), depositSetup?: Maybe<(
-      { __typename?: 'DepositSetup' }
-      & Pick<DepositSetup, 'failureReason'>
-    )>, bondedECDSAKeep?: Maybe<(
+    ), bondedECDSAKeep?: Maybe<(
       { __typename?: 'BondedECDSAKeep' }
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount'>
     )> }
+    & NiceStateLabelFragment
   )> }
 );
 
@@ -3696,6 +3693,18 @@ export type GetOperatorsQuery = (
   )> }
 );
 
+export type NiceStateLabelFragment = (
+  { __typename?: 'Deposit' }
+  & Pick<Deposit, 'currentState'>
+  & { bondedECDSAKeep?: Maybe<(
+    { __typename?: 'BondedECDSAKeep' }
+    & Pick<BondedEcdsaKeep, 'publicKey'>
+  )>, depositSetup?: Maybe<(
+    { __typename?: 'DepositSetup' }
+    & Pick<DepositSetup, 'failureReason'>
+  )> }
+);
+
 export const ChangeFragmentDoc = gql`
     fragment Change on GovernanceChange {
   type
@@ -3705,6 +3714,17 @@ export const ChangeFragmentDoc = gql`
   newFactorySelector
   newFullyBackedFactory
   newKeepStakedFactory
+}
+    `;
+export const NiceStateLabelFragmentDoc = gql`
+    fragment NiceStateLabel on Deposit {
+  currentState
+  bondedECDSAKeep {
+    publicKey
+  }
+  depositSetup {
+    failureReason
+  }
 }
     `;
 export const GetDepositDocument = gql`
@@ -3854,18 +3874,16 @@ export const GetDepositsDocument = gql`
     tdtToken {
       owner
     }
-    depositSetup {
-      failureReason
-    }
     undercollateralizedThresholdPercent
     severelyUndercollateralizedThresholdPercent
     bondedECDSAKeep {
       id
       totalBondAmount
     }
+    ...NiceStateLabel
   }
 }
-    `;
+    ${NiceStateLabelFragmentDoc}`;
 
 /**
  * __useGetDepositsQuery__
@@ -4065,6 +4083,17 @@ export const Change = gql`
   newKeepStakedFactory
 }
     `;
+export const NiceStateLabel = gql`
+    fragment NiceStateLabel on Deposit {
+  currentState
+  bondedECDSAKeep {
+    publicKey
+  }
+  depositSetup {
+    failureReason
+  }
+}
+    `;
 export const GetDeposit = gql`
     query GetDeposit($id: ID!) {
   deposit(id: $id) {
@@ -4138,18 +4167,16 @@ export const GetDeposits = gql`
     tdtToken {
       owner
     }
-    depositSetup {
-      failureReason
-    }
     undercollateralizedThresholdPercent
     severelyUndercollateralizedThresholdPercent
     bondedECDSAKeep {
       id
       totalBondAmount
     }
+    ...NiceStateLabel
   }
 }
-    `;
+    ${NiceStateLabel}`;
 export const GetGovernance = gql`
     query GetGovernance {
   governance(id: "GOVERNANCE") {

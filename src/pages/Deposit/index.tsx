@@ -6,7 +6,7 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {css} from "emotion";
 import {Address, BitcoinAddress} from "../../components/Address";
 import {Paper} from "../../design-system/Paper";
-import {getNiceStateLabel, getStateTooltip} from "../../utils/depositStates";
+import {getNiceStateLabel, getStateTooltip, NiceStateLabel} from "../../utils/depositStates";
 import {
   getTDTTokenAddress,
   getVendingMachineAddress,
@@ -62,9 +62,13 @@ const DEPOSIT_QUERY = gql`
                     id,
                     address
                 }
-            }
+            },
+            
+            ...NiceStateLabel
         }
     }
+  
+    ${NiceStateLabel}
 `;
 
 const DEPOSIT_SUBSCRIPTION = gql`
@@ -133,7 +137,7 @@ export function Content() {
 
       <Box label={"state"}>
         <div>
-          {getNiceStateLabel(data.deposit.currentState)} {getStateTooltip(data.deposit.currentState)
+          {getNiceStateLabel(data.deposit)} {getStateTooltip(data.deposit.currentState)
             ? <span className={css`position: relative; top: -0.5em; font-size: 0.6em;`}><InfoTooltip>{getStateTooltip(data.deposit.currentState)}</InfoTooltip></span>
             : null}
         </div>

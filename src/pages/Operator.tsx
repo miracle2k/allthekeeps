@@ -9,7 +9,7 @@ import {TimeToNow} from "../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateBoxStyle, getStateTooltip} from "../utils/depositStates";
+import {getNiceStateLabel, getStateBoxStyle, getStateTooltip, NiceStateLabel} from "../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../utils/contracts";
 import {TBTCIcon} from "../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
@@ -45,14 +45,20 @@ const OPERATOR_QUERY = gql`
 
                     undercollateralizedThresholdPercent,
                     severelyUndercollateralizedThresholdPercent,
+                    
+                    # Should take it from the parent intead.
                     bondedECDSAKeep {
                         id,
                         totalBondAmount
-                    }
+                    },
+                    
+                    ...NiceStateLabel
                 }
             }
         }
     }
+  
+    ${NiceStateLabel}
 `;
 
 
@@ -203,7 +209,7 @@ export function KeepsTable(props: {
                 ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
-            {getNiceStateLabel(deposit.currentState)}
+            {getNiceStateLabel(deposit)}
           </td>
 
           <td>

@@ -150,7 +150,7 @@ export function OperatorsTable(props: {
         <td>
           <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(unbound)}
           {" "}
-          {capacityBTC != null ? <span style={{color: 'gray', fontSize: '0.8em'}}>
+          {(capacityBTC != null && unbound) ? <span style={{color: 'gray', fontSize: '0.8em'}}>
             (~{formatter.format(capacityBTC)} BTC)
           </span> : null}
         </td>

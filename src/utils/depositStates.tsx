@@ -1,6 +1,27 @@
+import gql from 'graphql-tag';
 import React from "react";
+import {NiceStateLabelFragment} from "../generated/graphql";
 
-export function getNiceStateLabel(state: string, failedSetupReason?: string) {
+export const NiceStateLabel = gql`
+    fragment NiceStateLabel on Deposit {
+        currentState,
+        bondedECDSAKeep {
+            publicKey
+        },
+        depositSetup {
+            failureReason
+        }
+    }
+`
+
+export function getNiceStateLabel(deposit: NiceStateLabelFragment) {
+  const {currentState: state, depositSetup} = deposit;
+  const failedSetupReason = depositSetup?.failureReason || "";
+
+  if (state == 'AWAITING_SIGNER_SETUP' && deposit.bondedECDSAKeep?.publicKey) {
+    return "Awaiting Funding";
+  }
+
   if (state == 'FAILED_SETUP' && failedSetupReason) {
     return ({
       'FUNDING_TIMEOUT': 'Funding Timeout',
@@ -11,7 +32,7 @@ export function getNiceStateLabel(state: string, failedSetupReason?: string) {
 
   return ({
     'AWAITING_SIGNER_SETUP': "Awaiting Signer Setup",
-    'AWAITING_BTC_FUNDING_PROOF': "Awaiting BTC Funding Proof",
+    'AWAITING_BTC_FUNDING_PROOF': "Awaiting Funding Proof",
     'AWAITING_WITHDRAWAL_SIGNATURE': 'Awaiting Withdrawal Signature',
     'AWAITING_WITHDRAWAL_PROOF': 'Awaiting Withdrawal Proof',
     'REDEEMED': 'Redeemed',
@@ -19,7 +40,7 @@ export function getNiceStateLabel(state: string, failedSetupReason?: string) {
     'FAILED_SETUP': "Setup Failed",
     "LIQUIDATED": "Liquidated",
     "LIQUIDATION_IN_PROGRESS": "Liquidation In Progress"
-  } as any)[state] || state;
+  } as any)[state || ""] || state;
 }
 
 export function getStateBoxStyle(state: string) {
