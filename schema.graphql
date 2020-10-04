@@ -1,0 +1,3204 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    subscription: Subscription
+}
+
+interface Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type Bond {
+    bondedAmount: BigDecimal!
+    holder: Bytes!
+    id: ID!
+    keep: BondedECDSAKeep!
+    operator: Operator!
+    referenceID: BigInt!
+    status: BondStatus!
+}
+
+type BondedECDSAKeep {
+    createdAt: BigInt!
+    deposit: Deposit!
+    honestThreshold: Int
+    id: ID!
+    keepAddress: Bytes!
+    members(first: Int, orderBy: Operator_orderBy, orderDirection: OrderDirection, skip: Int, where: Operator_filter): [Operator]!
+    "The nodes which have submitted their pubkey."
+    pubkeySubmissions(first: Int, orderBy: Operator_orderBy, orderDirection: OrderDirection, skip: Int, where: Operator_filter): [Operator]!
+    publicKey: Bytes
+    status: BondedECDSAKeepStatus
+    totalBondAmount: BigInt
+}
+
+type CourtesyCalledEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type CreatedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type Deposit {
+    bondedECDSAKeep: BondedECDSAKeep
+    contractAddress: Bytes!
+    createdAt: BigInt
+    currentState: DepositState
+    depositLiquidation: DepositLiquidation
+    depositRedemption: DepositRedemption
+    depositSetup: DepositSetup
+    endOfTerm: BigInt
+    filter_activeLikeState: Boolean!
+    filter_liquidationLikeState: Boolean!
+    filter_redeemableAsOf: BigInt!
+    filter_unmintedTDT: Boolean!
+    id: ID!
+    initialCollateralizedPercent: Int
+    keepAddress: Bytes
+    lotSizeSatoshis: BigInt
+    owner: Bytes!
+    severelyUndercollateralizedThresholdPercent: Int
+    signerFee: BigInt
+    tbtcSystem: Bytes!
+    tdtToken: TBTCDepositToken!
+    undercollateralizedThresholdPercent: Int
+    updatedAt: BigInt
+    utxoSize: BigInt
+}
+
+type DepositLiquidation {
+    courtesyCallInitiated: BigInt
+    courtesyCallTxhash: Bytes
+    deposit: Deposit!
+    id: ID!
+    initiateTxhash: Bytes
+    isLiquidated: Boolean!
+    liquidatedAt: BigInt
+    liquidationInitiated: BigInt
+    liquidationInitiator: Bytes
+    wasFraud: Boolean
+}
+
+type DepositRedemption {
+    deposit: Deposit!
+    id: ID!
+    lastRequestedDigest: Bytes
+    latestRedemptionFee: BigInt
+    outpoint: Bytes
+    redeemedAt: BigInt
+    redeemerOutputScript: Bytes
+    requestedFee: BigInt
+    txid: Bytes
+    utxoSize: BigInt
+    withdrawalRequestAt: BigInt
+}
+
+type DepositSetup {
+    deposit: Deposit!
+    failureReason: SetupFailedReason
+    id: ID!
+}
+
+type FundedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+    tx: Bytes!
+}
+
+type GotRedemptionSignatureEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type Governance {
+    factorySelector: Bytes!
+    fullyBackedFactory: Bytes!
+    id: ID!
+    initialCollateralizedPercent: Int!
+    keepStakedFactory: Bytes!
+    lotSizes: [BigInt!]!
+    newDepositsAllowed: Boolean!
+    pendingCollateralizationThresholdsChange: GovernanceChange
+    pendingFactoriesChange: GovernanceChange
+    pendingLotSizeChange: GovernanceChange
+    pendingPriceFeedAddition: GovernanceChange
+    pendingSignerFeeDivisorChange: GovernanceChange
+    priceFeeds: [Bytes!]!
+    severelyUndercollateralizedThresholdPercent: Int!
+    signerFeeDivisor: Int!
+    undercollateralizedThresholdPercent: Int!
+}
+
+type GovernanceChange {
+    finalizeBlock: BigInt
+    finalizeTransactionHash: String
+    id: ID!
+    newFactorySelector: Bytes
+    newFullyBackedFactory: Bytes
+    newInitialCollateralizedPercent: Int
+    newKeepStakedFactory: Bytes
+    newLotSizes: [BigInt!]
+    newPriceFeed: Bytes
+    newSeverelyUndercollateralizedThresholdPercent: Int
+    newSignerFeeDivisor: Int
+    newUndercollateralizedThresholdPercent: Int
+    prevFactorySelector: Bytes
+    prevFullyBackedFactory: Bytes
+    prevInitialCollateralizedPercent: Int
+    prevKeepStakedFactory: Bytes
+    prevLotSizes: [BigInt!]
+    prevSeverelyUndercollateralizedThresholdPercent: Int
+    prevSignerFeeDivisor: Int
+    prevUndercollateralizedThresholdPercent: Int
+    requestBlock: BigInt!
+    requestTransactionHash: String!
+    requestedAt: BigInt!
+    takesEffectAfter: BigInt!
+    type: GovernanceChangeType!
+}
+
+type GovernanceLogEntry {
+    block: BigInt!
+    change: GovernanceChange
+    id: ID!
+    isRequest: Boolean!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type LiquidatedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+"""
+
+A lock on an operator stake.
+"""
+type Lock {
+    creator: Bytes!
+    id: ID!
+    operator: Operator!
+    until: BigInt!
+}
+
+"""
+
+A node operator.
+
+In Staking terms (https://docs.keep.network/random-beacon/staking/), there is an abstract role called the Staker,
+representing owner, operator, beneficiary and authorizer. "Stakers are identified by their operator address", and
+in our graph, through the Operator entity. Understand that in staking terms, only a single owner can delegate
+their tokens to a particular owner, so the tokens staked always come from the samea address.
+"""
+type Operator {
+    activeKeepCount: Int!
+    address: Bytes!
+    authorizer: Bytes
+    beneficiary: Bytes
+    bonded: BigDecimal!
+    bonds(first: Int, orderBy: Bond_orderBy, orderDirection: OrderDirection, skip: Int, where: Bond_filter): [Bond!]!
+    id: ID!
+    keeps(first: Int, orderBy: BondedECDSAKeep_orderBy, orderDirection: OrderDirection, skip: Int, where: BondedECDSAKeep_filter): [BondedECDSAKeep!]
+    locks(first: Int, orderBy: Lock_orderBy, orderDirection: OrderDirection, skip: Int, where: Lock_filter): [Lock!]!
+    operator: Bytes
+    owner: Bytes
+    stakedAmount: BigDecimal!
+    totalKeepCount: Int!
+    unboundAvailable: BigDecimal!
+}
+
+type Query {
+    bond(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Bond
+    bondedECDSAKeep(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): BondedECDSAKeep
+    bondedECDSAKeeps(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: BondedECDSAKeep_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: BondedECDSAKeep_filter
+    ): [BondedECDSAKeep!]!
+    bonds(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Bond_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Bond_filter
+    ): [Bond!]!
+    courtesyCalledEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): CourtesyCalledEvent
+    courtesyCalledEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: CourtesyCalledEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: CourtesyCalledEvent_filter
+    ): [CourtesyCalledEvent!]!
+    createdEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): CreatedEvent
+    createdEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: CreatedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: CreatedEvent_filter
+    ): [CreatedEvent!]!
+    deposit(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Deposit
+    depositLiquidation(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositLiquidation
+    depositLiquidations(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositLiquidation_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositLiquidation_filter
+    ): [DepositLiquidation!]!
+    depositRedemption(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositRedemption
+    depositRedemptions(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositRedemption_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositRedemption_filter
+    ): [DepositRedemption!]!
+    depositSetup(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositSetup
+    depositSetups(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositSetup_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositSetup_filter
+    ): [DepositSetup!]!
+    deposits(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Deposit_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Deposit_filter
+    ): [Deposit!]!
+    event(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Event
+    events(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Event_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Event_filter
+    ): [Event!]!
+    fundedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): FundedEvent
+    fundedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: FundedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: FundedEvent_filter
+    ): [FundedEvent!]!
+    gotRedemptionSignatureEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GotRedemptionSignatureEvent
+    gotRedemptionSignatureEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GotRedemptionSignatureEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GotRedemptionSignatureEvent_filter
+    ): [GotRedemptionSignatureEvent!]!
+    governance(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Governance
+    governanceChange(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GovernanceChange
+    governanceChanges(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GovernanceChange_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GovernanceChange_filter
+    ): [GovernanceChange!]!
+    governanceLogEntries(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GovernanceLogEntry_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GovernanceLogEntry_filter
+    ): [GovernanceLogEntry!]!
+    governanceLogEntry(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GovernanceLogEntry
+    governances(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Governance_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Governance_filter
+    ): [Governance!]!
+    liquidatedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): LiquidatedEvent
+    liquidatedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: LiquidatedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: LiquidatedEvent_filter
+    ): [LiquidatedEvent!]!
+    lock(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Lock
+    locks(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Lock_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Lock_filter
+    ): [Lock!]!
+    operator(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Operator
+    operators(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Operator_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Operator_filter
+    ): [Operator!]!
+    randomBeaconGroup(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RandomBeaconGroup
+    randomBeaconGroups(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RandomBeaconGroup_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RandomBeaconGroup_filter
+    ): [RandomBeaconGroup!]!
+    redeemedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RedeemedEvent
+    redeemedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RedeemedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RedeemedEvent_filter
+    ): [RedeemedEvent!]!
+    redemptionRequestedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RedemptionRequestedEvent
+    redemptionRequestedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RedemptionRequestedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RedemptionRequestedEvent_filter
+    ): [RedemptionRequestedEvent!]!
+    registeredPubKeyEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RegisteredPubKeyEvent
+    registeredPubKeyEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RegisteredPubKeyEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RegisteredPubKeyEvent_filter
+    ): [RegisteredPubKeyEvent!]!
+    relayEntries(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RelayEntry_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RelayEntry_filter
+    ): [RelayEntry!]!
+    relayEntry(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RelayEntry
+    setupFailedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): SetupFailedEvent
+    setupFailedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: SetupFailedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: SetupFailedEvent_filter
+    ): [SetupFailedEvent!]!
+    startedLiquidationEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): StartedLiquidationEvent
+    startedLiquidationEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: StartedLiquidationEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: StartedLiquidationEvent_filter
+    ): [StartedLiquidationEvent!]!
+    statsRecord(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): StatsRecord
+    statsRecords(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: StatsRecord_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: StatsRecord_filter
+    ): [StatsRecord!]!
+    tbtcdepositToken(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): TBTCDepositToken
+    tbtcdepositTokens(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: TBTCDepositToken_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: TBTCDepositToken_filter
+    ): [TBTCDepositToken!]!
+}
+
+type RandomBeaconGroup {
+    createdAt: BigInt!
+    id: ID!
+    members(first: Int, orderBy: Operator_orderBy, orderDirection: OrderDirection, skip: Int, where: Operator_filter): [Operator!]!
+}
+
+type RedeemedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+    tx: Bytes!
+}
+
+type RedemptionRequestedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    redeemer: Bytes!
+    redeemerOutputScript: Bytes!
+    requestedFee: BigInt!
+    sigHashDigest: Bytes!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+    utxoOutpoint: Bytes!
+    utxoValue: BigInt!
+}
+
+type RegisteredPubKeyEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    signingGroupPubkeyX: Bytes!
+    signingGroupPubkeyY: Bytes!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type RelayEntry {
+    id: ID!
+}
+
+type SetupFailedEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    "The reason for the failure, based on which contract call caused the failure state to be entered."
+    reason: SetupFailedReason
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+}
+
+type StartedLiquidationEvent implements Event {
+    deposit: Deposit
+    id: ID!
+    submitter: Bytes!
+    timestamp: BigInt!
+    transactionHash: String!
+    wasFraud: Boolean!
+}
+
+type StatsRecord {
+    availableToBeBonded: BigDecimal!
+    btcUnderDeposit: BigInt!
+    id: ID!
+    totalBonded: BigDecimal!
+    totalBondsSeized: BigDecimal!
+}
+
+type Subscription {
+    bond(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Bond
+    bondedECDSAKeep(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): BondedECDSAKeep
+    bondedECDSAKeeps(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: BondedECDSAKeep_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: BondedECDSAKeep_filter
+    ): [BondedECDSAKeep!]!
+    bonds(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Bond_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Bond_filter
+    ): [Bond!]!
+    courtesyCalledEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): CourtesyCalledEvent
+    courtesyCalledEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: CourtesyCalledEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: CourtesyCalledEvent_filter
+    ): [CourtesyCalledEvent!]!
+    createdEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): CreatedEvent
+    createdEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: CreatedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: CreatedEvent_filter
+    ): [CreatedEvent!]!
+    deposit(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Deposit
+    depositLiquidation(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositLiquidation
+    depositLiquidations(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositLiquidation_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositLiquidation_filter
+    ): [DepositLiquidation!]!
+    depositRedemption(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositRedemption
+    depositRedemptions(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositRedemption_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositRedemption_filter
+    ): [DepositRedemption!]!
+    depositSetup(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): DepositSetup
+    depositSetups(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: DepositSetup_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: DepositSetup_filter
+    ): [DepositSetup!]!
+    deposits(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Deposit_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Deposit_filter
+    ): [Deposit!]!
+    event(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Event
+    events(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Event_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Event_filter
+    ): [Event!]!
+    fundedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): FundedEvent
+    fundedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: FundedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: FundedEvent_filter
+    ): [FundedEvent!]!
+    gotRedemptionSignatureEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GotRedemptionSignatureEvent
+    gotRedemptionSignatureEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GotRedemptionSignatureEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GotRedemptionSignatureEvent_filter
+    ): [GotRedemptionSignatureEvent!]!
+    governance(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Governance
+    governanceChange(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GovernanceChange
+    governanceChanges(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GovernanceChange_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GovernanceChange_filter
+    ): [GovernanceChange!]!
+    governanceLogEntries(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: GovernanceLogEntry_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: GovernanceLogEntry_filter
+    ): [GovernanceLogEntry!]!
+    governanceLogEntry(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): GovernanceLogEntry
+    governances(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Governance_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Governance_filter
+    ): [Governance!]!
+    liquidatedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): LiquidatedEvent
+    liquidatedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: LiquidatedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: LiquidatedEvent_filter
+    ): [LiquidatedEvent!]!
+    lock(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Lock
+    locks(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Lock_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Lock_filter
+    ): [Lock!]!
+    operator(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): Operator
+    operators(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: Operator_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: Operator_filter
+    ): [Operator!]!
+    randomBeaconGroup(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RandomBeaconGroup
+    randomBeaconGroups(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RandomBeaconGroup_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RandomBeaconGroup_filter
+    ): [RandomBeaconGroup!]!
+    redeemedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RedeemedEvent
+    redeemedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RedeemedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RedeemedEvent_filter
+    ): [RedeemedEvent!]!
+    redemptionRequestedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RedemptionRequestedEvent
+    redemptionRequestedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RedemptionRequestedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RedemptionRequestedEvent_filter
+    ): [RedemptionRequestedEvent!]!
+    registeredPubKeyEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RegisteredPubKeyEvent
+    registeredPubKeyEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RegisteredPubKeyEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RegisteredPubKeyEvent_filter
+    ): [RegisteredPubKeyEvent!]!
+    relayEntries(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: RelayEntry_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: RelayEntry_filter
+    ): [RelayEntry!]!
+    relayEntry(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): RelayEntry
+    setupFailedEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): SetupFailedEvent
+    setupFailedEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: SetupFailedEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: SetupFailedEvent_filter
+    ): [SetupFailedEvent!]!
+    startedLiquidationEvent(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): StartedLiquidationEvent
+    startedLiquidationEvents(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: StartedLiquidationEvent_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: StartedLiquidationEvent_filter
+    ): [StartedLiquidationEvent!]!
+    statsRecord(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): StatsRecord
+    statsRecords(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: StatsRecord_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: StatsRecord_filter
+    ): [StatsRecord!]!
+    tbtcdepositToken(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        id: ID!
+    ): TBTCDepositToken
+    tbtcdepositTokens(
+        "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted."
+        block: Block_height,
+        first: Int,
+        orderBy: TBTCDepositToken_orderBy,
+        orderDirection: OrderDirection,
+        skip: Int,
+        where: TBTCDepositToken_filter
+    ): [TBTCDepositToken!]!
+}
+
+type TBTCDepositToken {
+    deposit: Deposit
+    id: ID!
+    mintedAt: BigInt!
+    minter: Bytes!
+    owner: Bytes!
+    tokenID: BigInt!
+}
+
+enum BondStatus {
+    ACTIVE
+    RELEASED
+    SEIZED
+}
+
+enum Bond_orderBy {
+    bondedAmount
+    holder
+    id
+    keep
+    operator
+    referenceID
+    status
+}
+
+enum BondedECDSAKeepStatus {
+    ACTIVE
+    CLOSED
+    TERMINATED
+}
+
+enum BondedECDSAKeep_orderBy {
+    createdAt
+    deposit
+    honestThreshold
+    id
+    keepAddress
+    members
+    pubkeySubmissions
+    publicKey
+    status
+    totalBondAmount
+}
+
+enum CourtesyCalledEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum CreatedEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum DepositLiquidation_orderBy {
+    courtesyCallInitiated
+    courtesyCallTxhash
+    deposit
+    id
+    initiateTxhash
+    isLiquidated
+    liquidatedAt
+    liquidationInitiated
+    liquidationInitiator
+    wasFraud
+}
+
+enum DepositRedemption_orderBy {
+    deposit
+    id
+    lastRequestedDigest
+    latestRedemptionFee
+    outpoint
+    redeemedAt
+    redeemerOutputScript
+    requestedFee
+    txid
+    utxoSize
+    withdrawalRequestAt
+}
+
+enum DepositSetup_orderBy {
+    deposit
+    failureReason
+    id
+}
+
+enum DepositState {
+    ACTIVE
+    AWAITING_BTC_FUNDING_PROOF
+    AWAITING_SIGNER_SETUP
+    AWAITING_WITHDRAWAL_PROOF
+    AWAITING_WITHDRAWAL_SIGNATURE
+    COURTESY_CALL
+    FAILED_SETUP
+    FRAUD_LIQUIDATION_IN_PROGRESS
+    LIQUIDATED
+    LIQUIDATION_IN_PROGRESS
+    REDEEMED
+    START
+}
+
+enum Deposit_orderBy {
+    bondedECDSAKeep
+    contractAddress
+    createdAt
+    currentState
+    depositLiquidation
+    depositRedemption
+    depositSetup
+    endOfTerm
+    filter_activeLikeState
+    filter_liquidationLikeState
+    filter_redeemableAsOf
+    filter_unmintedTDT
+    id
+    initialCollateralizedPercent
+    keepAddress
+    lotSizeSatoshis
+    owner
+    severelyUndercollateralizedThresholdPercent
+    signerFee
+    tbtcSystem
+    tdtToken
+    undercollateralizedThresholdPercent
+    updatedAt
+    utxoSize
+}
+
+enum Event_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum FundedEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+    tx
+}
+
+enum GotRedemptionSignatureEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum GovernanceChangeType {
+    COLLATERALIZATION_THRESHOLDS
+    ETH_BTC_PRICE_FEED_ADDITION
+    KEEP_FACTORIES
+    LOT_SIZES
+    SIGNER_FEE_DIVISOR
+}
+
+enum GovernanceChange_orderBy {
+    finalizeBlock
+    finalizeTransactionHash
+    id
+    newFactorySelector
+    newFullyBackedFactory
+    newInitialCollateralizedPercent
+    newKeepStakedFactory
+    newLotSizes
+    newPriceFeed
+    newSeverelyUndercollateralizedThresholdPercent
+    newSignerFeeDivisor
+    newUndercollateralizedThresholdPercent
+    prevFactorySelector
+    prevFullyBackedFactory
+    prevInitialCollateralizedPercent
+    prevKeepStakedFactory
+    prevLotSizes
+    prevSeverelyUndercollateralizedThresholdPercent
+    prevSignerFeeDivisor
+    prevUndercollateralizedThresholdPercent
+    requestBlock
+    requestTransactionHash
+    requestedAt
+    takesEffectAfter
+    type
+}
+
+enum GovernanceLogEntry_orderBy {
+    block
+    change
+    id
+    isRequest
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum Governance_orderBy {
+    factorySelector
+    fullyBackedFactory
+    id
+    initialCollateralizedPercent
+    keepStakedFactory
+    lotSizes
+    newDepositsAllowed
+    pendingCollateralizationThresholdsChange
+    pendingFactoriesChange
+    pendingLotSizeChange
+    pendingPriceFeedAddition
+    pendingSignerFeeDivisorChange
+    priceFeeds
+    severelyUndercollateralizedThresholdPercent
+    signerFeeDivisor
+    undercollateralizedThresholdPercent
+}
+
+enum LiquidatedEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum Lock_orderBy {
+    creator
+    id
+    operator
+    until
+}
+
+enum Operator_orderBy {
+    activeKeepCount
+    address
+    authorizer
+    beneficiary
+    bonded
+    bonds
+    id
+    keeps
+    locks
+    operator
+    owner
+    stakedAmount
+    totalKeepCount
+    unboundAvailable
+}
+
+enum OrderDirection {
+    asc
+    desc
+}
+
+enum RandomBeaconGroup_orderBy {
+    createdAt
+    id
+    members
+}
+
+enum RedeemedEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+    tx
+}
+
+enum RedemptionRequestedEvent_orderBy {
+    deposit
+    id
+    redeemer
+    redeemerOutputScript
+    requestedFee
+    sigHashDigest
+    submitter
+    timestamp
+    transactionHash
+    utxoOutpoint
+    utxoValue
+}
+
+enum RegisteredPubKeyEvent_orderBy {
+    deposit
+    id
+    signingGroupPubkeyX
+    signingGroupPubkeyY
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum RelayEntry_orderBy {
+    id
+}
+
+enum SetupFailedEvent_orderBy {
+    deposit
+    id
+    reason
+    submitter
+    timestamp
+    transactionHash
+}
+
+enum SetupFailedReason {
+    FUNDING_ECDSA_FRAUD
+    FUNDING_TIMEOUT
+    SIGNER_SETUP_FAILED
+    SIGNER_SETUP_FAILED_DEPOSITOR
+}
+
+enum StartedLiquidationEvent_orderBy {
+    deposit
+    id
+    submitter
+    timestamp
+    transactionHash
+    wasFraud
+}
+
+enum StatsRecord_orderBy {
+    availableToBeBonded
+    btcUnderDeposit
+    id
+    totalBonded
+    totalBondsSeized
+}
+
+enum TBTCDepositToken_orderBy {
+    deposit
+    id
+    mintedAt
+    minter
+    owner
+    tokenID
+}
+
+input Block_height {
+    hash: Bytes
+    number: Int
+}
+
+input Bond_filter {
+    bondedAmount: BigDecimal
+    bondedAmount_gt: BigDecimal
+    bondedAmount_gte: BigDecimal
+    bondedAmount_in: [BigDecimal!]
+    bondedAmount_lt: BigDecimal
+    bondedAmount_lte: BigDecimal
+    bondedAmount_not: BigDecimal
+    bondedAmount_not_in: [BigDecimal!]
+    holder: Bytes
+    holder_contains: Bytes
+    holder_in: [Bytes!]
+    holder_not: Bytes
+    holder_not_contains: Bytes
+    holder_not_in: [Bytes!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    keep: String
+    keep_contains: String
+    keep_ends_with: String
+    keep_gt: String
+    keep_gte: String
+    keep_in: [String!]
+    keep_lt: String
+    keep_lte: String
+    keep_not: String
+    keep_not_contains: String
+    keep_not_ends_with: String
+    keep_not_in: [String!]
+    keep_not_starts_with: String
+    keep_starts_with: String
+    operator: String
+    operator_contains: String
+    operator_ends_with: String
+    operator_gt: String
+    operator_gte: String
+    operator_in: [String!]
+    operator_lt: String
+    operator_lte: String
+    operator_not: String
+    operator_not_contains: String
+    operator_not_ends_with: String
+    operator_not_in: [String!]
+    operator_not_starts_with: String
+    operator_starts_with: String
+    referenceID: BigInt
+    referenceID_gt: BigInt
+    referenceID_gte: BigInt
+    referenceID_in: [BigInt!]
+    referenceID_lt: BigInt
+    referenceID_lte: BigInt
+    referenceID_not: BigInt
+    referenceID_not_in: [BigInt!]
+    status: BondStatus
+    status_not: BondStatus
+}
+
+input BondedECDSAKeep_filter {
+    createdAt: BigInt
+    createdAt_gt: BigInt
+    createdAt_gte: BigInt
+    createdAt_in: [BigInt!]
+    createdAt_lt: BigInt
+    createdAt_lte: BigInt
+    createdAt_not: BigInt
+    createdAt_not_in: [BigInt!]
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    honestThreshold: Int
+    honestThreshold_gt: Int
+    honestThreshold_gte: Int
+    honestThreshold_in: [Int!]
+    honestThreshold_lt: Int
+    honestThreshold_lte: Int
+    honestThreshold_not: Int
+    honestThreshold_not_in: [Int!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    keepAddress: Bytes
+    keepAddress_contains: Bytes
+    keepAddress_in: [Bytes!]
+    keepAddress_not: Bytes
+    keepAddress_not_contains: Bytes
+    keepAddress_not_in: [Bytes!]
+    members: [String!]
+    members_contains: [String!]
+    members_not: [String!]
+    members_not_contains: [String!]
+    pubkeySubmissions: [String!]
+    pubkeySubmissions_contains: [String!]
+    pubkeySubmissions_not: [String!]
+    pubkeySubmissions_not_contains: [String!]
+    publicKey: Bytes
+    publicKey_contains: Bytes
+    publicKey_in: [Bytes!]
+    publicKey_not: Bytes
+    publicKey_not_contains: Bytes
+    publicKey_not_in: [Bytes!]
+    status: BondedECDSAKeepStatus
+    status_not: BondedECDSAKeepStatus
+    totalBondAmount: BigInt
+    totalBondAmount_gt: BigInt
+    totalBondAmount_gte: BigInt
+    totalBondAmount_in: [BigInt!]
+    totalBondAmount_lt: BigInt
+    totalBondAmount_lte: BigInt
+    totalBondAmount_not: BigInt
+    totalBondAmount_not_in: [BigInt!]
+}
+
+input CourtesyCalledEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input CreatedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input DepositLiquidation_filter {
+    courtesyCallInitiated: BigInt
+    courtesyCallInitiated_gt: BigInt
+    courtesyCallInitiated_gte: BigInt
+    courtesyCallInitiated_in: [BigInt!]
+    courtesyCallInitiated_lt: BigInt
+    courtesyCallInitiated_lte: BigInt
+    courtesyCallInitiated_not: BigInt
+    courtesyCallInitiated_not_in: [BigInt!]
+    courtesyCallTxhash: Bytes
+    courtesyCallTxhash_contains: Bytes
+    courtesyCallTxhash_in: [Bytes!]
+    courtesyCallTxhash_not: Bytes
+    courtesyCallTxhash_not_contains: Bytes
+    courtesyCallTxhash_not_in: [Bytes!]
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    initiateTxhash: Bytes
+    initiateTxhash_contains: Bytes
+    initiateTxhash_in: [Bytes!]
+    initiateTxhash_not: Bytes
+    initiateTxhash_not_contains: Bytes
+    initiateTxhash_not_in: [Bytes!]
+    isLiquidated: Boolean
+    isLiquidated_in: [Boolean!]
+    isLiquidated_not: Boolean
+    isLiquidated_not_in: [Boolean!]
+    liquidatedAt: BigInt
+    liquidatedAt_gt: BigInt
+    liquidatedAt_gte: BigInt
+    liquidatedAt_in: [BigInt!]
+    liquidatedAt_lt: BigInt
+    liquidatedAt_lte: BigInt
+    liquidatedAt_not: BigInt
+    liquidatedAt_not_in: [BigInt!]
+    liquidationInitiated: BigInt
+    liquidationInitiated_gt: BigInt
+    liquidationInitiated_gte: BigInt
+    liquidationInitiated_in: [BigInt!]
+    liquidationInitiated_lt: BigInt
+    liquidationInitiated_lte: BigInt
+    liquidationInitiated_not: BigInt
+    liquidationInitiated_not_in: [BigInt!]
+    liquidationInitiator: Bytes
+    liquidationInitiator_contains: Bytes
+    liquidationInitiator_in: [Bytes!]
+    liquidationInitiator_not: Bytes
+    liquidationInitiator_not_contains: Bytes
+    liquidationInitiator_not_in: [Bytes!]
+    wasFraud: Boolean
+    wasFraud_in: [Boolean!]
+    wasFraud_not: Boolean
+    wasFraud_not_in: [Boolean!]
+}
+
+input DepositRedemption_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    lastRequestedDigest: Bytes
+    lastRequestedDigest_contains: Bytes
+    lastRequestedDigest_in: [Bytes!]
+    lastRequestedDigest_not: Bytes
+    lastRequestedDigest_not_contains: Bytes
+    lastRequestedDigest_not_in: [Bytes!]
+    latestRedemptionFee: BigInt
+    latestRedemptionFee_gt: BigInt
+    latestRedemptionFee_gte: BigInt
+    latestRedemptionFee_in: [BigInt!]
+    latestRedemptionFee_lt: BigInt
+    latestRedemptionFee_lte: BigInt
+    latestRedemptionFee_not: BigInt
+    latestRedemptionFee_not_in: [BigInt!]
+    outpoint: Bytes
+    outpoint_contains: Bytes
+    outpoint_in: [Bytes!]
+    outpoint_not: Bytes
+    outpoint_not_contains: Bytes
+    outpoint_not_in: [Bytes!]
+    redeemedAt: BigInt
+    redeemedAt_gt: BigInt
+    redeemedAt_gte: BigInt
+    redeemedAt_in: [BigInt!]
+    redeemedAt_lt: BigInt
+    redeemedAt_lte: BigInt
+    redeemedAt_not: BigInt
+    redeemedAt_not_in: [BigInt!]
+    redeemerOutputScript: Bytes
+    redeemerOutputScript_contains: Bytes
+    redeemerOutputScript_in: [Bytes!]
+    redeemerOutputScript_not: Bytes
+    redeemerOutputScript_not_contains: Bytes
+    redeemerOutputScript_not_in: [Bytes!]
+    requestedFee: BigInt
+    requestedFee_gt: BigInt
+    requestedFee_gte: BigInt
+    requestedFee_in: [BigInt!]
+    requestedFee_lt: BigInt
+    requestedFee_lte: BigInt
+    requestedFee_not: BigInt
+    requestedFee_not_in: [BigInt!]
+    txid: Bytes
+    txid_contains: Bytes
+    txid_in: [Bytes!]
+    txid_not: Bytes
+    txid_not_contains: Bytes
+    txid_not_in: [Bytes!]
+    utxoSize: BigInt
+    utxoSize_gt: BigInt
+    utxoSize_gte: BigInt
+    utxoSize_in: [BigInt!]
+    utxoSize_lt: BigInt
+    utxoSize_lte: BigInt
+    utxoSize_not: BigInt
+    utxoSize_not_in: [BigInt!]
+    withdrawalRequestAt: BigInt
+    withdrawalRequestAt_gt: BigInt
+    withdrawalRequestAt_gte: BigInt
+    withdrawalRequestAt_in: [BigInt!]
+    withdrawalRequestAt_lt: BigInt
+    withdrawalRequestAt_lte: BigInt
+    withdrawalRequestAt_not: BigInt
+    withdrawalRequestAt_not_in: [BigInt!]
+}
+
+input DepositSetup_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    failureReason: SetupFailedReason
+    failureReason_not: SetupFailedReason
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+}
+
+input Deposit_filter {
+    bondedECDSAKeep: String
+    bondedECDSAKeep_contains: String
+    bondedECDSAKeep_ends_with: String
+    bondedECDSAKeep_gt: String
+    bondedECDSAKeep_gte: String
+    bondedECDSAKeep_in: [String!]
+    bondedECDSAKeep_lt: String
+    bondedECDSAKeep_lte: String
+    bondedECDSAKeep_not: String
+    bondedECDSAKeep_not_contains: String
+    bondedECDSAKeep_not_ends_with: String
+    bondedECDSAKeep_not_in: [String!]
+    bondedECDSAKeep_not_starts_with: String
+    bondedECDSAKeep_starts_with: String
+    contractAddress: Bytes
+    contractAddress_contains: Bytes
+    contractAddress_in: [Bytes!]
+    contractAddress_not: Bytes
+    contractAddress_not_contains: Bytes
+    contractAddress_not_in: [Bytes!]
+    createdAt: BigInt
+    createdAt_gt: BigInt
+    createdAt_gte: BigInt
+    createdAt_in: [BigInt!]
+    createdAt_lt: BigInt
+    createdAt_lte: BigInt
+    createdAt_not: BigInt
+    createdAt_not_in: [BigInt!]
+    currentState: DepositState
+    currentState_not: DepositState
+    depositLiquidation: String
+    depositLiquidation_contains: String
+    depositLiquidation_ends_with: String
+    depositLiquidation_gt: String
+    depositLiquidation_gte: String
+    depositLiquidation_in: [String!]
+    depositLiquidation_lt: String
+    depositLiquidation_lte: String
+    depositLiquidation_not: String
+    depositLiquidation_not_contains: String
+    depositLiquidation_not_ends_with: String
+    depositLiquidation_not_in: [String!]
+    depositLiquidation_not_starts_with: String
+    depositLiquidation_starts_with: String
+    depositRedemption: String
+    depositRedemption_contains: String
+    depositRedemption_ends_with: String
+    depositRedemption_gt: String
+    depositRedemption_gte: String
+    depositRedemption_in: [String!]
+    depositRedemption_lt: String
+    depositRedemption_lte: String
+    depositRedemption_not: String
+    depositRedemption_not_contains: String
+    depositRedemption_not_ends_with: String
+    depositRedemption_not_in: [String!]
+    depositRedemption_not_starts_with: String
+    depositRedemption_starts_with: String
+    endOfTerm: BigInt
+    endOfTerm_gt: BigInt
+    endOfTerm_gte: BigInt
+    endOfTerm_in: [BigInt!]
+    endOfTerm_lt: BigInt
+    endOfTerm_lte: BigInt
+    endOfTerm_not: BigInt
+    endOfTerm_not_in: [BigInt!]
+    filter_activeLikeState: Boolean
+    filter_activeLikeState_in: [Boolean!]
+    filter_activeLikeState_not: Boolean
+    filter_activeLikeState_not_in: [Boolean!]
+    filter_liquidationLikeState: Boolean
+    filter_liquidationLikeState_in: [Boolean!]
+    filter_liquidationLikeState_not: Boolean
+    filter_liquidationLikeState_not_in: [Boolean!]
+    filter_redeemableAsOf: BigInt
+    filter_redeemableAsOf_gt: BigInt
+    filter_redeemableAsOf_gte: BigInt
+    filter_redeemableAsOf_in: [BigInt!]
+    filter_redeemableAsOf_lt: BigInt
+    filter_redeemableAsOf_lte: BigInt
+    filter_redeemableAsOf_not: BigInt
+    filter_redeemableAsOf_not_in: [BigInt!]
+    filter_unmintedTDT: Boolean
+    filter_unmintedTDT_in: [Boolean!]
+    filter_unmintedTDT_not: Boolean
+    filter_unmintedTDT_not_in: [Boolean!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    initialCollateralizedPercent: Int
+    initialCollateralizedPercent_gt: Int
+    initialCollateralizedPercent_gte: Int
+    initialCollateralizedPercent_in: [Int!]
+    initialCollateralizedPercent_lt: Int
+    initialCollateralizedPercent_lte: Int
+    initialCollateralizedPercent_not: Int
+    initialCollateralizedPercent_not_in: [Int!]
+    keepAddress: Bytes
+    keepAddress_contains: Bytes
+    keepAddress_in: [Bytes!]
+    keepAddress_not: Bytes
+    keepAddress_not_contains: Bytes
+    keepAddress_not_in: [Bytes!]
+    lotSizeSatoshis: BigInt
+    lotSizeSatoshis_gt: BigInt
+    lotSizeSatoshis_gte: BigInt
+    lotSizeSatoshis_in: [BigInt!]
+    lotSizeSatoshis_lt: BigInt
+    lotSizeSatoshis_lte: BigInt
+    lotSizeSatoshis_not: BigInt
+    lotSizeSatoshis_not_in: [BigInt!]
+    owner: Bytes
+    owner_contains: Bytes
+    owner_in: [Bytes!]
+    owner_not: Bytes
+    owner_not_contains: Bytes
+    owner_not_in: [Bytes!]
+    severelyUndercollateralizedThresholdPercent: Int
+    severelyUndercollateralizedThresholdPercent_gt: Int
+    severelyUndercollateralizedThresholdPercent_gte: Int
+    severelyUndercollateralizedThresholdPercent_in: [Int!]
+    severelyUndercollateralizedThresholdPercent_lt: Int
+    severelyUndercollateralizedThresholdPercent_lte: Int
+    severelyUndercollateralizedThresholdPercent_not: Int
+    severelyUndercollateralizedThresholdPercent_not_in: [Int!]
+    signerFee: BigInt
+    signerFee_gt: BigInt
+    signerFee_gte: BigInt
+    signerFee_in: [BigInt!]
+    signerFee_lt: BigInt
+    signerFee_lte: BigInt
+    signerFee_not: BigInt
+    signerFee_not_in: [BigInt!]
+    tbtcSystem: Bytes
+    tbtcSystem_contains: Bytes
+    tbtcSystem_in: [Bytes!]
+    tbtcSystem_not: Bytes
+    tbtcSystem_not_contains: Bytes
+    tbtcSystem_not_in: [Bytes!]
+    tdtToken: String
+    tdtToken_contains: String
+    tdtToken_ends_with: String
+    tdtToken_gt: String
+    tdtToken_gte: String
+    tdtToken_in: [String!]
+    tdtToken_lt: String
+    tdtToken_lte: String
+    tdtToken_not: String
+    tdtToken_not_contains: String
+    tdtToken_not_ends_with: String
+    tdtToken_not_in: [String!]
+    tdtToken_not_starts_with: String
+    tdtToken_starts_with: String
+    undercollateralizedThresholdPercent: Int
+    undercollateralizedThresholdPercent_gt: Int
+    undercollateralizedThresholdPercent_gte: Int
+    undercollateralizedThresholdPercent_in: [Int!]
+    undercollateralizedThresholdPercent_lt: Int
+    undercollateralizedThresholdPercent_lte: Int
+    undercollateralizedThresholdPercent_not: Int
+    undercollateralizedThresholdPercent_not_in: [Int!]
+    updatedAt: BigInt
+    updatedAt_gt: BigInt
+    updatedAt_gte: BigInt
+    updatedAt_in: [BigInt!]
+    updatedAt_lt: BigInt
+    updatedAt_lte: BigInt
+    updatedAt_not: BigInt
+    updatedAt_not_in: [BigInt!]
+    utxoSize: BigInt
+    utxoSize_gt: BigInt
+    utxoSize_gte: BigInt
+    utxoSize_in: [BigInt!]
+    utxoSize_lt: BigInt
+    utxoSize_lte: BigInt
+    utxoSize_not: BigInt
+    utxoSize_not_in: [BigInt!]
+}
+
+input Event_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input FundedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+    tx: Bytes
+    tx_contains: Bytes
+    tx_in: [Bytes!]
+    tx_not: Bytes
+    tx_not_contains: Bytes
+    tx_not_in: [Bytes!]
+}
+
+input GotRedemptionSignatureEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input GovernanceChange_filter {
+    finalizeBlock: BigInt
+    finalizeBlock_gt: BigInt
+    finalizeBlock_gte: BigInt
+    finalizeBlock_in: [BigInt!]
+    finalizeBlock_lt: BigInt
+    finalizeBlock_lte: BigInt
+    finalizeBlock_not: BigInt
+    finalizeBlock_not_in: [BigInt!]
+    finalizeTransactionHash: String
+    finalizeTransactionHash_contains: String
+    finalizeTransactionHash_ends_with: String
+    finalizeTransactionHash_gt: String
+    finalizeTransactionHash_gte: String
+    finalizeTransactionHash_in: [String!]
+    finalizeTransactionHash_lt: String
+    finalizeTransactionHash_lte: String
+    finalizeTransactionHash_not: String
+    finalizeTransactionHash_not_contains: String
+    finalizeTransactionHash_not_ends_with: String
+    finalizeTransactionHash_not_in: [String!]
+    finalizeTransactionHash_not_starts_with: String
+    finalizeTransactionHash_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    newFactorySelector: Bytes
+    newFactorySelector_contains: Bytes
+    newFactorySelector_in: [Bytes!]
+    newFactorySelector_not: Bytes
+    newFactorySelector_not_contains: Bytes
+    newFactorySelector_not_in: [Bytes!]
+    newFullyBackedFactory: Bytes
+    newFullyBackedFactory_contains: Bytes
+    newFullyBackedFactory_in: [Bytes!]
+    newFullyBackedFactory_not: Bytes
+    newFullyBackedFactory_not_contains: Bytes
+    newFullyBackedFactory_not_in: [Bytes!]
+    newInitialCollateralizedPercent: Int
+    newInitialCollateralizedPercent_gt: Int
+    newInitialCollateralizedPercent_gte: Int
+    newInitialCollateralizedPercent_in: [Int!]
+    newInitialCollateralizedPercent_lt: Int
+    newInitialCollateralizedPercent_lte: Int
+    newInitialCollateralizedPercent_not: Int
+    newInitialCollateralizedPercent_not_in: [Int!]
+    newKeepStakedFactory: Bytes
+    newKeepStakedFactory_contains: Bytes
+    newKeepStakedFactory_in: [Bytes!]
+    newKeepStakedFactory_not: Bytes
+    newKeepStakedFactory_not_contains: Bytes
+    newKeepStakedFactory_not_in: [Bytes!]
+    newLotSizes: [BigInt!]
+    newLotSizes_contains: [BigInt!]
+    newLotSizes_not: [BigInt!]
+    newLotSizes_not_contains: [BigInt!]
+    newPriceFeed: Bytes
+    newPriceFeed_contains: Bytes
+    newPriceFeed_in: [Bytes!]
+    newPriceFeed_not: Bytes
+    newPriceFeed_not_contains: Bytes
+    newPriceFeed_not_in: [Bytes!]
+    newSeverelyUndercollateralizedThresholdPercent: Int
+    newSeverelyUndercollateralizedThresholdPercent_gt: Int
+    newSeverelyUndercollateralizedThresholdPercent_gte: Int
+    newSeverelyUndercollateralizedThresholdPercent_in: [Int!]
+    newSeverelyUndercollateralizedThresholdPercent_lt: Int
+    newSeverelyUndercollateralizedThresholdPercent_lte: Int
+    newSeverelyUndercollateralizedThresholdPercent_not: Int
+    newSeverelyUndercollateralizedThresholdPercent_not_in: [Int!]
+    newSignerFeeDivisor: Int
+    newSignerFeeDivisor_gt: Int
+    newSignerFeeDivisor_gte: Int
+    newSignerFeeDivisor_in: [Int!]
+    newSignerFeeDivisor_lt: Int
+    newSignerFeeDivisor_lte: Int
+    newSignerFeeDivisor_not: Int
+    newSignerFeeDivisor_not_in: [Int!]
+    newUndercollateralizedThresholdPercent: Int
+    newUndercollateralizedThresholdPercent_gt: Int
+    newUndercollateralizedThresholdPercent_gte: Int
+    newUndercollateralizedThresholdPercent_in: [Int!]
+    newUndercollateralizedThresholdPercent_lt: Int
+    newUndercollateralizedThresholdPercent_lte: Int
+    newUndercollateralizedThresholdPercent_not: Int
+    newUndercollateralizedThresholdPercent_not_in: [Int!]
+    prevFactorySelector: Bytes
+    prevFactorySelector_contains: Bytes
+    prevFactorySelector_in: [Bytes!]
+    prevFactorySelector_not: Bytes
+    prevFactorySelector_not_contains: Bytes
+    prevFactorySelector_not_in: [Bytes!]
+    prevFullyBackedFactory: Bytes
+    prevFullyBackedFactory_contains: Bytes
+    prevFullyBackedFactory_in: [Bytes!]
+    prevFullyBackedFactory_not: Bytes
+    prevFullyBackedFactory_not_contains: Bytes
+    prevFullyBackedFactory_not_in: [Bytes!]
+    prevInitialCollateralizedPercent: Int
+    prevInitialCollateralizedPercent_gt: Int
+    prevInitialCollateralizedPercent_gte: Int
+    prevInitialCollateralizedPercent_in: [Int!]
+    prevInitialCollateralizedPercent_lt: Int
+    prevInitialCollateralizedPercent_lte: Int
+    prevInitialCollateralizedPercent_not: Int
+    prevInitialCollateralizedPercent_not_in: [Int!]
+    prevKeepStakedFactory: Bytes
+    prevKeepStakedFactory_contains: Bytes
+    prevKeepStakedFactory_in: [Bytes!]
+    prevKeepStakedFactory_not: Bytes
+    prevKeepStakedFactory_not_contains: Bytes
+    prevKeepStakedFactory_not_in: [Bytes!]
+    prevLotSizes: [BigInt!]
+    prevLotSizes_contains: [BigInt!]
+    prevLotSizes_not: [BigInt!]
+    prevLotSizes_not_contains: [BigInt!]
+    prevSeverelyUndercollateralizedThresholdPercent: Int
+    prevSeverelyUndercollateralizedThresholdPercent_gt: Int
+    prevSeverelyUndercollateralizedThresholdPercent_gte: Int
+    prevSeverelyUndercollateralizedThresholdPercent_in: [Int!]
+    prevSeverelyUndercollateralizedThresholdPercent_lt: Int
+    prevSeverelyUndercollateralizedThresholdPercent_lte: Int
+    prevSeverelyUndercollateralizedThresholdPercent_not: Int
+    prevSeverelyUndercollateralizedThresholdPercent_not_in: [Int!]
+    prevSignerFeeDivisor: Int
+    prevSignerFeeDivisor_gt: Int
+    prevSignerFeeDivisor_gte: Int
+    prevSignerFeeDivisor_in: [Int!]
+    prevSignerFeeDivisor_lt: Int
+    prevSignerFeeDivisor_lte: Int
+    prevSignerFeeDivisor_not: Int
+    prevSignerFeeDivisor_not_in: [Int!]
+    prevUndercollateralizedThresholdPercent: Int
+    prevUndercollateralizedThresholdPercent_gt: Int
+    prevUndercollateralizedThresholdPercent_gte: Int
+    prevUndercollateralizedThresholdPercent_in: [Int!]
+    prevUndercollateralizedThresholdPercent_lt: Int
+    prevUndercollateralizedThresholdPercent_lte: Int
+    prevUndercollateralizedThresholdPercent_not: Int
+    prevUndercollateralizedThresholdPercent_not_in: [Int!]
+    requestBlock: BigInt
+    requestBlock_gt: BigInt
+    requestBlock_gte: BigInt
+    requestBlock_in: [BigInt!]
+    requestBlock_lt: BigInt
+    requestBlock_lte: BigInt
+    requestBlock_not: BigInt
+    requestBlock_not_in: [BigInt!]
+    requestTransactionHash: String
+    requestTransactionHash_contains: String
+    requestTransactionHash_ends_with: String
+    requestTransactionHash_gt: String
+    requestTransactionHash_gte: String
+    requestTransactionHash_in: [String!]
+    requestTransactionHash_lt: String
+    requestTransactionHash_lte: String
+    requestTransactionHash_not: String
+    requestTransactionHash_not_contains: String
+    requestTransactionHash_not_ends_with: String
+    requestTransactionHash_not_in: [String!]
+    requestTransactionHash_not_starts_with: String
+    requestTransactionHash_starts_with: String
+    requestedAt: BigInt
+    requestedAt_gt: BigInt
+    requestedAt_gte: BigInt
+    requestedAt_in: [BigInt!]
+    requestedAt_lt: BigInt
+    requestedAt_lte: BigInt
+    requestedAt_not: BigInt
+    requestedAt_not_in: [BigInt!]
+    takesEffectAfter: BigInt
+    takesEffectAfter_gt: BigInt
+    takesEffectAfter_gte: BigInt
+    takesEffectAfter_in: [BigInt!]
+    takesEffectAfter_lt: BigInt
+    takesEffectAfter_lte: BigInt
+    takesEffectAfter_not: BigInt
+    takesEffectAfter_not_in: [BigInt!]
+    type: GovernanceChangeType
+    type_not: GovernanceChangeType
+}
+
+input GovernanceLogEntry_filter {
+    block: BigInt
+    block_gt: BigInt
+    block_gte: BigInt
+    block_in: [BigInt!]
+    block_lt: BigInt
+    block_lte: BigInt
+    block_not: BigInt
+    block_not_in: [BigInt!]
+    change: String
+    change_contains: String
+    change_ends_with: String
+    change_gt: String
+    change_gte: String
+    change_in: [String!]
+    change_lt: String
+    change_lte: String
+    change_not: String
+    change_not_contains: String
+    change_not_ends_with: String
+    change_not_in: [String!]
+    change_not_starts_with: String
+    change_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    isRequest: Boolean
+    isRequest_in: [Boolean!]
+    isRequest_not: Boolean
+    isRequest_not_in: [Boolean!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input Governance_filter {
+    factorySelector: Bytes
+    factorySelector_contains: Bytes
+    factorySelector_in: [Bytes!]
+    factorySelector_not: Bytes
+    factorySelector_not_contains: Bytes
+    factorySelector_not_in: [Bytes!]
+    fullyBackedFactory: Bytes
+    fullyBackedFactory_contains: Bytes
+    fullyBackedFactory_in: [Bytes!]
+    fullyBackedFactory_not: Bytes
+    fullyBackedFactory_not_contains: Bytes
+    fullyBackedFactory_not_in: [Bytes!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    initialCollateralizedPercent: Int
+    initialCollateralizedPercent_gt: Int
+    initialCollateralizedPercent_gte: Int
+    initialCollateralizedPercent_in: [Int!]
+    initialCollateralizedPercent_lt: Int
+    initialCollateralizedPercent_lte: Int
+    initialCollateralizedPercent_not: Int
+    initialCollateralizedPercent_not_in: [Int!]
+    keepStakedFactory: Bytes
+    keepStakedFactory_contains: Bytes
+    keepStakedFactory_in: [Bytes!]
+    keepStakedFactory_not: Bytes
+    keepStakedFactory_not_contains: Bytes
+    keepStakedFactory_not_in: [Bytes!]
+    lotSizes: [BigInt!]
+    lotSizes_contains: [BigInt!]
+    lotSizes_not: [BigInt!]
+    lotSizes_not_contains: [BigInt!]
+    newDepositsAllowed: Boolean
+    newDepositsAllowed_in: [Boolean!]
+    newDepositsAllowed_not: Boolean
+    newDepositsAllowed_not_in: [Boolean!]
+    pendingCollateralizationThresholdsChange: String
+    pendingCollateralizationThresholdsChange_contains: String
+    pendingCollateralizationThresholdsChange_ends_with: String
+    pendingCollateralizationThresholdsChange_gt: String
+    pendingCollateralizationThresholdsChange_gte: String
+    pendingCollateralizationThresholdsChange_in: [String!]
+    pendingCollateralizationThresholdsChange_lt: String
+    pendingCollateralizationThresholdsChange_lte: String
+    pendingCollateralizationThresholdsChange_not: String
+    pendingCollateralizationThresholdsChange_not_contains: String
+    pendingCollateralizationThresholdsChange_not_ends_with: String
+    pendingCollateralizationThresholdsChange_not_in: [String!]
+    pendingCollateralizationThresholdsChange_not_starts_with: String
+    pendingCollateralizationThresholdsChange_starts_with: String
+    pendingFactoriesChange: String
+    pendingFactoriesChange_contains: String
+    pendingFactoriesChange_ends_with: String
+    pendingFactoriesChange_gt: String
+    pendingFactoriesChange_gte: String
+    pendingFactoriesChange_in: [String!]
+    pendingFactoriesChange_lt: String
+    pendingFactoriesChange_lte: String
+    pendingFactoriesChange_not: String
+    pendingFactoriesChange_not_contains: String
+    pendingFactoriesChange_not_ends_with: String
+    pendingFactoriesChange_not_in: [String!]
+    pendingFactoriesChange_not_starts_with: String
+    pendingFactoriesChange_starts_with: String
+    pendingLotSizeChange: String
+    pendingLotSizeChange_contains: String
+    pendingLotSizeChange_ends_with: String
+    pendingLotSizeChange_gt: String
+    pendingLotSizeChange_gte: String
+    pendingLotSizeChange_in: [String!]
+    pendingLotSizeChange_lt: String
+    pendingLotSizeChange_lte: String
+    pendingLotSizeChange_not: String
+    pendingLotSizeChange_not_contains: String
+    pendingLotSizeChange_not_ends_with: String
+    pendingLotSizeChange_not_in: [String!]
+    pendingLotSizeChange_not_starts_with: String
+    pendingLotSizeChange_starts_with: String
+    pendingPriceFeedAddition: String
+    pendingPriceFeedAddition_contains: String
+    pendingPriceFeedAddition_ends_with: String
+    pendingPriceFeedAddition_gt: String
+    pendingPriceFeedAddition_gte: String
+    pendingPriceFeedAddition_in: [String!]
+    pendingPriceFeedAddition_lt: String
+    pendingPriceFeedAddition_lte: String
+    pendingPriceFeedAddition_not: String
+    pendingPriceFeedAddition_not_contains: String
+    pendingPriceFeedAddition_not_ends_with: String
+    pendingPriceFeedAddition_not_in: [String!]
+    pendingPriceFeedAddition_not_starts_with: String
+    pendingPriceFeedAddition_starts_with: String
+    pendingSignerFeeDivisorChange: String
+    pendingSignerFeeDivisorChange_contains: String
+    pendingSignerFeeDivisorChange_ends_with: String
+    pendingSignerFeeDivisorChange_gt: String
+    pendingSignerFeeDivisorChange_gte: String
+    pendingSignerFeeDivisorChange_in: [String!]
+    pendingSignerFeeDivisorChange_lt: String
+    pendingSignerFeeDivisorChange_lte: String
+    pendingSignerFeeDivisorChange_not: String
+    pendingSignerFeeDivisorChange_not_contains: String
+    pendingSignerFeeDivisorChange_not_ends_with: String
+    pendingSignerFeeDivisorChange_not_in: [String!]
+    pendingSignerFeeDivisorChange_not_starts_with: String
+    pendingSignerFeeDivisorChange_starts_with: String
+    priceFeeds: [Bytes!]
+    priceFeeds_contains: [Bytes!]
+    priceFeeds_not: [Bytes!]
+    priceFeeds_not_contains: [Bytes!]
+    severelyUndercollateralizedThresholdPercent: Int
+    severelyUndercollateralizedThresholdPercent_gt: Int
+    severelyUndercollateralizedThresholdPercent_gte: Int
+    severelyUndercollateralizedThresholdPercent_in: [Int!]
+    severelyUndercollateralizedThresholdPercent_lt: Int
+    severelyUndercollateralizedThresholdPercent_lte: Int
+    severelyUndercollateralizedThresholdPercent_not: Int
+    severelyUndercollateralizedThresholdPercent_not_in: [Int!]
+    signerFeeDivisor: Int
+    signerFeeDivisor_gt: Int
+    signerFeeDivisor_gte: Int
+    signerFeeDivisor_in: [Int!]
+    signerFeeDivisor_lt: Int
+    signerFeeDivisor_lte: Int
+    signerFeeDivisor_not: Int
+    signerFeeDivisor_not_in: [Int!]
+    undercollateralizedThresholdPercent: Int
+    undercollateralizedThresholdPercent_gt: Int
+    undercollateralizedThresholdPercent_gte: Int
+    undercollateralizedThresholdPercent_in: [Int!]
+    undercollateralizedThresholdPercent_lt: Int
+    undercollateralizedThresholdPercent_lte: Int
+    undercollateralizedThresholdPercent_not: Int
+    undercollateralizedThresholdPercent_not_in: [Int!]
+}
+
+input LiquidatedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input Lock_filter {
+    creator: Bytes
+    creator_contains: Bytes
+    creator_in: [Bytes!]
+    creator_not: Bytes
+    creator_not_contains: Bytes
+    creator_not_in: [Bytes!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    operator: String
+    operator_contains: String
+    operator_ends_with: String
+    operator_gt: String
+    operator_gte: String
+    operator_in: [String!]
+    operator_lt: String
+    operator_lte: String
+    operator_not: String
+    operator_not_contains: String
+    operator_not_ends_with: String
+    operator_not_in: [String!]
+    operator_not_starts_with: String
+    operator_starts_with: String
+    until: BigInt
+    until_gt: BigInt
+    until_gte: BigInt
+    until_in: [BigInt!]
+    until_lt: BigInt
+    until_lte: BigInt
+    until_not: BigInt
+    until_not_in: [BigInt!]
+}
+
+input Operator_filter {
+    activeKeepCount: Int
+    activeKeepCount_gt: Int
+    activeKeepCount_gte: Int
+    activeKeepCount_in: [Int!]
+    activeKeepCount_lt: Int
+    activeKeepCount_lte: Int
+    activeKeepCount_not: Int
+    activeKeepCount_not_in: [Int!]
+    address: Bytes
+    address_contains: Bytes
+    address_in: [Bytes!]
+    address_not: Bytes
+    address_not_contains: Bytes
+    address_not_in: [Bytes!]
+    authorizer: Bytes
+    authorizer_contains: Bytes
+    authorizer_in: [Bytes!]
+    authorizer_not: Bytes
+    authorizer_not_contains: Bytes
+    authorizer_not_in: [Bytes!]
+    beneficiary: Bytes
+    beneficiary_contains: Bytes
+    beneficiary_in: [Bytes!]
+    beneficiary_not: Bytes
+    beneficiary_not_contains: Bytes
+    beneficiary_not_in: [Bytes!]
+    bonded: BigDecimal
+    bonded_gt: BigDecimal
+    bonded_gte: BigDecimal
+    bonded_in: [BigDecimal!]
+    bonded_lt: BigDecimal
+    bonded_lte: BigDecimal
+    bonded_not: BigDecimal
+    bonded_not_in: [BigDecimal!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    operator: Bytes
+    operator_contains: Bytes
+    operator_in: [Bytes!]
+    operator_not: Bytes
+    operator_not_contains: Bytes
+    operator_not_in: [Bytes!]
+    owner: Bytes
+    owner_contains: Bytes
+    owner_in: [Bytes!]
+    owner_not: Bytes
+    owner_not_contains: Bytes
+    owner_not_in: [Bytes!]
+    stakedAmount: BigDecimal
+    stakedAmount_gt: BigDecimal
+    stakedAmount_gte: BigDecimal
+    stakedAmount_in: [BigDecimal!]
+    stakedAmount_lt: BigDecimal
+    stakedAmount_lte: BigDecimal
+    stakedAmount_not: BigDecimal
+    stakedAmount_not_in: [BigDecimal!]
+    totalKeepCount: Int
+    totalKeepCount_gt: Int
+    totalKeepCount_gte: Int
+    totalKeepCount_in: [Int!]
+    totalKeepCount_lt: Int
+    totalKeepCount_lte: Int
+    totalKeepCount_not: Int
+    totalKeepCount_not_in: [Int!]
+    unboundAvailable: BigDecimal
+    unboundAvailable_gt: BigDecimal
+    unboundAvailable_gte: BigDecimal
+    unboundAvailable_in: [BigDecimal!]
+    unboundAvailable_lt: BigDecimal
+    unboundAvailable_lte: BigDecimal
+    unboundAvailable_not: BigDecimal
+    unboundAvailable_not_in: [BigDecimal!]
+}
+
+input RandomBeaconGroup_filter {
+    createdAt: BigInt
+    createdAt_gt: BigInt
+    createdAt_gte: BigInt
+    createdAt_in: [BigInt!]
+    createdAt_lt: BigInt
+    createdAt_lte: BigInt
+    createdAt_not: BigInt
+    createdAt_not_in: [BigInt!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    members: [String!]
+    members_contains: [String!]
+    members_not: [String!]
+    members_not_contains: [String!]
+}
+
+input RedeemedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+    tx: Bytes
+    tx_contains: Bytes
+    tx_in: [Bytes!]
+    tx_not: Bytes
+    tx_not_contains: Bytes
+    tx_not_in: [Bytes!]
+}
+
+input RedemptionRequestedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    redeemer: Bytes
+    redeemerOutputScript: Bytes
+    redeemerOutputScript_contains: Bytes
+    redeemerOutputScript_in: [Bytes!]
+    redeemerOutputScript_not: Bytes
+    redeemerOutputScript_not_contains: Bytes
+    redeemerOutputScript_not_in: [Bytes!]
+    redeemer_contains: Bytes
+    redeemer_in: [Bytes!]
+    redeemer_not: Bytes
+    redeemer_not_contains: Bytes
+    redeemer_not_in: [Bytes!]
+    requestedFee: BigInt
+    requestedFee_gt: BigInt
+    requestedFee_gte: BigInt
+    requestedFee_in: [BigInt!]
+    requestedFee_lt: BigInt
+    requestedFee_lte: BigInt
+    requestedFee_not: BigInt
+    requestedFee_not_in: [BigInt!]
+    sigHashDigest: Bytes
+    sigHashDigest_contains: Bytes
+    sigHashDigest_in: [Bytes!]
+    sigHashDigest_not: Bytes
+    sigHashDigest_not_contains: Bytes
+    sigHashDigest_not_in: [Bytes!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+    utxoOutpoint: Bytes
+    utxoOutpoint_contains: Bytes
+    utxoOutpoint_in: [Bytes!]
+    utxoOutpoint_not: Bytes
+    utxoOutpoint_not_contains: Bytes
+    utxoOutpoint_not_in: [Bytes!]
+    utxoValue: BigInt
+    utxoValue_gt: BigInt
+    utxoValue_gte: BigInt
+    utxoValue_in: [BigInt!]
+    utxoValue_lt: BigInt
+    utxoValue_lte: BigInt
+    utxoValue_not: BigInt
+    utxoValue_not_in: [BigInt!]
+}
+
+input RegisteredPubKeyEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    signingGroupPubkeyX: Bytes
+    signingGroupPubkeyX_contains: Bytes
+    signingGroupPubkeyX_in: [Bytes!]
+    signingGroupPubkeyX_not: Bytes
+    signingGroupPubkeyX_not_contains: Bytes
+    signingGroupPubkeyX_not_in: [Bytes!]
+    signingGroupPubkeyY: Bytes
+    signingGroupPubkeyY_contains: Bytes
+    signingGroupPubkeyY_in: [Bytes!]
+    signingGroupPubkeyY_not: Bytes
+    signingGroupPubkeyY_not_contains: Bytes
+    signingGroupPubkeyY_not_in: [Bytes!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input RelayEntry_filter {
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+}
+
+input SetupFailedEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    reason: SetupFailedReason
+    reason_not: SetupFailedReason
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+}
+
+input StartedLiquidationEvent_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    submitter: Bytes
+    submitter_contains: Bytes
+    submitter_in: [Bytes!]
+    submitter_not: Bytes
+    submitter_not_contains: Bytes
+    submitter_not_in: [Bytes!]
+    timestamp: BigInt
+    timestamp_gt: BigInt
+    timestamp_gte: BigInt
+    timestamp_in: [BigInt!]
+    timestamp_lt: BigInt
+    timestamp_lte: BigInt
+    timestamp_not: BigInt
+    timestamp_not_in: [BigInt!]
+    transactionHash: String
+    transactionHash_contains: String
+    transactionHash_ends_with: String
+    transactionHash_gt: String
+    transactionHash_gte: String
+    transactionHash_in: [String!]
+    transactionHash_lt: String
+    transactionHash_lte: String
+    transactionHash_not: String
+    transactionHash_not_contains: String
+    transactionHash_not_ends_with: String
+    transactionHash_not_in: [String!]
+    transactionHash_not_starts_with: String
+    transactionHash_starts_with: String
+    wasFraud: Boolean
+    wasFraud_in: [Boolean!]
+    wasFraud_not: Boolean
+    wasFraud_not_in: [Boolean!]
+}
+
+input StatsRecord_filter {
+    availableToBeBonded: BigDecimal
+    availableToBeBonded_gt: BigDecimal
+    availableToBeBonded_gte: BigDecimal
+    availableToBeBonded_in: [BigDecimal!]
+    availableToBeBonded_lt: BigDecimal
+    availableToBeBonded_lte: BigDecimal
+    availableToBeBonded_not: BigDecimal
+    availableToBeBonded_not_in: [BigDecimal!]
+    btcUnderDeposit: BigInt
+    btcUnderDeposit_gt: BigInt
+    btcUnderDeposit_gte: BigInt
+    btcUnderDeposit_in: [BigInt!]
+    btcUnderDeposit_lt: BigInt
+    btcUnderDeposit_lte: BigInt
+    btcUnderDeposit_not: BigInt
+    btcUnderDeposit_not_in: [BigInt!]
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    totalBonded: BigDecimal
+    totalBonded_gt: BigDecimal
+    totalBonded_gte: BigDecimal
+    totalBonded_in: [BigDecimal!]
+    totalBonded_lt: BigDecimal
+    totalBonded_lte: BigDecimal
+    totalBonded_not: BigDecimal
+    totalBonded_not_in: [BigDecimal!]
+    totalBondsSeized: BigDecimal
+    totalBondsSeized_gt: BigDecimal
+    totalBondsSeized_gte: BigDecimal
+    totalBondsSeized_in: [BigDecimal!]
+    totalBondsSeized_lt: BigDecimal
+    totalBondsSeized_lte: BigDecimal
+    totalBondsSeized_not: BigDecimal
+    totalBondsSeized_not_in: [BigDecimal!]
+}
+
+input TBTCDepositToken_filter {
+    deposit: String
+    deposit_contains: String
+    deposit_ends_with: String
+    deposit_gt: String
+    deposit_gte: String
+    deposit_in: [String!]
+    deposit_lt: String
+    deposit_lte: String
+    deposit_not: String
+    deposit_not_contains: String
+    deposit_not_ends_with: String
+    deposit_not_in: [String!]
+    deposit_not_starts_with: String
+    deposit_starts_with: String
+    id: ID
+    id_gt: ID
+    id_gte: ID
+    id_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_not: ID
+    id_not_in: [ID!]
+    mintedAt: BigInt
+    mintedAt_gt: BigInt
+    mintedAt_gte: BigInt
+    mintedAt_in: [BigInt!]
+    mintedAt_lt: BigInt
+    mintedAt_lte: BigInt
+    mintedAt_not: BigInt
+    mintedAt_not_in: [BigInt!]
+    minter: Bytes
+    minter_contains: Bytes
+    minter_in: [Bytes!]
+    minter_not: Bytes
+    minter_not_contains: Bytes
+    minter_not_in: [Bytes!]
+    owner: Bytes
+    owner_contains: Bytes
+    owner_in: [Bytes!]
+    owner_not: Bytes
+    owner_not_contains: Bytes
+    owner_not_in: [Bytes!]
+    tokenID: BigInt
+    tokenID_gt: BigInt
+    tokenID_gte: BigInt
+    tokenID_in: [BigInt!]
+    tokenID_lt: BigInt
+    tokenID_lte: BigInt
+    tokenID_not: BigInt
+    tokenID_not_in: [BigInt!]
+}
+
+
+scalar BigDecimal
+
+scalar BigInt
+
+scalar Bytes

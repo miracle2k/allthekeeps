@@ -9,13 +9,14 @@ import {Helmet} from "react-helmet";
 import {SortableHeader, SortState, Table, useSort} from "../components/Table";
 import {usePriceFeed} from "../components/PriceFeed";
 import {Box} from "../components/Box";
+import {GetOperatorsQuery} from "../generated/graphql";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
         $orderBy: Operator_orderBy,
         $direction: OrderDirection
     ) {
-        stats: statsRecords(id: "current") {
+        stats: statsRecord(id: "current") {
             availableToBeBonded,
             totalBonded
         }
@@ -34,7 +35,7 @@ const OPERATOR_QUERY = gql`
 
 export function Operators() {
   const sortState = useSort("activeKeepCount");
-  const { loading, error, data } = useQuery(OPERATOR_QUERY, {
+  const { loading, error, data } = useQuery<GetOperatorsQuery>(OPERATOR_QUERY, {
     variables: {
       orderBy: sortState.column,
       direction: sortState.direction
@@ -45,7 +46,7 @@ export function Operators() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  const remainingCapacityBTC = price?.val ? parseFloat(data.stats[0].availableToBeBonded) / 1.5 * price.val : null;
+  const remainingCapacityBTC = price?.val ? parseFloat(data!.stats!.availableToBeBonded) / 1.5 * price.val : null;
 
   return  <div style={{padding: '20px'}}>
     <Helmet>
@@ -63,13 +64,13 @@ export function Operators() {
         label={"total bonded"}
         tooltip={"The amount of collateral backing active deposits."}
       >
-        <div>{formatterSimple.format(data.stats[0].totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        <div>{formatterSimple.format(data!.stats!.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
       </Box>
       <Box
         label={"available for bonding"}
         tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
       >
-        <div>{formatterSimple.format(data.stats[0].availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        <div>{formatterSimple.format(data!.stats!.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
         {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
           capacity ~{formatter.format(remainingCapacityBTC)} BTC
         </div> : null}
