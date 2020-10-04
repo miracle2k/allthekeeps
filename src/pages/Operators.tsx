@@ -6,17 +6,20 @@ import { Address } from "../components/Address";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Helmet} from "react-helmet";
-import { Table } from "../components/Table";
+import {SortableHeader, SortState, Table, useSort} from "../components/Table";
 import {usePriceFeed} from "../components/PriceFeed";
 import {Box} from "../components/Box";
 
 const OPERATOR_QUERY = gql`
-    query GetOperators {
-        stats(id: "current") {
+    query GetOperators(
+        $orderBy: Operator_orderBy,
+        $direction: OrderDirection
+    ) {
+        stats: statsRecords(id: "current") {
             availableToBeBonded,
             totalBonded
         }
-        operators(first: 1000, orderBy: activeKeepCount, orderDirection: desc) {
+        operators(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
             id,
             address,
             bonded,
@@ -30,19 +33,25 @@ const OPERATOR_QUERY = gql`
 
 
 export function Operators() {
-  const { loading, error, data } = useQuery(OPERATOR_QUERY);
+  const sortState = useSort("activeKeepCount");
+  const { loading, error, data } = useQuery(OPERATOR_QUERY, {
+    variables: {
+      orderBy: sortState.column,
+      direction: sortState.direction
+    }
+  });
   const price = usePriceFeed();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  const remainingCapacityBTC = price?.val ? parseFloat(data.stats.availableToBeBonded) / 1.5 * price.val : null;
+  const remainingCapacityBTC = price?.val ? parseFloat(data.stats[0].availableToBeBonded) / 1.5 * price.val : null;
 
   return  <div style={{padding: '20px'}}>
     <Helmet>
       <title>Operators</title>
     </Helmet>
-    <h1 style={{marginTop: 0}}>Operators</h1>
+    <h1 style={{marginTop: 0, marginBottom: 5}}>Operators</h1>
     <div className={css`
       display: flex;
       flex-direction: row;
@@ -54,20 +63,20 @@ export function Operators() {
         label={"total bonded"}
         tooltip={"The amount of collateral backing active deposits."}
       >
-        <div>{formatterSimple.format(data.stats.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        <div>{formatterSimple.format(data.stats[0].totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
       </Box>
       <Box
         label={"available for bonding"}
         tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
       >
-        <div>{formatterSimple.format(data.stats.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        <div>{formatterSimple.format(data.stats[0].availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
         {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
           capacity ~{formatter.format(remainingCapacityBTC)} BTC
         </div> : null}
       </Box>
     </div>
     <Paper padding>
-      <OperatorsTable data={data} />
+      <OperatorsTable data={data} sortState={sortState} />
     </Paper>
   </div>
 }
@@ -83,7 +92,8 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
 
 
 export function OperatorsTable(props: {
-  data: any
+  data: any,
+  sortState: SortState,
 }) {
   const {data} = props;
   const price = usePriceFeed();
@@ -94,13 +104,17 @@ export function OperatorsTable(props: {
     <tr>
       <th>Address</th>
       <th>
-        # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
+        <SortableHeader fieldId={"activeKeepCount"} state={props.sortState}>
+          # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
+        </SortableHeader>
       </th>
       <th>
         Amount Bonded <InfoTooltip>Collateral backing active deposits.</InfoTooltip>
       </th>
       <th>
-        Amount Available <InfoTooltip>Collateral available for further deposits.</InfoTooltip>
+        <SortableHeader fieldId={"unboundAvailable"} state={props.sortState}>
+          Amount Available <InfoTooltip>Collateral available for further deposits.</InfoTooltip>
+        </SortableHeader>
       </th>
       <th>
         Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
