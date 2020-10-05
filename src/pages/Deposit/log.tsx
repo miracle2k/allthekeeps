@@ -3,12 +3,14 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {Address, BitcoinAddress, Transaction} from "../../components/Address";
 import React from "react";
 import BitcoinHelpers from "../../utils/BitcoinHelpers";
-import {gql, useQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
+import gql from 'graphql-tag';
+import {GetDepositLogsQuery} from "../../generated/graphql";
 
 export function Log(props: {
   depositId: string
 }) {
-  const {loading, error, data} = useQuery(gql`
+  const {loading, error, data} = useQuery<GetDepositLogsQuery>(gql`
       query GetDepositLogs($depositId: String!)
       {
           events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
@@ -24,7 +26,13 @@ export function Log(props: {
               }
 
               ...on SetupFailedEvent {
-                  reason
+                  reason,
+                  deposit {
+                      bondedECDSAKeep {
+                          pubkeySubmissions { address },
+                          members { address }
+                      }
+                  }
               }
           }
       }
@@ -33,9 +41,11 @@ export function Log(props: {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {"" + error}</p>;
 
-  return data.events.map((logEntry: any) => {
-    return <LogEntry key={logEntry.id} event={logEntry}/>
-  })
+  return <>
+    {data!.events.map((logEntry: any) => {
+      return <LogEntry key={logEntry.id} event={logEntry}/>
+    })}
+  </>
 }
 
 function LogEntry(props: {
@@ -151,6 +161,23 @@ function SetupFailedEvent(props: {
       <div>
         The depositor did not send the required amount of Bitcoin to the deposit address,
         and the deposit has now timed out.
+      </div>
+      {/*<div style={{color: 'gray', fontSize: '0.9em'}}>*/}
+      {/*  The depositor has 3 hours to send the desired amount of Bitcoins to the address provided by the signers.*/}
+      {/*  Failure to do so, as*/}
+      {/*</div>*/}
+    </>
+  }
+  else if (props.event.reason == 'SIGNER_SETUP_FAILED') {
+    const allSigners = props.event.deposit.bondedECDSAKeep.members.map((s: any) => s.address);
+    const goodSigners = new Set(props.event.deposit.bondedECDSAKeep.pubkeySubmissions.map((s: any) => s.address));
+    const badSigners: string[] = allSigners.filter((s: any) => !goodSigners.has(s));
+
+    content = <>
+      <LogTitle>Failed: Signer Setup</LogTitle>
+      <div>
+        The signers failed to coordinate to provide a Bitcoin deposit address. Specifically, nothing was
+        submitted by the following signer(s): {badSigners.map(address => <Address to={`/operator/${address}`} address={address} />)}
       </div>
       {/*<div style={{color: 'gray', fontSize: '0.9em'}}>*/}
       {/*  The depositor has 3 hours to send the desired amount of Bitcoins to the address provided by the signers.*/}

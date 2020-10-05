@@ -3538,6 +3538,7 @@ export type GetDepositQuery = (
         & Pick<Operator, 'id' | 'address'>
       )>> }
     )> }
+    & NiceStateLabelFragment
   )> }
 );
 
@@ -3588,6 +3589,19 @@ export type GetDepositLogsQuery = (
   ) | (
     { __typename: 'SetupFailedEvent' }
     & Pick<SetupFailedEvent, 'reason' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+    & { deposit?: Maybe<(
+      { __typename?: 'Deposit' }
+      & { bondedECDSAKeep?: Maybe<(
+        { __typename?: 'BondedECDSAKeep' }
+        & { pubkeySubmissions: Array<Maybe<(
+          { __typename?: 'Operator' }
+          & Pick<Operator, 'address'>
+        )>>, members: Array<Maybe<(
+          { __typename?: 'Operator' }
+          & Pick<Operator, 'address'>
+        )>> }
+      )> }
+    )> }
   ) | (
     { __typename: 'StartedLiquidationEvent' }
     & Pick<StartedLiquidationEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
@@ -3671,6 +3685,7 @@ export type GetOperatorQuery = (
           { __typename?: 'BondedECDSAKeep' }
           & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount'>
         )> }
+        & NiceStateLabelFragment
       ) }
     )>> }
   )> }
@@ -3759,9 +3774,10 @@ export const GetDepositDocument = gql`
         address
       }
     }
+    ...NiceStateLabel
   }
 }
-    `;
+    ${NiceStateLabelFragmentDoc}`;
 
 /**
  * __useGetDepositQuery__
@@ -3832,6 +3848,16 @@ export const GetDepositLogsDocument = gql`
     }
     ... on SetupFailedEvent {
       reason
+      deposit {
+        bondedECDSAKeep {
+          pubkeySubmissions {
+            address
+          }
+          members {
+            address
+          }
+        }
+      }
     }
   }
 }
@@ -3997,11 +4023,12 @@ export const GetOperatorDocument = gql`
           id
           totalBondAmount
         }
+        ...NiceStateLabel
       }
     }
   }
 }
-    `;
+    ${NiceStateLabelFragmentDoc}`;
 
 /**
  * __useGetOperatorQuery__
@@ -4126,9 +4153,10 @@ export const GetDeposit = gql`
         address
       }
     }
+    ...NiceStateLabel
   }
 }
-    `;
+    ${NiceStateLabel}`;
 export const WatchDeposit = gql`
     subscription WatchDeposit($id: ID!) {
   deposit(id: $id) {
@@ -4151,6 +4179,16 @@ export const GetDepositLogs = gql`
     }
     ... on SetupFailedEvent {
       reason
+      deposit {
+        bondedECDSAKeep {
+          pubkeySubmissions {
+            address
+          }
+          members {
+            address
+          }
+        }
+      }
     }
   }
 }
@@ -4239,11 +4277,12 @@ export const GetOperator = gql`
           id
           totalBondAmount
         }
+        ...NiceStateLabel
       }
     }
   }
 }
-    `;
+    ${NiceStateLabel}`;
 export const GetOperators = gql`
     query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection) {
   stats: statsRecord(id: "current") {
