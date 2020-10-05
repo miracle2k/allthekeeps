@@ -91,6 +91,15 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0
 });
 
+function getMaxLotSize(capacity: any) {
+  var lots = [10, 5, 1, 0.5, 0.2, 0.1, 0.01]
+  for (var i=0; i<lots.length;i++) {
+    if (capacity * 2 > lots[i]) {
+      return lots[i];
+    }
+  }
+  return 0
+}
 
 export function OperatorsTable(props: {
   data: any,
@@ -109,8 +118,10 @@ export function OperatorsTable(props: {
           # Keeps <InfoTooltip>Number of keeps/deposits this operator is securing.</InfoTooltip>
         </SortableHeader>
       </th>
-      <th>
-        Amount Bonded <InfoTooltip>Collateral backing active deposits.</InfoTooltip>
+      <th>      
+        <SortableHeader fieldId={"bonded"} state={props.sortState}>
+          Amount Bonded <InfoTooltip>Collateral backing active deposits.</InfoTooltip>
+        </SortableHeader>
       </th>
       <th>
         <SortableHeader fieldId={"unboundAvailable"} state={props.sortState}>
@@ -118,7 +129,12 @@ export function OperatorsTable(props: {
         </SortableHeader>
       </th>
       <th>
-        Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
+        <SortableHeader fieldId={"stakedAmount"} state={props.sortState}>
+          Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
+        </SortableHeader>
+      </th>
+      <th>
+        Max Lot Size
       </th>
     </tr>
     </thead>
@@ -127,7 +143,7 @@ export function OperatorsTable(props: {
       const unbound = parseFloat(member.unboundAvailable);
       const total = (unbound + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);
-      const capacityBTC = price?.val ? unbound / 1.5 * price.val : null;
+      const capacityBTC = price?.val ? unbound * price.val : null;
 
       return  <tr key={member.id}>
         <td>
@@ -141,21 +157,24 @@ export function OperatorsTable(props: {
         </td>
         <td>{member.activeKeepCount}<span style={{color: 'gray', fontSize: '0.8em'}}> / {member.totalKeepCount}</span></td>
         <td>
-          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(bonded)}
+          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatterSimple.format(bonded)}
           {" "}
           {total > 0 ? <span style={{color: 'gray', fontSize: '0.8em'}}>
             ({formatterSimple.format(bonded / total * 100)}%)
           </span> : null}
         </td>
         <td>
-          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(unbound)}
+          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatterSimple.format(unbound)}
           {" "}
           {(capacityBTC != null && unbound) ? <span style={{color: 'gray', fontSize: '0.8em'}}>
             (~{formatter.format(capacityBTC)} BTC)
           </span> : null}
         </td>
         <td>
-          <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatter.format(member.stakedAmount)}
+          <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatterSimple.format(member.stakedAmount)}
+        </td>
+        <td>
+          { getMaxLotSize(capacityBTC) } BTC
         </td>
       </tr>
     })}
