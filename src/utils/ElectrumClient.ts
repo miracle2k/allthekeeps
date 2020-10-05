@@ -59,11 +59,14 @@ const { digest } = sha256
  * Uses methods exposed by the [Electrum Protocol](https://electrumx.readthedocs.io/en/stable/protocol.html)
  */
 export default class Client {
+
+  electrumClient: any;
+
   /**
    * Initializes Electrum Client instance with provided configuration.
    * @param {Config} config Electrum client connection configuration.
    */
-  constructor(config) {
+  constructor(config: any) {
     this.electrumClient = new ElectrumClient(
         config.server,
         config.port,
@@ -78,7 +81,7 @@ export default class Client {
   async connect() {
     console.log("Connecting to electrum server...")
 
-    await this.electrumClient.connect("tbtc", "1.4.2").catch(err => {
+    await this.electrumClient.connect("tbtc", "1.4.2").catch((err: any) => {
       throw new Error(`failed to connect: [${err}]`)
     })
   }
@@ -99,7 +102,7 @@ export default class Client {
     // Get header of the latest mined block.
     const header = await this.electrumClient
         .blockchain_headers_subscribe()
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to get block header: [${err}]`)
         })
     return header.height
@@ -110,10 +113,10 @@ export default class Client {
    * @param {string} txHash Hash of a transaction.
    * @return {Promise<TransactionData>} Transaction details.
    */
-  async getTransaction(txHash) {
+  async getTransaction(txHash: any) {
     const tx = await this.electrumClient
         .blockchain_transaction_get(txHash, true)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to get transaction: [${err}]`)
         })
 
@@ -125,10 +128,10 @@ export default class Client {
    * @param {string} rawTX The raw transaction as a hexadecimal string.
    * @return {Promise<string>} The transaction hash as a hexadecimal string.
    */
-  async broadcastTransaction(rawTX) {
+  async broadcastTransaction(rawTX: any) {
     const txHash = await this.electrumClient
         .blockchain_transaction_broadcast(rawTX)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to broadcast transaction: [${err}]`)
         })
 
@@ -155,12 +158,12 @@ export default class Client {
    * @return {Promise<UnspentOutputData[]>} List of unspent outputs. It includes
    *         transactions in the mempool.
    */
-  async getUnspentToScript(script) {
+  async getUnspentToScript(script: any) {
     const scriptHash = scriptToHash(script)
 
     const listUnspent = await this.electrumClient
         .blockchain_scripthash_listunspent(scriptHash)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(JSON.stringify(err))
         })
 
@@ -176,12 +179,12 @@ export default class Client {
    *         the confirmed and unconfirmed BTC balance of the given script as
    *         decimal strings.
    */
-  async getBalanceOfScript(script) {
+  async getBalanceOfScript(script: any) {
     const scriptHash = scriptToHash(script)
 
     const balance = await this.electrumClient
         .blockchain_scripthash_getBalance(scriptHash)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(JSON.stringify(err))
         })
 
@@ -214,13 +217,13 @@ export default class Client {
    *        discontinued.
    * @return {Promise<T>} Value resolved by the callback.
    */
-  async onTransactionToScript(script, callback) {
+  async onTransactionToScript(script: any, callback: any) {
     const scriptHash = scriptToHash(script)
 
     // Check if transaction for script already exists.
     const initialStatus = await this.electrumClient
         .blockchain_scripthash_subscribe(scriptHash)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to subscribe: ${err}`)
         })
 
@@ -231,7 +234,7 @@ export default class Client {
       // support `blockchain.scripthash.unsubscribe` method.
       await this.electrumClient
           .blockchain_scripthash_unsubscribe(scriptHash)
-          .catch(err => {
+          .catch((err: any) => {
             throw new Error(`failed to unsubscribe: ${err}`)
           })
 
@@ -244,7 +247,7 @@ export default class Client {
         const eventName = "blockchain.scripthash.subscribe"
         const electrumClient = this.electrumClient
 
-        const listener = async function(/** @type {[string, string]} */ msg) {
+        const listener = async function(/** @type {[string, string]} */ msg: any) {
           const receivedScriptHash = msg[0]
           const status = msg[1]
 
@@ -259,7 +262,7 @@ export default class Client {
 
               await electrumClient
                   .blockchain_scripthash_unsubscribe(scriptHash)
-                  .catch(err => {
+                  .catch((err: any) => {
                     throw new Error(`failed to unsubscribe: ${err}`)
                   })
 
@@ -300,11 +303,11 @@ export default class Client {
    *        `onNewBlock` and monitoring for new blocks is discontinued.
    * @return {Promise<T>} Value resolved by the callback.
    */
-  async onNewBlock(callback) {
+  async onNewBlock(callback: any) {
     // Subscribe for new block notifications.
     const blockHeader = await this.electrumClient
         .blockchain_headers_subscribe()
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to subscribe: ${err}`)
         })
 
@@ -321,7 +324,7 @@ export default class Client {
         const electrumClient = this.electrumClient
 
         const listener = async function(
-            /** @type {NewBlockData[]} */ messages
+            /** @type {NewBlockData[]} */ messages: any
         ) {
           for (const msg of messages) {
             const height = msg.height
@@ -354,10 +357,10 @@ export default class Client {
    * @param {number} blockHeight Block height.
    * @return {Promise<Buffer>} Merkle root hash.
    */
-  async getMerkleRoot(blockHeight) {
+  async getMerkleRoot(blockHeight: any) {
     const header = await this.electrumClient
         .blockchain_block_header(blockHeight)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to get block header: [${err}]`)
         })
 
@@ -371,10 +374,10 @@ export default class Client {
    * built on the starting block.
    * @return {Promise<string>} Concatenation of block headers in a hexadecimal format.
    */
-  async getHeadersChain(blockHeight, confirmations) {
+  async getHeadersChain(blockHeight: any, confirmations: any) {
     const headersChain = await this.electrumClient
         .blockchain_block_headers(blockHeight, confirmations + 1)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to get block headers: [${err}]`)
         })
     return headersChain.hex
@@ -403,10 +406,10 @@ export default class Client {
    * @return {Promise<TransactionMerkleBranch>} Transaction inclusion proof in
    *         hexadecimal form.
    */
-  async getTransactionMerkle(txHash, blockHeight) {
+  async getTransactionMerkle(txHash: any, blockHeight: any) {
     return /** @type {TransactionMerkleBranch} */ (await this.electrumClient
         .blockchain_transaction_getMerkle(txHash, blockHeight)
-        .catch(err => {
+        .catch((err: any) => {
           throw new Error(`failed to get transaction merkle: [${err}]`)
         }))
   }
@@ -417,8 +420,8 @@ export default class Client {
    * @param {string} address Bitcoin address for the output.
    * @return {Promise<number>} Index of output in the transaction (0-indexed).
    */
-  async findOutputForAddress(txHash, address) {
-    const tx = await this.getTransaction(txHash).catch(err => {
+  async findOutputForAddress(txHash: any, address: any) {
+    const tx = await this.getTransaction(txHash).catch((err: any) => {
       throw new Error(`failed to get transaction: [${err}]`)
     })
 
@@ -440,7 +443,7 @@ export default class Client {
    * @param {string} script The script in raw hexadecimal format.
    * @return {Promise<TransactionData[]>} A list of transactions.
    */
-  async getTransactionsForScript(script) {
+  async getTransactionsForScript(script: any) {
     const scriptHash = scriptToHash(script)
     /** @type {{ height: number, tx_hash: string }[]} */
     const history = await this.electrumClient.blockchain_scripthash_getHistory(
@@ -450,8 +453,8 @@ export default class Client {
     // Get all transactions for script.
     const transactions = await Promise.all(
         history
-            .map(confirmedTx => confirmedTx.tx_hash)
-            .map(txHash => this.getTransaction(txHash))
+            .map((confirmedTx: any) => confirmedTx.tx_hash)
+            .map((txHash: any) => this.getTransaction(txHash))
     )
 
     return transactions
@@ -463,7 +466,7 @@ export default class Client {
  * @param {string} script ScriptPubKey in a hexadecimal format.
  * @return {string} Script hash as a hex string.
  */
-function scriptToHash(script) {
+function scriptToHash(script: any) {
   /** @type {Buffer} */
   const scriptHash = digest(Buffer.from(script, "hex")).reverse()
   return scriptHash.toString("hex")
