@@ -1,12 +1,14 @@
 import React from "react";
 import {css} from "emotion";
-import { Link } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 export function NavigationButton(props: {
   children: any,
   to: string
 }) {
-  return <Link to={props.to} className={css`
+  const isActive = useLocation().pathname == props.to;
+
+  return <Link to={props.to} data-active={isActive ? "true" : ""} className={css`
     padding: 0.5em;    
                
     font-size: 14px;
@@ -26,11 +28,11 @@ export function NavigationButton(props: {
     }
     
     position: relative;
-    &:hover::after {
+    &:hover::after, &[data-active=true]::after {
       content: '';
       position: absolute;
       height: 5px;
-      background: #F4F4F4;
+      background: #48DBB4 /**#F4F4F4**/;
       bottom: 0px;
       left: 0px;
       right: 0px;

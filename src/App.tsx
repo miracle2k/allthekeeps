@@ -108,18 +108,18 @@ export default App;
 
 function Header() {
   return <div className={css`
-    background: #48DBB4;
+    background: #fafafa; /* #48DBB4; */
     border-bottom: 1px #C4C4C4 solid;
     
     display: flex;
     flex-direction: row;
     padding: 0 20px;   
   `}>
-    <strong style={{padding: '20px 20px 20px 0'}}>
-      AllTheKeeps
+    <strong style={{padding: '10px 20px 10px 0'}}>
+      <img src={"/logo.png"} height={40} alt={"AllTheKeeps Logo"} />
     </strong>
 
-    <NavigationButton to={"/"}>
+    <NavigationButton to={"/deposits"}>
       Deposits
     </NavigationButton>
 
