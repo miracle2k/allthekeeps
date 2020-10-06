@@ -1,5 +1,6 @@
 import ElectrumClient from "electrum-client-js"
 import sha256 from "bcrypto/lib/sha256-browser.js"
+import {EventEmitter} from 'events';
 const { digest } = sha256
 
 /**
@@ -53,26 +54,35 @@ const { digest } = sha256
  *           SSL/TLS connections, they are Node `TLSSocket` options.
  */
 
+interface NewBlockData {
+  height: number,
+  hex: string
+}
+
 /**
  * Client to interact with [ElectrumX](https://electrumx.readthedocs.io/en/stable/index.html)
  * server.
  * Uses methods exposed by the [Electrum Protocol](https://electrumx.readthedocs.io/en/stable/protocol.html)
  */
-export default class Client {
+export default class Client extends EventEmitter {
 
-  electrumClient: any;
+  private electrumClient: any;
 
   /**
    * Initializes Electrum Client instance with provided configuration.
    * @param {Config} config Electrum client connection configuration.
    */
   constructor(config: any) {
+    super();
     this.electrumClient = new ElectrumClient(
         config.server,
         config.port,
         config.protocol,
         config.options
-    )
+    );
+
+    this.on('newListener', () => { this.startBlockListening() });
+    this.on('removeListener', () => this.stopBlockListening())
   }
 
   /**
@@ -278,78 +288,38 @@ export default class Client {
     })
   }
 
-  /**
-   * @typedef {object} NewBlockData
-   * @property {number} height The height of the new block.
-   * @property {string} hex The header of the new block as an unprefixed hex
-   *           string.
-   */
-
-  /**
-   * @callback NewBlockReceived
-   * @param {NewBlockData} blockData Data about the newly-seen block.
-   * @return {Promise<T | null>}
-   * @template T
-   */
-
-  /**
-   * Calls a callback for the current block and next mined blocks until the
-   * callback returns a truthy value.
-   *
-   * @template T
-   * @param {NewBlockReceived<T>} callback An async callback function called for
-   *        the current block and when a new block is mined. If the transaction
-   *        returns non-`null`, the returned value is also returned from
-   *        `onNewBlock` and monitoring for new blocks is discontinued.
-   * @return {Promise<T>} Value resolved by the callback.
-   */
-  async onNewBlock(callback: any) {
-    // Subscribe for new block notifications.
-    const blockHeader = await this.electrumClient
-        .blockchain_headers_subscribe()
-        .catch((err: any) => {
-          throw new Error(`failed to subscribe: ${err}`)
-        })
-
-    // Invoke callback for the current block.
-    const result = await callback(blockHeader)
-    if (result) {
-      return result
+  private handleNewBlock = (messages: NewBlockData[]) => {
+    for (const msg of messages) {
+      const height = msg.height
+      console.log(
+          `Received notification of a new block at height: [${height}]`
+      )
+      this.emit('block', msg);
     }
+  }
 
-    // If callback have not resolved wait for new blocks notifications.
-    return new Promise(async resolve => {
+  // This will start listening to onBlock events if we have subscriptions to the onNewBlock event.
+  private startBlockListening() {
+    const eventName = "blockchain.headers.subscribe"
+    const listenerCount = this.listenerCount('block');
+    if (listenerCount == 0) {
       try {
-        const eventName = "blockchain.headers.subscribe"
-        const electrumClient = this.electrumClient
-
-        const listener = async function(
-            /** @type {NewBlockData[]} */ messages: any
-        ) {
-          for (const msg of messages) {
-            const height = msg.height
-
-            console.log(
-                `Received notification of a new block at height: [${height}]`
-            )
-
-            // Invoke callback for the current block.
-            const result = await callback(msg)
-            if (result) {
-              await electrumClient.subscribe.off(eventName, listener)
-
-              return resolve(result)
-            }
-          }
-        }
-
-        this.electrumClient.subscribe.on(eventName, listener)
-
-        console.log(`Registered listener for ${eventName} event`)
-      } catch (err) {
+        this.electrumClient.subscribe.on(eventName, this.handleNewBlock)
+      }
+      catch (err) {
         throw new Error(`failed listening for notification: ${err}`)
       }
-    })
+      console.log(`ElectrumClient: First "block" listener added, subscribing to server's ${eventName}`)
+    }
+  }
+
+  private stopBlockListening() {
+    const eventName = "blockchain.headers.subscribe"
+    const listenerCount = this.listenerCount('block');
+    if (listenerCount == 0) {
+      this.electrumClient.subscribe.off(eventName, this.handleNewBlock)
+      console.log(`ElectrumClient: No "block" listeners, unsubscribing from server's ${eventName}`)
+    }
   }
 
   /**
@@ -467,7 +437,6 @@ export default class Client {
  * @return {string} Script hash as a hex string.
  */
 function scriptToHash(script: any) {
-  /** @type {Buffer} */
   const scriptHash = digest(Buffer.from(script, "hex")).reverse()
   return scriptHash.toString("hex")
 }

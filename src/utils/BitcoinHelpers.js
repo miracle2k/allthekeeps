@@ -10,7 +10,7 @@ import BcoinScript from "bcoin/lib/script/index.js"
 //import { BitcoinSPV } from "./lib/BitcoinSPV.js"
 /** @typedef { import("./lib/BitcoinSPV.js").Proof } Proof */
 //import { BitcoinTxParser } from "./lib/BitcoinTxParser.js"
-import ElectrumClient from "./ElectrumClient.js"
+import ElectrumClient from "./ElectrumClient"
 
 /** @typedef { import("./lib/ElectrumClient.js").Config } ElectrumConfig */
 
@@ -421,9 +421,6 @@ const BitcoinHelpers = {
      *        confirmations to wait before returning.
      * @param {OnReceivedConfirmationHandler} [onReceivedConfirmation] A
      *        callback that fires when a confirmation is seen.
-     *
-     * @return {Promise<number>} A promise to the final number of confirmations
-     *         observed that was at least equal to the required confirmations.
      */
     waitForConfirmations: async function(
         electrumClient,
@@ -431,7 +428,7 @@ const BitcoinHelpers = {
         requiredConfirmations,
         onReceivedConfirmation
     ) {
-      const checkConfirmations = async function() {
+      const checkConfirmations = async function(block) {
         const { confirmations } = await electrumClient.getTransaction(
             transactionID
         )
@@ -445,15 +442,14 @@ const BitcoinHelpers = {
         }
 
         if (confirmations >= requiredConfirmations) {
-          return confirmations
+          electrumClient.off('block', checkConfirmations);
         }
-
-        // Return null if required confirmations have not been reached so we
-        // continue to receive notifications.
-        return null
       }
 
-      return electrumClient.onNewBlock(checkConfirmations)
+      electrumClient.on('block', checkConfirmations)
+      return () => {
+        electrumClient.off('block', checkConfirmations)
+      }
     },
     /**
      * Estimates the fee that would be needed for a given transaction.
