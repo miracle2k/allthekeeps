@@ -110,7 +110,7 @@ function AppInternal() {
 }
 
 function App() {
-  return <SetNetwork network={Network.ROPSTEN}>
+  return <SetNetwork network={Network.MAINNET}>
     <AppInternal />
   </SetNetwork>
 }
