@@ -1,12 +1,7 @@
-import React from 'react';
-import {ApolloProvider, HttpLink, split, useQuery} from '@apollo/client';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
-import { css, cx } from 'emotion'
+import React, {useMemo} from 'react';
+import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split} from '@apollo/client';
+import {BrowserRouter as Router, Route, Switch,} from "react-router-dom";
+import {css} from 'emotion'
 import {Operators} from "./pages/Operators";
 import {Operator} from "./pages/Operator";
 import {Deposits} from "./pages/Deposits";
@@ -17,31 +12,26 @@ import {About} from "./pages/About";
 import {Redirect} from "react-router";
 import {Helmet} from "react-helmet";
 import {Governance} from "./pages/Governance";
-import { UseWalletProvider } from 'use-wallet'
+import {UseWalletProvider} from 'use-wallet'
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
+import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
 
 
-// DEV:
-//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps-ropsten'
-//const uri = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
-// LIVE
-const uri = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+function makeApolloLink(uri: string) {
+  const httpLink = new HttpLink({
+    uri: 'https://' + uri
+  });
 
+  const wsLink = new WebSocketLink({
+    uri: `wss://` + uri,
+    options: {
+      reconnect: true
+    }
+  });
 
-const httpLink = new HttpLink({
-  uri: 'https://' + uri
-});
-
-const wsLink = new WebSocketLink({
-  uri: `wss://` + uri,
-  options: {
-    reconnect: true
-  }
-});
-
-const splitLink = split(
+  return split(
     ({ query }) => {
       const definition = getMainDefinition(query);
       return (
@@ -51,18 +41,34 @@ const splitLink = split(
     },
     wsLink,
     httpLink,
-);
+  );
+}
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: splitLink
-});
+function AppInternal() {
+  const isRopsten = useIsRopsten();
 
-function App() {
+  let url: string;
+  if (isRopsten) {
+    url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps-ropsten';
+  }
+  else {
+    // DEV:
+    //url = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
+    // LIVE
+    url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+  }
+
+  const client = useMemo(() => {
+    return new ApolloClient({
+      cache: new InMemoryCache(),
+      link: makeApolloLink(url)
+    });
+  }, []);
+
   return (
       <ApolloProvider client={client}>
         <UseWalletProvider
-            chainId={1}
+            chainId={isRopsten ? 3 : 1}
         >
           <Router>
             <Header />
@@ -101,6 +107,12 @@ function App() {
         </UseWalletProvider>
       </ApolloProvider>
   );
+}
+
+function App() {
+  return <SetNetwork network={Network.ROPSTEN}>
+    <AppInternal />
+  </SetNetwork>
 }
 
 export default App;

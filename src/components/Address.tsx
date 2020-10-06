@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {css} from "emotion";
 import {ExternalLinkIcon} from "./ExternalLinkIcon";
 import {isVendingMachine} from "../utils/contracts";
+import {useBlockchainBaseUrl, useEtherscanDomain} from "../NetworkContext";
 
 
 export function Address(props: {
@@ -10,6 +11,7 @@ export function Address(props: {
   to?: string,
   includeExternalIcon?: boolean
 }) {
+  const etherscan = useEtherscanDomain();
   let knownAddress: string|undefined;
   if (isVendingMachine(props.address)) {
     knownAddress = 'the Vending Machine'
@@ -17,7 +19,7 @@ export function Address(props: {
 
   return <Hash
     hash={props.address}
-    to={props.to || `https://etherscan.io/address/${props.address}`}
+    to={props.to || `https://${etherscan}/address/${props.address}`}
     includeExternalIcon={props.includeExternalIcon}
     children={knownAddress}
   />
@@ -27,7 +29,8 @@ export function Address(props: {
 export function BitcoinAddress(props: {
   address: string
 }) {
-  return <Address address={props.address} to={`https://www.blockchain.com/btc/address/${props.address}`} />;
+  const baseUrl = useBlockchainBaseUrl();
+  return <Address address={props.address} to={`${baseUrl}/address/${props.address}`} />;
 }
 
 
@@ -37,9 +40,10 @@ export function Transaction(props: {
   includeExternalIcon?: boolean,
   children?: any
 }) {
+  const etherscan = useEtherscanDomain();
   return <Hash
     hash={props.tx}
-    to={props.to || `https://etherscan.io/tx/${props.tx}`}
+    to={props.to || `https://${etherscan}/tx/${props.tx}`}
     includeExternalIcon={props.includeExternalIcon}
     children={props.children}
   />

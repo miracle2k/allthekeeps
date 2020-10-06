@@ -26,6 +26,8 @@ import {Loading} from "../../components/Loading";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {useElectrumClient} from "../../utils/useElectrumClient";
 import {Log} from "./log";
+import {useBlockchainBaseUrl, useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
+import {ethers} from "ethers";
 
 
 const DEPOSIT_QUERY = gql`
@@ -109,6 +111,9 @@ export function Content() {
   let { depositId } = useParams<any>();
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
+  const etherscan = useEtherscanDomain();
+  const blockChainBaseUrl = useBlockchainBaseUrl();
+  const dAppDomain = useDAppDomain();
 
   const btcAddress = data?.deposit.bondedECDSAKeep.publicKey ?
       BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main")
@@ -160,10 +165,10 @@ export function Content() {
                   ? <>{btcTxState?.numConfirmations} confirmations</>
                   : <>waiting for transaction</>
               }
-              <a title={"Open on blockchain.info"} href={
+              <a title={"Open on blockchain.com"} href={
                 btcTxState.transactionHash
-                    ? `https://www.blockchain.com/btc/tx/${btcTxState.transactionHash}`
-                    : `https://www.blockchain.com/btc/address/${btcAddress}`
+                    ? `${blockChainBaseUrl}/tx/${btcTxState.transactionHash}`
+                    : `${blockChainBaseUrl}/address/${btcAddress}`
               } className={css`
                   font-size: 0.8em;
                   padding-left: 0.2em;
@@ -202,7 +207,7 @@ export function Content() {
               hasDepositBeenUsedToMint(data.deposit.tdtToken.owner, data.deposit.currentState)
                   ? <div>
                     This deposit has been used to mint tBTC. The corresponding TDT token is now
-                    owned by the <a href={`https://etherscan.io/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
+                    owned by the <a href={`https://${etherscan}/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
                   </div>
                   : (data.deposit.tdtToken.owner == data.deposit.tdtToken.minter) ? <div>
                     The TDT Token representing ownership over this deposit is owned by the original
@@ -219,13 +224,13 @@ export function Content() {
               color: gray;
             }            
           `}>
-            <a href={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
+            <a href={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
           </div>
 
           {(canBeRedeemedByAnyone) ?
             <div style={{marginTop: 20}}>
               This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange tBTC for the Bitcoin deposited here.</InfoTooltip>
-              <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://dapp.tbtc.network/deposit/${data.deposit.contractAddress}/redeem`}>
+              <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://${dAppDomain}/deposit/${data.deposit.contractAddress}/redeem`}>
                 Redeem
               </Button></div>
             </div>
@@ -251,7 +256,7 @@ export function Content() {
                   {
                     key: 'tokenId',
                     label: "Token ID",
-                    value: <Address address={data.deposit.tdtToken.tokenID} to={`https://etherscan.io/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
+                    value: <Address address={data.deposit.tdtToken.tokenID} to={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
                   },
                   data.deposit.endOfTerm ? {
                     key: 'endOfTerm',
@@ -473,19 +478,13 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
     setConfirmations(confirmations!);
     setInitialized(true);
 
-    confirmations = await BitcoinHelpers.Transaction.waitForConfirmations(
-        client,
-        tx.transactionID,
-        6,
-        ({ transactionID, confirmations, requiredConfirmations }) => {
-          // Stop watching by returning a positive value.
-          if (cancelToken.set) {
-            return true;
-          }
-        });
-    if (cancelToken.set) { return; }
-
-    setConfirmations(confirmations);
+    return BitcoinHelpers.Transaction.waitForConfirmations(
+      client,
+      tx.transactionID,
+      6,
+      ({ transactionID, confirmations, requiredConfirmations }) => {
+        setConfirmations(confirmations);
+      });
   }, [address, lotSizeSatoshis, setConfirmations, setTxHash, client]);
 
   useEffect(() => {
@@ -493,10 +492,15 @@ function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: 
       return;
     }
 
-    const cancelToken = {set: false};
-    waitForTxAndConfirmations(cancelToken);
+    const cancelToken: any = {set: false, unsubscribe: null};
+    waitForTxAndConfirmations(cancelToken).then(unsubscribe => {
+      cancelToken.unsubscribe = unsubscribe;
+    });
     return () => {
       cancelToken.set = true;
+      if (cancelToken.unsubscribe) {
+        cancelToken.unsubscribe();
+      }
     }
   }, [address, lotSizeSatoshis, client]);
 

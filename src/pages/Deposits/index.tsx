@@ -6,6 +6,7 @@ import { Button } from "../../design-system/Button";
 import Dropdown from "react-dropdown-aria";
 import {DropdownStyle, ExtraState} from "react-dropdown-aria/dist/utils/types";
 import { css } from "emotion";
+import {useDAppDomain} from "../../NetworkContext";
 
 
 // See: https://github.com/jfangrad/react-dropdown-aria/blob/68e730d1ba8894ded9ee6cfb665c7aabf985d1dc/packages/react-dropdown-aria/styles/index.ts
@@ -79,6 +80,7 @@ const style: DropdownStyle = {
 
 export function Deposits() {
   const [view, setView] = useState("all");
+  const dAppDomain = useDAppDomain();
 
   return  <div style={{padding: '20px'}}>
     <Helmet>
@@ -87,7 +89,7 @@ export function Deposits() {
 
     <div style={{marginBottom: '20px', display: 'flex', alignItems: 'center'}}>
       <h1 style={{marginTop: 0, marginBottom: '0px'}}>Deposits</h1> &nbsp;&nbsp;&nbsp;
-      <Button size={"tiny"} to={"https://dapp.tbtc.network/deposit"}>Make</Button>
+      <Button size={"tiny"} to={`https://${dAppDomain}/deposit`}>Make</Button>
     </div>
 
     <Paper padding>

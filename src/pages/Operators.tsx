@@ -10,6 +10,7 @@ import {SortableHeader, SortState, Table, useSort} from "../components/Table";
 import {usePriceFeed} from "../components/PriceFeed";
 import {Box} from "../components/Box";
 import {GetOperatorsQuery} from "../generated/graphql";
+import {useEtherscanDomain} from "../NetworkContext";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -106,6 +107,7 @@ export function OperatorsTable(props: {
   sortState: SortState,
 }) {
   const {data} = props;
+  const etherscan = useEtherscanDomain();
   const price = usePriceFeed();
 
   return <Table
@@ -148,7 +150,7 @@ export function OperatorsTable(props: {
       return  <tr key={member.id}>
         <td>
           <Address address={member.address} to={`/operator/${member.address}`} />
-          <a title={"Open on Etherscan"} href={`https://etherscan.io/address/${member.address}`} className={css`
+          <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${member.address}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;
                `}>

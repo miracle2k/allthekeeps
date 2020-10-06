@@ -18,6 +18,7 @@ import { Box } from "../components/Box";
 import {CollaterizationStatusWithPrice} from "../components/CollateralizationStatus";
 import {usePriceFeed} from "../components/PriceFeed";
 import { Table } from "../components/Table";
+import {useEtherscanDomain} from "../NetworkContext";
 
 
 const OPERATOR_QUERY = gql`
@@ -141,6 +142,7 @@ export function KeepsTable(props: {
 }) {
   const [source, target] = useSingleton();
   const price = usePriceFeed();
+  const etherscan = useEtherscanDomain();
 
   // const totalActive = props.keeps.filter((keep: any) => {
   //   return (
@@ -181,7 +183,7 @@ export function KeepsTable(props: {
             <Link to={`/deposit/${deposit.id}`}>
               {deposit.contractAddress}
             </Link>
-            <a title={"Open on Etherscan"} href={`https://etherscan.io/address/${deposit.contractAddress}`} className={css`
+            <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;
                `}>

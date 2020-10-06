@@ -14,6 +14,7 @@ import {CollaterizationStatusWithPrice} from "../../components/Collateralization
 import {usePriceFeed} from "../../components/PriceFeed";
 import { Table } from "../../components/Table";
 import {DateTime} from "luxon";
+import {useEtherscanDomain} from "../../NetworkContext";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter) {
@@ -66,6 +67,7 @@ export function DepositsTable(props: {
   const { loading, error, data } = useQuery(DEPOSITS_QUERY, {variables: {where: where}});
   const [source, target] = useSingleton();
   const price = usePriceFeed();
+  const etherscan = useEtherscanDomain();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
@@ -99,7 +101,7 @@ export function DepositsTable(props: {
             <Link to={`/deposit/${deposit.id}`}>
               {deposit.contractAddress}
             </Link>
-            <a title={"Open on Etherscan"} href={`https://etherscan.io/address/${deposit.contractAddress}`} className={css`
+            <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;
                `}>
