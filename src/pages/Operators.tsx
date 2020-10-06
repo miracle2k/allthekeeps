@@ -132,7 +132,7 @@ export function OperatorsTable(props: {
       </th>
       <th>
         <SortableHeader fieldId={"stakedAmount"} state={props.sortState}>
-          Amount Staked <InfoTooltip>To stake will be seized in case of fraud.</InfoTooltip>
+          Amount Staked <InfoTooltip>The stake will be seized in case of fraud.</InfoTooltip>
         </SortableHeader>
       </th>
       <th>
