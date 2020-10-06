@@ -1,5 +1,5 @@
 import {gql, useQuery, useSubscription} from "@apollo/client";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../../components/FormattedTime";
@@ -24,10 +24,10 @@ import {Button} from "../../design-system/Button";
 import {useWallet} from 'use-wallet'
 import {Loading} from "../../components/Loading";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
-import {useElectrumClient} from "../../utils/useElectrumClient";
 import {Log} from "./log";
 import {useBlockchainBaseUrl, useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
-import {ethers} from "ethers";
+import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
+import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 
 
 const DEPOSIT_QUERY = gql`
@@ -115,9 +115,7 @@ export function Content() {
   const blockChainBaseUrl = useBlockchainBaseUrl();
   const dAppDomain = useDAppDomain();
 
-  const btcAddress = data?.deposit.bondedECDSAKeep.publicKey ?
-      BitcoinHelpers.Address.publicKeyToP2WPKHAddress(data.deposit.bondedECDSAKeep.publicKey.slice(2), "main")
-      : "";
+  const btcAddress = useBtcAddressFromPublicKey(data?.deposit.bondedECDSAKeep.publicKey);
   const shouldShowConfirmationInfo = data?.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
   const btcTxState = useBitcoinTxState(btcAddress, parseInt(data?.deposit.lotSizeSatoshis), shouldShowConfirmationInfo)
 
@@ -443,75 +441,3 @@ function PropertyTable(props: {
       </tbody>
     </table>
 }
-
-
-// A bug:
-// - first findScript() does return null even though findorWaitfor() finds one.
-function useBitcoinTxState(address: string, lotSizeSatoshis: number, isEnabled: boolean) {
-  const client = useElectrumClient();
-  const [txHash, setTxHash] = useState("");
-  const [isInitialized, setInitialized] = useState(false);
-  const [confirmations, setConfirmations] = useState(0);
-
-  const waitForTxAndConfirmations = useCallback(async (cancelToken: {set: boolean}) => {
-    let tx = await BitcoinHelpers.Transaction.findWithClient(client!, address, lotSizeSatoshis);
-    if (cancelToken.set) { return; }
-
-    if (!tx) {
-      setInitialized(true);
-
-      // Would be much nicer to get a cancel token from those helper functions
-      tx = await BitcoinHelpers.Transaction.findOrWaitFor(
-          client,
-          address,
-          lotSizeSatoshis
-      )
-    }
-    if (cancelToken.set) { return; }
-
-    setTxHash(tx.transactionID);
-
-    // Now ensure we have enough confirmations
-    let confirmations = await BitcoinHelpers.Transaction.checkForConfirmations(client, tx.transactionID, 0);
-    if (cancelToken.set) { return; }
-
-    setConfirmations(confirmations!);
-    setInitialized(true);
-
-    return BitcoinHelpers.Transaction.waitForConfirmations(
-      client,
-      tx.transactionID,
-      6,
-      ({ transactionID, confirmations, requiredConfirmations }) => {
-        setConfirmations(confirmations);
-      });
-  }, [address, lotSizeSatoshis, setConfirmations, setTxHash, client]);
-
-  useEffect(() => {
-    if (!address || !lotSizeSatoshis || !isEnabled || !client) {
-      return;
-    }
-
-    const cancelToken: any = {set: false, unsubscribe: null};
-    waitForTxAndConfirmations(cancelToken).then(unsubscribe => {
-      cancelToken.unsubscribe = unsubscribe;
-    });
-    return () => {
-      cancelToken.set = true;
-      if (cancelToken.unsubscribe) {
-        cancelToken.unsubscribe();
-      }
-    }
-  }, [address, lotSizeSatoshis, client]);
-
-  // isInitialized makes sure we do not return "no tx" if we really don't know yet.
-  return isInitialized ? {
-    hasTransaction: !!txHash,
-    transactionHash: txHash,
-    numConfirmations: confirmations
-  } : null;
-}
-
-// TODO: This would happen multiple times if a fee increase is requested via increaseRedemptionFee()
-
-

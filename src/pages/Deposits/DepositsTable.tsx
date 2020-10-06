@@ -15,6 +15,8 @@ import {usePriceFeed} from "../../components/PriceFeed";
 import { Table } from "../../components/Table";
 import {DateTime} from "luxon";
 import {useEtherscanDomain} from "../../NetworkContext";
+import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
+import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter) {
@@ -43,7 +45,8 @@ const DEPOSITS_QUERY = gql`
             severelyUndercollateralizedThresholdPercent,
             bondedECDSAKeep {
                 id,
-                totalBondAmount
+                totalBondAmount,
+                publicKey
             }
             
             ...NiceStateLabel
@@ -131,7 +134,7 @@ export function DepositsTable(props: {
             }
             {getNiceStateLabel(deposit)}
 
-            {/* warning sign if it can be redeemed by anyone (at-term or courtesy call */}
+            <FundingStatus deposit={deposit}/>
           </td>
           <td>
             <CollaterizationStatusWithPrice deposit={deposit} price={price} />
@@ -141,4 +144,17 @@ export function DepositsTable(props: {
       </tbody>
     </Table>
   </>;
+}
+
+function FundingStatus(props: {
+  deposit: any
+}) {
+  const btcAddress = useBtcAddressFromPublicKey(props.deposit.bondedECDSAKeep.publicKey);
+  const isEnabled = !!btcAddress && props.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF'
+  const state = useBitcoinTxState(btcAddress, props.deposit.lotSizeSatoshis ?? 0, isEnabled);
+  return isEnabled ? <>
+    {state?.hasTransaction ? <>
+      <span style={{color: 'silver', fontSize: '.8em', paddingLeft: '5px'}}>({state.numConfirmations}/6)</span>
+    </>: null}
+  </> : null;
 }

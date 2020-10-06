@@ -90,8 +90,7 @@ export default class Client extends EventEmitter {
    */
   async connect() {
     console.log("Connecting to electrum server...")
-
-    await this.electrumClient.connect("tbtc", "1.4.2").catch((err: any) => {
+    return await this.electrumClient.connect("tbtc", "1.4.2").catch((err: any) => {
       throw new Error(`failed to connect: [${err}]`)
     })
   }

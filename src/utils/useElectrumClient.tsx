@@ -17,14 +17,24 @@ BitcoinHelpers.setElectrumConfig({
 const State: {
   refCount: number,
   state: 'connecting'|'connected'|'disconnected',
-  client: ElectrumClient|null
+  connectingPromise: Promise<any>|null,
+  client: ElectrumClient|null,
+  scheduledDisconnect?: number
 } = {
   refCount: 0,
   state: 'disconnected',
-  client: null
+  client: null,
+  connectingPromise: null
 }
 
-async function acquireInstance() {
+/**
+ * Will return the current connection, or start a new one if necessary.
+ */
+async function acquireConnection() {
+  if (State.scheduledDisconnect) {
+    window.clearTimeout(State.scheduledDisconnect);
+  }
+
   if (!State.client) {
     if (BitcoinHelpers.electrumConfig === null) {
       throw new Error("Electrum client not configured.")
@@ -37,20 +47,30 @@ async function acquireInstance() {
   // Connect the first time
   if (State.state === 'disconnected') {
     State.state = 'connecting';
-    await State.client.connect();
-    State.state = 'connected';
+    State.connectingPromise = State.client.connect();
+  }
+
+  if (State.state === 'connecting') {
+    await State.connectingPromise;
+    if (State.state === 'connecting') {
+      State.state = 'connected';
+    }
   }
 
   return State.client;
 }
 
 
-function releaseInstance() {
+function releaseConnection() {
   State.refCount -= 1;
 
   if (State.refCount == 0) {
-    State.client?.close();
-    State.state = 'disconnected';
+    State.scheduledDisconnect = window.setTimeout(() => {
+      // TODO: It seems if you try to reconnect immediately after this, it will not work. Enforce a timeout.
+      State.client?.close();
+      State.state = 'disconnected';
+      State.scheduledDisconnect = undefined;
+    }, 10000);
   }
 }
 
@@ -59,11 +79,11 @@ export function useElectrumClient() {
   const [client, setClient] = useState<null|ElectrumClient>(null);
 
   useEffect(() => {
-    acquireInstance().then(client => {
+    acquireConnection().then(client => {
       setClient(client);
     });
     return () => {
-      releaseInstance();
+      releaseConnection();
     }
   }, [])
 
