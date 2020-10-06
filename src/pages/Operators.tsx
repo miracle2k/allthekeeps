@@ -95,7 +95,7 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
 function getMaxLotSize(capacity: any) {
   var lots = [10, 5, 1, 0.5, 0.2, 0.1, 0.01]
   for (var i=0; i<lots.length;i++) {
-    if (capacity * 2 > lots[i]) {
+    if (capacity > lots[i]) {
       return lots[i];
     }
   }
@@ -145,7 +145,7 @@ export function OperatorsTable(props: {
       const unbound = parseFloat(member.unboundAvailable);
       const total = (unbound + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);
-      const capacityBTC = price?.val ? unbound * price.val : null;
+      const capacityBTC = price?.val ? (unbound / 1.5 * 3) * price.val : null;
 
       return  <tr key={member.id}>
         <td>
