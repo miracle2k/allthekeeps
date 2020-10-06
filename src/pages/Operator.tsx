@@ -29,6 +29,8 @@ const OPERATOR_QUERY = gql`
             bonded,
             unboundAvailable,
             stakedAmount,
+            totalFaultCount,
+            attributableFaultCount,
             keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
                 # TODO: How much is bonded in this keep for this operator?
@@ -124,6 +126,14 @@ export function Content() {
       <Box label={"staked"}>
         <div>
           {formatter.format(data.operator.stakedAmount)} KEEP
+        </div>
+      </Box>
+
+      <Box label={"faults"} tooltip={"How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault."}>
+        <div>
+          {data.operator.attributableFaultCount > 0 ? <>
+            {data.operator.attributableFaultCount} / </> : null}
+          {data.operator.totalFaultCount}
         </div>
       </Box>
     </div>

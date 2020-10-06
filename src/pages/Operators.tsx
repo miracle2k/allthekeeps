@@ -28,7 +28,9 @@ const OPERATOR_QUERY = gql`
             unboundAvailable,
             totalKeepCount,
             activeKeepCount,
-            stakedAmount
+            stakedAmount,
+            totalFaultCount,
+            attributableFaultCount,
         }
     }
 `;
@@ -92,16 +94,6 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0
 });
 
-function getMaxLotSize(capacity: any) {
-  var lots = [10, 5, 1, 0.5, 0.2, 0.1, 0.01]
-  for (var i=0; i<lots.length;i++) {
-    if (capacity > lots[i]) {
-      return lots[i];
-    }
-  }
-  return 0
-}
-
 export function OperatorsTable(props: {
   data: any,
   sortState: SortState,
@@ -136,7 +128,9 @@ export function OperatorsTable(props: {
         </SortableHeader>
       </th>
       <th>
-        Max Lot Size
+        <SortableHeader fieldId={"totalFaultCount"} state={props.sortState}>
+          Faults <InfoTooltip>How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault.</InfoTooltip>
+        </SortableHeader>
       </th>
     </tr>
     </thead>
@@ -176,7 +170,9 @@ export function OperatorsTable(props: {
           <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatterSimple.format(member.stakedAmount)}
         </td>
         <td>
-          { getMaxLotSize(capacityBTC) } BTC
+          {member.attributableFaultCount > 0 ? <>
+            {member.attributableFaultCount} / </> : null}
+          {member.totalFaultCount || ""}
         </td>
       </tr>
     })}
