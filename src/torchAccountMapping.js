@@ -20,4 +20,15 @@ export const TorchMapping = {
     '0x2ec7947f3ac9aaaa44b53640506cdc9d848d9489': 'https://twitter.com/skumbagt/status/1312108592737083392',
     '0xa483cda2b861bf47b1fbdc4e79cb58e843d2b1ca': 'https://twitter.com/kferretcrypto/status/1312147841679122434',
     '0xf90e729c01a5116cf0925c155b70dfb97d15e457': 'https://twitter.com/Fendimannn/status/1312194276105703424',
+    '0x3b16821a5dbbff86e4a88ea0621ec6be016cd79a': 'https://twitter.com/drakefjustin/status/1312659960552198144',
+    '0x1db3439a222c519ab44bb1144fc28167b4fa6ee6': 'https://twitter.com/VitalikButerin/status/1312659953098784768',
+    '0xd334741d0766b257b18f2d058e844e17e346a0c1': 'https://twitter.com/CarlBeek/status/1312712765530951680', 
+    '0xd45a8f8bb4463e62a39ce6359ee6ac5c2c942cae': 'https://twitter.com/twfhyr/status/1312727780337967107',
+    '0x69fe53eb3791dd135f71157b660c66caeff648f5': 'https://twitter.com/smart_wallet_1/status/1312766730721132545',
+    '0x8da1dbeca9f637fd5ee5d44a017b2e54ed235255': 'https://twitter.com/fishkiller/status/1312767380360032261',
+    '0xbc8dafeaca658ae0857c80d8aa6de4d487577c63': 'https://twitter.com/Victor928/status/1312929347095781376',
+    '0x358a906ca407a35de33b930aa7cf49a301a4def1': 'https://twitter.com/kevingaspar/status/1312944589268021248',
+    '0xa6a55c2699ea8ce97eedefdfbb24027e64943825': 'https://twitter.com/jay_loopring/status/1313030919532376070',
+    '0x2708ea0287dee1bdb6d09d8efbbae12bae78070c': 'https://twitter.com/fintie/status/1313101867837079552',
+
 }
