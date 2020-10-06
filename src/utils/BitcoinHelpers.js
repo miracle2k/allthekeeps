@@ -367,7 +367,6 @@ const BitcoinHelpers = {
       // invoked when an existing or a new transaction is found.
       const checkTransactions = async function(/** @type {string?} */ status) {
         // If the status is set, transactions were seen for the script.
-        console.log('handle Transaction for ' + bitcoinAddress + ": " + status)
         if (status) {
           return BitcoinHelpers.Transaction.findWithClient(
               electrumClient,

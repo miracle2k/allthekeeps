@@ -4,7 +4,7 @@ import {Address, BitcoinAddress, Transaction} from "../../components/Address";
 import React from "react";
 import BitcoinHelpers from "../../utils/BitcoinHelpers";
 import {useQuery} from "@apollo/client";
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 import {GetDepositLogsQuery} from "../../generated/graphql";
 
 export function Log(props: {
@@ -24,6 +24,10 @@ export function Log(props: {
                   signingGroupPubkeyX,
                   signingGroupPubkeyY
               }
+              
+              ...on StartedLiquidationEvent {
+                  cause
+              },
 
               ...on SetupFailedEvent {
                   reason,
@@ -127,19 +131,41 @@ function FundedEvent(props: {
 function RedemptionRequestedEvent(props: {
   event: any
 }) {
-
   return <div>
     <LogTitle>Redemption Requested</LogTitle>
     <div>
+
     </div>
   </div>
+}
+
+export function getLiquidationCauseAsString(cause: string) {
+  return ({
+    'FRAUD': 'Signer Fraud',
+    'PROOF_TIMEOUT': 'Signer Timeout',
+    'SIGNATURE_TIMEOUT': 'Signer Timeout',
+    'UNDERCOLLATERIZED': 'Undercollaterialized'
+  } as any)[cause] || cause;
 }
 
 function StartedLiquidationEvent(props: {
   event: any
 }) {
+  const {cause} = props.event;
+  const title: string = getLiquidationCauseAsString(cause);
+
+  const description: string = ({
+    'FRAUD': 'One of the signers submitted a fraudulent signature.',
+    'PROOF_TIMEOUT': 'The signing group failed to submit proof that their transaction, releasing the deposited Bitcoin, was included in the blockchain.',
+    'SIGNATURE_TIMEOUT': 'The signing group failed to provide a signature for a transaction releasing the Bitcoin.',
+    'UNDERCOLLATERIZED': 'The deposit became undercollateralized due to the value of the backing ETH bond falling.'
+  } as any)[cause];
+
   return <div>
-    <LogTitle>Liquidation Started</LogTitle>
+    <LogTitle>Liquidation Started: {title}</LogTitle>
+    <div>
+      {description}
+    </div>
   </div>
 }
 

@@ -414,7 +414,7 @@ export type DepositLiquidation = {
   isLiquidated: Scalars['Boolean'];
   liquidatedAt?: Maybe<Scalars['BigInt']>;
   liquidationInitiator?: Maybe<Scalars['Bytes']>;
-  wasFraud?: Maybe<Scalars['Boolean']>;
+  cause?: Maybe<LiquidationCause>;
 };
 
 export type DepositLiquidation_Filter = {
@@ -486,10 +486,8 @@ export type DepositLiquidation_Filter = {
   liquidationInitiator_not_in?: Maybe<Array<Scalars['Bytes']>>;
   liquidationInitiator_contains?: Maybe<Scalars['Bytes']>;
   liquidationInitiator_not_contains?: Maybe<Scalars['Bytes']>;
-  wasFraud?: Maybe<Scalars['Boolean']>;
-  wasFraud_not?: Maybe<Scalars['Boolean']>;
-  wasFraud_in?: Maybe<Array<Scalars['Boolean']>>;
-  wasFraud_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  cause?: Maybe<LiquidationCause>;
+  cause_not?: Maybe<LiquidationCause>;
 };
 
 export enum DepositLiquidation_OrderBy {
@@ -502,7 +500,7 @@ export enum DepositLiquidation_OrderBy {
   IsLiquidated = 'isLiquidated',
   LiquidatedAt = 'liquidatedAt',
   LiquidationInitiator = 'liquidationInitiator',
-  WasFraud = 'wasFraud'
+  Cause = 'cause'
 }
 
 export type DepositRedemption = {
@@ -1697,6 +1695,13 @@ export enum LiquidatedEvent_OrderBy {
   Deposit = 'deposit'
 }
 
+export enum LiquidationCause {
+  Fraud = 'FRAUD',
+  Undercollaterized = 'UNDERCOLLATERIZED',
+  SignatureTimeout = 'SIGNATURE_TIMEOUT',
+  ProofTimeout = 'PROOF_TIMEOUT'
+}
+
 /** A lock on an operator stake. */
 export type Lock = {
   __typename?: 'Lock';
@@ -1776,6 +1781,12 @@ export type Operator = {
   totalKeepCount: Scalars['Int'];
   activeKeepCount: Scalars['Int'];
   stakedAmount: Scalars['BigDecimal'];
+  /** How often this operator was involved in a fault, attributable to them. */
+  attributableFaultCount: Scalars['Int'];
+  /** How often this operator was involved in a fault, attributable to them. */
+  involvedInFaultCount: Scalars['Int'];
+  /** How often this operator was involved in a fault, either attributable or not. */
+  totalFaultCount: Scalars['Int'];
 };
 
 
@@ -1908,6 +1919,30 @@ export type Operator_Filter = {
   stakedAmount_lte?: Maybe<Scalars['BigDecimal']>;
   stakedAmount_in?: Maybe<Array<Scalars['BigDecimal']>>;
   stakedAmount_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  attributableFaultCount?: Maybe<Scalars['Int']>;
+  attributableFaultCount_not?: Maybe<Scalars['Int']>;
+  attributableFaultCount_gt?: Maybe<Scalars['Int']>;
+  attributableFaultCount_lt?: Maybe<Scalars['Int']>;
+  attributableFaultCount_gte?: Maybe<Scalars['Int']>;
+  attributableFaultCount_lte?: Maybe<Scalars['Int']>;
+  attributableFaultCount_in?: Maybe<Array<Scalars['Int']>>;
+  attributableFaultCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  involvedInFaultCount?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_not?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_gt?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_lt?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_gte?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_lte?: Maybe<Scalars['Int']>;
+  involvedInFaultCount_in?: Maybe<Array<Scalars['Int']>>;
+  involvedInFaultCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  totalFaultCount?: Maybe<Scalars['Int']>;
+  totalFaultCount_not?: Maybe<Scalars['Int']>;
+  totalFaultCount_gt?: Maybe<Scalars['Int']>;
+  totalFaultCount_lt?: Maybe<Scalars['Int']>;
+  totalFaultCount_gte?: Maybe<Scalars['Int']>;
+  totalFaultCount_lte?: Maybe<Scalars['Int']>;
+  totalFaultCount_in?: Maybe<Array<Scalars['Int']>>;
+  totalFaultCount_not_in?: Maybe<Array<Scalars['Int']>>;
 };
 
 export enum Operator_OrderBy {
@@ -1924,7 +1959,10 @@ export enum Operator_OrderBy {
   UnboundAvailable = 'unboundAvailable',
   TotalKeepCount = 'totalKeepCount',
   ActiveKeepCount = 'activeKeepCount',
-  StakedAmount = 'stakedAmount'
+  StakedAmount = 'stakedAmount',
+  AttributableFaultCount = 'attributableFaultCount',
+  InvolvedInFaultCount = 'involvedInFaultCount',
+  TotalFaultCount = 'totalFaultCount'
 }
 
 export enum OrderDirection {
@@ -2844,7 +2882,8 @@ export type StartedLiquidationEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
-  wasFraud: Scalars['Boolean'];
+  /** The cause of this deposit going into liquidation */
+  cause?: Maybe<LiquidationCause>;
 };
 
 export type StartedLiquidationEvent_Filter = {
@@ -2898,10 +2937,8 @@ export type StartedLiquidationEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
-  wasFraud?: Maybe<Scalars['Boolean']>;
-  wasFraud_not?: Maybe<Scalars['Boolean']>;
-  wasFraud_in?: Maybe<Array<Scalars['Boolean']>>;
-  wasFraud_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  cause?: Maybe<LiquidationCause>;
+  cause_not?: Maybe<LiquidationCause>;
 };
 
 export enum StartedLiquidationEvent_OrderBy {
@@ -2910,7 +2947,7 @@ export enum StartedLiquidationEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
-  WasFraud = 'wasFraud'
+  Cause = 'cause'
 }
 
 export type StatsRecord = {
@@ -3604,7 +3641,7 @@ export type GetDepositLogsQuery = (
     )> }
   ) | (
     { __typename: 'StartedLiquidationEvent' }
-    & Pick<StartedLiquidationEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+    & Pick<StartedLiquidationEvent, 'cause' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   )> }
 );
 
@@ -3623,7 +3660,7 @@ export type GetDepositsQuery = (
       & Pick<TbtcDepositToken, 'owner'>
     ), bondedECDSAKeep?: Maybe<(
       { __typename?: 'BondedECDSAKeep' }
-      & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount'>
+      & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount' | 'publicKey'>
     )> }
     & NiceStateLabelFragment
   )> }
@@ -3846,6 +3883,9 @@ export const GetDepositLogsDocument = gql`
       signingGroupPubkeyX
       signingGroupPubkeyY
     }
+    ... on StartedLiquidationEvent {
+      cause
+    }
     ... on SetupFailedEvent {
       reason
       deposit {
@@ -3905,6 +3945,7 @@ export const GetDepositsDocument = gql`
     bondedECDSAKeep {
       id
       totalBondAmount
+      publicKey
     }
     ...NiceStateLabel
   }
@@ -4177,6 +4218,9 @@ export const GetDepositLogs = gql`
       signingGroupPubkeyX
       signingGroupPubkeyY
     }
+    ... on StartedLiquidationEvent {
+      cause
+    }
     ... on SetupFailedEvent {
       reason
       deposit {
@@ -4210,6 +4254,7 @@ export const GetDeposits = gql`
     bondedECDSAKeep {
       id
       totalBondAmount
+      publicKey
     }
     ...NiceStateLabel
   }

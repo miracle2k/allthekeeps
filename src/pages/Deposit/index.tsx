@@ -6,7 +6,7 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {css} from "emotion";
 import {Address, BitcoinAddress} from "../../components/Address";
 import {Paper} from "../../design-system/Paper";
-import {getNiceStateLabel, getStateTooltip, NiceStateLabel} from "../../utils/depositStates";
+import {NiceStateLabel} from "../../utils/depositStates";
 import {
   getTDTTokenAddress,
   getVendingMachineAddress,
@@ -14,20 +14,15 @@ import {
   isVendingMachine,
 } from "../../utils/contracts";
 import {InfoTooltip} from "../../components/InfoTooltip";
-import {TBTCIcon} from "../../design-system/tbtcIcon";
 import {Helmet} from "react-helmet";
-import BitcoinHelpers from "../../utils/BitcoinHelpers";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import {CollaterizationStatus} from "../../components/CollateralizationStatus";
 import {Box} from "../../components/Box";
 import {Button} from "../../design-system/Button";
-import {useWallet} from 'use-wallet'
-import {Loading} from "../../components/Loading";
-import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {Log} from "./log";
-import {useBlockchainBaseUrl, useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
-import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
+import {useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
+import {StatusBox} from "./StatusBox";
 
 
 const DEPOSIT_QUERY = gql`
@@ -40,8 +35,7 @@ const DEPOSIT_QUERY = gql`
             keepAddress,
             lotSizeSatoshis,
             endOfTerm,
-
-            tbtcSystem,
+            
             tdtToken {
                 id,
                 tokenID,
@@ -65,6 +59,10 @@ const DEPOSIT_QUERY = gql`
                     address
                 }
             },
+            
+            depositLiquidation {
+                cause
+            }
             
             ...NiceStateLabel
         }
@@ -100,24 +98,14 @@ export function Deposit() {
 }
 
 
-const depositAbi = [
-  "function notifyFundingTimedOut()",
-  "function notifySignerSetupFailed()"
-];
-
-
-
 export function Content() {
   let { depositId } = useParams<any>();
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
   const etherscan = useEtherscanDomain();
-  const blockChainBaseUrl = useBlockchainBaseUrl();
   const dAppDomain = useDAppDomain();
 
   const btcAddress = useBtcAddressFromPublicKey(data?.deposit.bondedECDSAKeep.publicKey);
-  const shouldShowConfirmationInfo = data?.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
-  const btcTxState = useBitcoinTxState(btcAddress, parseInt(data?.deposit.lotSizeSatoshis), shouldShowConfirmationInfo)
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
@@ -138,46 +126,7 @@ export function Content() {
         {getSatoshisAsBitcoin(data.deposit.lotSizeSatoshis)} BTC
       </Box>
 
-      <Box label={"state"}>
-        <div>
-          {getNiceStateLabel(data.deposit)} {getStateTooltip(data.deposit.currentState)
-            ? <span className={css`position: relative; top: -0.5em; font-size: 0.6em;`}><InfoTooltip>{getStateTooltip(data.deposit.currentState)}</InfoTooltip></span>
-            : null}
-        </div>
-        {
-          hasDepositBeenUsedToMint(data.deposit.tdtToken.owner, data.deposit.currentState)
-              ? <div className={css`
-                  font-size: 0.6em;
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-              ` }>
-                <TBTCIcon /> <span style={{paddingLeft: 5}}>tBTC minted</span>
-                </div>
-              : null
-        }
-        {
-          <div style={{lineHeight: 1, alignItems: 'center', display: 'flex', flexDirection: 'row'}}>
-            {(shouldShowConfirmationInfo && btcTxState) ? <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
-              {btcTxState.hasTransaction
-                  ? <>{btcTxState?.numConfirmations} confirmations</>
-                  : <>waiting for transaction</>
-              }
-              <a title={"Open on blockchain.com"} href={
-                btcTxState.transactionHash
-                    ? `${blockChainBaseUrl}/tx/${btcTxState.transactionHash}`
-                    : `${blockChainBaseUrl}/address/${btcAddress}`
-              } className={css`
-                  font-size: 0.8em;
-                  padding-left: 0.2em;
-                 `}>
-                <ExternalLinkIcon />
-              </a> <span style={{fontSize: 12}}><Loading /></span>
-            </span> : null}
-            <NotifyButton data={data} />
-          </div>
-        }
-      </Box>
+      <StatusBox deposit={data.deposit} />
 
       <Box label={"creation date"}>
         <TimeToNow time={data.deposit.createdAt} />
@@ -355,58 +304,6 @@ export function Content() {
   </div>
 }
 
-
-function NotifyButton(props: {
-  data: any
-}) {
-  const wallet = useWallet()
-  const data = props.data;
-  const [isBusy, setBusy] = useState(false);
-
-  let func: string;
-  if (data.deposit.currentState == 'AWAITING_SIGNER_SETUP') {
-    func = 'notifySignerSetupFailed';
-  } else if (data.deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF') {
-    func = 'notifyFundingTimedOut';
-  }
-  else {
-    return null;
-  }
-
-  return <Button size={"tiny"} onClick={async () => {
-    setBusy(true)
-    try {
-      const ethers = await import("ethers");
-
-      // This is what shoes the metamask popup (could support different providers)
-      // await returns only when the user took action, but unfortunately it does not tell us the result
-      // (we'd have to wait for a state update).
-      await wallet.connect("injected")
-
-      // TODO: We should use wallet.ethereum here I think, but again, it is not filled until the
-      // component re-renders.
-      const provider = new ethers.providers.Web3Provider((window as any).ethereum as any);
-
-      const contract = new ethers.Contract(data.deposit.contractAddress, depositAbi, provider);
-      const daiWithSigner = contract.connect(provider.getSigner());
-
-      // gas estimation fails, why?
-      //alert(await daiWithSigner.estimateGas.notifyFundingTimedOut());
-
-      // limit based on: https://etherscan.io/tx/0x35d1a7e9d25bb1aefb4a0ed5237854a12440a4748091b9f16474b7a2d5ac5251, but can vary widely, I also saw 246,750
-      const tx = await daiWithSigner[func]({gasLimit: 593800})
-      const receipt = await tx.wait();
-    }
-    finally {
-      setBusy(false)
-    }
-  }}>
-    Notify Timeout {isBusy ? <Loading /> : <InfoTooltip>
-    If the deposit process was not completed in time. Notifying the contract of this will release
-    the bonded funds back to the signers.
-  </InfoTooltip>}
-  </Button>
-}
 
 
 function PropertyTable(props: {
