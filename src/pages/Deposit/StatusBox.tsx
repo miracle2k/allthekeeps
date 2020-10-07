@@ -33,7 +33,7 @@ export function StatusBox(props: {
     secondLine = <>
       {
         (shouldShowConfirmationInfo && btcTxState) ?
-            <>
+            <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
               {btcTxState.hasTransaction
                     ? <>{btcTxState?.numConfirmations} confirmations</>
                     : <>waiting for transaction</>}
@@ -49,7 +49,7 @@ export function StatusBox(props: {
                 <ExternalLinkIcon />
               </a>
               <span style={{fontSize: 12}}><Loading /></span>
-            </>
+            </span>
           : null}
       <NotifyButton deposit={deposit} />
     </>;
