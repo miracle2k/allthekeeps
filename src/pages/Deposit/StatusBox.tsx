@@ -99,8 +99,12 @@ function NotifyButton(props: {
 
   let func: string;
   if (deposit.currentState == 'AWAITING_SIGNER_SETUP') {
-    func = 'notifySignerSetupFailed';
-  } else if (deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF') {
+    func = 'notifySignerSetupFailed';    
+    if (deposit?.bondedECDSAKeep?.publicKey) {
+      // Here, we have to call retrieveSignerPubkey first
+      return null;
+    }
+  } else if (deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF') {    
     func = 'notifyFundingTimedOut';
   }
   else {
