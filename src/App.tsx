@@ -17,6 +17,7 @@ import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
 import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
+import {Users} from "./pages/Users";
 
 
 function makeApolloLink(uri: string) {
@@ -95,6 +96,9 @@ function AppInternal() {
                 <Route path="/operators" exact>
                   <Operators />
                 </Route>
+                <Route path="/users" exact>
+                  <Users />
+                </Route>
                 <Route path="/operator/:operatorId" exact>
                   <Operator />
                 </Route>
@@ -141,6 +145,10 @@ function Header() {
 
     <NavigationButton to={"/governance"}>
       Governance
+    </NavigationButton>
+
+    <NavigationButton to={"/users"}>
+      Users
     </NavigationButton>
 
     <NavigationButton to={'/torch'}>

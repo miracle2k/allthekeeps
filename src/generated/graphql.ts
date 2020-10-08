@@ -385,6 +385,8 @@ export type Deposit = {
   createdAt?: Maybe<Scalars['BigInt']>;
   updatedAt?: Maybe<Scalars['BigInt']>;
   owner: Scalars['Bytes'];
+  /** The address which created the deposit initially. In contrast to the owner, this cannot change. */
+  creator: Scalars['Bytes'];
   keepAddress?: Maybe<Scalars['Bytes']>;
   lotSizeSatoshis?: Maybe<Scalars['BigInt']>;
   initialCollateralizedPercent?: Maybe<Scalars['Int']>;
@@ -626,6 +628,7 @@ export type DepositSetup = {
   id: Scalars['ID'];
   deposit: Deposit;
   failureReason?: Maybe<SetupFailedReason>;
+  fundingProofTimerStartedAt?: Maybe<Scalars['BigInt']>;
 };
 
 export type DepositSetup_Filter = {
@@ -653,12 +656,21 @@ export type DepositSetup_Filter = {
   deposit_not_ends_with?: Maybe<Scalars['String']>;
   failureReason?: Maybe<SetupFailedReason>;
   failureReason_not?: Maybe<SetupFailedReason>;
+  fundingProofTimerStartedAt?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_not?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_gt?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_lt?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_gte?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_lte?: Maybe<Scalars['BigInt']>;
+  fundingProofTimerStartedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  fundingProofTimerStartedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum DepositSetup_OrderBy {
   Id = 'id',
   Deposit = 'deposit',
-  FailureReason = 'failureReason'
+  FailureReason = 'failureReason',
+  FundingProofTimerStartedAt = 'fundingProofTimerStartedAt'
 }
 
 export enum DepositState {
@@ -735,6 +747,12 @@ export type Deposit_Filter = {
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner_contains?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
+  creator?: Maybe<Scalars['Bytes']>;
+  creator_not?: Maybe<Scalars['Bytes']>;
+  creator_in?: Maybe<Array<Scalars['Bytes']>>;
+  creator_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  creator_contains?: Maybe<Scalars['Bytes']>;
+  creator_not_contains?: Maybe<Scalars['Bytes']>;
   keepAddress?: Maybe<Scalars['Bytes']>;
   keepAddress_not?: Maybe<Scalars['Bytes']>;
   keepAddress_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -870,6 +888,7 @@ export enum Deposit_OrderBy {
   CreatedAt = 'createdAt',
   UpdatedAt = 'updatedAt',
   Owner = 'owner',
+  Creator = 'creator',
   KeepAddress = 'keepAddress',
   LotSizeSatoshis = 'lotSizeSatoshis',
   InitialCollateralizedPercent = 'initialCollateralizedPercent',
@@ -1781,6 +1800,7 @@ export type Operator = {
   totalKeepCount: Scalars['Int'];
   activeKeepCount: Scalars['Int'];
   stakedAmount: Scalars['BigDecimal'];
+  totalTBTCRewards: Scalars['BigDecimal'];
   /** How often this operator was involved in a fault, attributable to them. */
   attributableFaultCount: Scalars['Int'];
   /** How often this operator was involved in a fault, attributable to them. */
@@ -1919,6 +1939,14 @@ export type Operator_Filter = {
   stakedAmount_lte?: Maybe<Scalars['BigDecimal']>;
   stakedAmount_in?: Maybe<Array<Scalars['BigDecimal']>>;
   stakedAmount_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalTBTCRewards?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_not?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_gt?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_lt?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_gte?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_lte?: Maybe<Scalars['BigDecimal']>;
+  totalTBTCRewards_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalTBTCRewards_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   attributableFaultCount?: Maybe<Scalars['Int']>;
   attributableFaultCount_not?: Maybe<Scalars['Int']>;
   attributableFaultCount_gt?: Maybe<Scalars['Int']>;
@@ -1960,6 +1988,7 @@ export enum Operator_OrderBy {
   TotalKeepCount = 'totalKeepCount',
   ActiveKeepCount = 'activeKeepCount',
   StakedAmount = 'stakedAmount',
+  TotalTbtcRewards = 'totalTBTCRewards',
   AttributableFaultCount = 'attributableFaultCount',
   InvolvedInFaultCount = 'involvedInFaultCount',
   TotalFaultCount = 'totalFaultCount'
@@ -2002,6 +2031,8 @@ export type Query = {
   depositLiquidations: Array<DepositLiquidation>;
   depositRedemption?: Maybe<DepositRedemption>;
   depositRedemptions: Array<DepositRedemption>;
+  user?: Maybe<User>;
+  users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
   lock?: Maybe<Lock>;
@@ -2263,6 +2294,22 @@ export type QueryDepositRedemptionsArgs = {
   orderBy?: Maybe<DepositRedemption_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<DepositRedemption_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUsersArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<User_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<User_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -2956,7 +3003,10 @@ export type StatsRecord = {
   availableToBeBonded: Scalars['BigDecimal'];
   totalBonded: Scalars['BigDecimal'];
   totalBondsSeized: Scalars['BigDecimal'];
+  /** The total amount of BTC currently deposited, measured from funding proof received to redemption proof received. */
   btcUnderDeposit: Scalars['BigInt'];
+  /** The total amount of BTC currently deposited, measured from funding proof received to redemption requested */
+  btcInActiveDeposits: Scalars['BigInt'];
 };
 
 export type StatsRecord_Filter = {
@@ -3000,6 +3050,14 @@ export type StatsRecord_Filter = {
   btcUnderDeposit_lte?: Maybe<Scalars['BigInt']>;
   btcUnderDeposit_in?: Maybe<Array<Scalars['BigInt']>>;
   btcUnderDeposit_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  btcInActiveDeposits?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_not?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_gt?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_lt?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_gte?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_lte?: Maybe<Scalars['BigInt']>;
+  btcInActiveDeposits_in?: Maybe<Array<Scalars['BigInt']>>;
+  btcInActiveDeposits_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum StatsRecord_OrderBy {
@@ -3007,7 +3065,8 @@ export enum StatsRecord_OrderBy {
   AvailableToBeBonded = 'availableToBeBonded',
   TotalBonded = 'totalBonded',
   TotalBondsSeized = 'totalBondsSeized',
-  BtcUnderDeposit = 'btcUnderDeposit'
+  BtcUnderDeposit = 'btcUnderDeposit',
+  BtcInActiveDeposits = 'btcInActiveDeposits'
 }
 
 export type Subscription = {
@@ -3042,6 +3101,8 @@ export type Subscription = {
   depositLiquidations: Array<DepositLiquidation>;
   depositRedemption?: Maybe<DepositRedemption>;
   depositRedemptions: Array<DepositRedemption>;
+  user?: Maybe<User>;
+  users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
   lock?: Maybe<Lock>;
@@ -3307,6 +3368,22 @@ export type SubscriptionDepositRedemptionsArgs = {
 };
 
 
+export type SubscriptionUserArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUsersArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<User_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<User_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type SubscriptionOperatorArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -3554,6 +3631,79 @@ export enum TbtcDepositToken_OrderBy {
   Minter = 'minter'
 }
 
+/** An actor using the minting and redeeming facilities. */
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  address: Scalars['Bytes'];
+  /** The number of deposits the user initiated. */
+  numDepositsCreated: Scalars['Int'];
+  /** The number of deposits the user initiated, then did not complete the funding process of. Excludes any deposits which failed due to signer issues. */
+  numDepositsUnfunded: Scalars['Int'];
+  /** The number of deposits the user requested to be redeemed. */
+  numDepositsRedeemed: Scalars['Int'];
+  /** The number of deposits the user requested to be redeemed, where the deposit was also created by them. */
+  numOwnDepositsRedeemed: Scalars['Int'];
+};
+
+export type User_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  address?: Maybe<Scalars['Bytes']>;
+  address_not?: Maybe<Scalars['Bytes']>;
+  address_in?: Maybe<Array<Scalars['Bytes']>>;
+  address_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  address_contains?: Maybe<Scalars['Bytes']>;
+  address_not_contains?: Maybe<Scalars['Bytes']>;
+  numDepositsCreated?: Maybe<Scalars['Int']>;
+  numDepositsCreated_not?: Maybe<Scalars['Int']>;
+  numDepositsCreated_gt?: Maybe<Scalars['Int']>;
+  numDepositsCreated_lt?: Maybe<Scalars['Int']>;
+  numDepositsCreated_gte?: Maybe<Scalars['Int']>;
+  numDepositsCreated_lte?: Maybe<Scalars['Int']>;
+  numDepositsCreated_in?: Maybe<Array<Scalars['Int']>>;
+  numDepositsCreated_not_in?: Maybe<Array<Scalars['Int']>>;
+  numDepositsUnfunded?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_not?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_gt?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_lt?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_gte?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_lte?: Maybe<Scalars['Int']>;
+  numDepositsUnfunded_in?: Maybe<Array<Scalars['Int']>>;
+  numDepositsUnfunded_not_in?: Maybe<Array<Scalars['Int']>>;
+  numDepositsRedeemed?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_not?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_gt?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_lt?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_gte?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_lte?: Maybe<Scalars['Int']>;
+  numDepositsRedeemed_in?: Maybe<Array<Scalars['Int']>>;
+  numDepositsRedeemed_not_in?: Maybe<Array<Scalars['Int']>>;
+  numOwnDepositsRedeemed?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_not?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_gt?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_lt?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_gte?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_lte?: Maybe<Scalars['Int']>;
+  numOwnDepositsRedeemed_in?: Maybe<Array<Scalars['Int']>>;
+  numOwnDepositsRedeemed_not_in?: Maybe<Array<Scalars['Int']>>;
+};
+
+export enum User_OrderBy {
+  Id = 'id',
+  Address = 'address',
+  NumDepositsCreated = 'numDepositsCreated',
+  NumDepositsUnfunded = 'numDepositsUnfunded',
+  NumDepositsRedeemed = 'numDepositsRedeemed',
+  NumOwnDepositsRedeemed = 'numOwnDepositsRedeemed'
+}
+
 export type GetDepositQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -3563,7 +3713,7 @@ export type GetDepositQuery = (
   { __typename?: 'Query' }
   & { deposit?: Maybe<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'tbtcSystem' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'id' | 'tokenID' | 'owner' | 'minter'>
@@ -3574,6 +3724,9 @@ export type GetDepositQuery = (
         { __typename?: 'Operator' }
         & Pick<Operator, 'id' | 'address'>
       )>> }
+    )>, depositLiquidation?: Maybe<(
+      { __typename?: 'DepositLiquidation' }
+      & Pick<DepositLiquidation, 'cause'>
     )> }
     & NiceStateLabelFragment
   )> }
@@ -3708,7 +3861,7 @@ export type GetOperatorQuery = (
   { __typename?: 'Query' }
   & { operator?: Maybe<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'stakedAmount'>
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards'>
     & { keeps?: Maybe<Array<(
       { __typename?: 'BondedECDSAKeep' }
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount'>
@@ -3741,7 +3894,21 @@ export type GetOperatorsQuery = (
     & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
   )>, operators: Array<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount'>
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards'>
+  )> }
+);
+
+export type GetUsersQueryVariables = Exact<{
+  orderBy?: Maybe<User_OrderBy>;
+  direction?: Maybe<OrderDirection>;
+}>;
+
+
+export type GetUsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'address' | 'numDepositsCreated' | 'numDepositsUnfunded' | 'numDepositsRedeemed' | 'numOwnDepositsRedeemed'>
   )> }
 );
 
@@ -3789,7 +3956,6 @@ export const GetDepositDocument = gql`
     keepAddress
     lotSizeSatoshis
     endOfTerm
-    tbtcSystem
     tdtToken {
       id
       tokenID
@@ -3810,6 +3976,9 @@ export const GetDepositDocument = gql`
         id
         address
       }
+    }
+    depositLiquidation {
+      cause
     }
     ...NiceStateLabel
   }
@@ -4045,6 +4214,9 @@ export const GetOperatorDocument = gql`
     bonded
     unboundAvailable
     stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
     keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
       id
       totalBondAmount
@@ -4110,6 +4282,9 @@ export const GetOperatorsDocument = gql`
     totalKeepCount
     activeKeepCount
     stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
   }
 }
     `;
@@ -4140,6 +4315,45 @@ export function useGetOperatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOperatorsQueryHookResult = ReturnType<typeof useGetOperatorsQuery>;
 export type GetOperatorsLazyQueryHookResult = ReturnType<typeof useGetOperatorsLazyQuery>;
 export type GetOperatorsQueryResult = Apollo.QueryResult<GetOperatorsQuery, GetOperatorsQueryVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection) {
+  users(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    id
+    address
+    numDepositsCreated
+    numDepositsUnfunded
+    numDepositsRedeemed
+    numOwnDepositsRedeemed
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      orderBy: // value for 'orderBy'
+ *      direction: // value for 'direction'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
 export const Change = gql`
     fragment Change on GovernanceChange {
   type
@@ -4172,7 +4386,6 @@ export const GetDeposit = gql`
     keepAddress
     lotSizeSatoshis
     endOfTerm
-    tbtcSystem
     tdtToken {
       id
       tokenID
@@ -4193,6 +4406,9 @@ export const GetDeposit = gql`
         id
         address
       }
+    }
+    depositLiquidation {
+      cause
     }
     ...NiceStateLabel
   }
@@ -4303,6 +4519,9 @@ export const GetOperator = gql`
     bonded
     unboundAvailable
     stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
     keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
       id
       totalBondAmount
@@ -4342,6 +4561,21 @@ export const GetOperators = gql`
     totalKeepCount
     activeKeepCount
     stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
+  }
+}
+    `;
+export const GetUsers = gql`
+    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection) {
+  users(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    id
+    address
+    numDepositsCreated
+    numDepositsUnfunded
+    numDepositsRedeemed
+    numOwnDepositsRedeemed
   }
 }
     `;
