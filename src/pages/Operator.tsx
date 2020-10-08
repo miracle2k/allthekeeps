@@ -31,6 +31,7 @@ const OPERATOR_QUERY = gql`
             stakedAmount,
             totalFaultCount,
             attributableFaultCount,
+            totalTBTCRewards,
             keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
                 id,
                 # TODO: How much is bonded in this keep for this operator?
@@ -78,6 +79,10 @@ export function Operator() {
 
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
+});
+
+const formatterBTC = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 6
 });
 
 
@@ -134,6 +139,12 @@ export function Content() {
           {data.operator.attributableFaultCount > 0 ? <>
             {data.operator.attributableFaultCount} / </> : null}
           {data.operator.totalFaultCount}
+        </div>
+      </Box>
+
+      <Box label={"rewards"}>
+        <div>
+          {formatterBTC.format(data.operator.totalTBTCRewards)} BTC
         </div>
       </Box>
     </div>

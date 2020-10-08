@@ -31,6 +31,7 @@ const OPERATOR_QUERY = gql`
             stakedAmount,
             totalFaultCount,
             attributableFaultCount,
+            totalTBTCRewards,
         }
     }
 `;
@@ -94,6 +95,10 @@ const formatterSimple = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0
 });
 
+const formatterBTC = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 6
+});
+
 export function OperatorsTable(props: {
   data: any,
   sortState: SortState,
@@ -125,6 +130,11 @@ export function OperatorsTable(props: {
       <th>
         <SortableHeader fieldId={"stakedAmount"} state={props.sortState}>
           Amount Staked <InfoTooltip>The stake will be seized in case of fraud.</InfoTooltip>
+        </SortableHeader>
+      </th>
+      <th>
+        <SortableHeader fieldId={"totalTBTCRewards"} state={props.sortState}>
+          BTC Rewards <InfoTooltip>The BTC fees earned by this operator.</InfoTooltip>
         </SortableHeader>
       </th>
       <th>
@@ -168,6 +178,9 @@ export function OperatorsTable(props: {
         </td>
         <td>
           <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatterSimple.format(member.stakedAmount)}
+        </td>
+        <td>
+          <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span> {formatterBTC.format(member.totalTBTCRewards)}
         </td>
         <td>
           {member.attributableFaultCount > 0 ? <>
