@@ -2494,6 +2494,7 @@ export type RandomBeaconGroup = {
   id: Scalars['ID'];
   createdAt: Scalars['BigInt'];
   members: Array<Operator>;
+  memberCount: Scalars['Int'];
 };
 
 
@@ -2526,12 +2527,21 @@ export type RandomBeaconGroup_Filter = {
   members_not?: Maybe<Array<Scalars['String']>>;
   members_contains?: Maybe<Array<Scalars['String']>>;
   members_not_contains?: Maybe<Array<Scalars['String']>>;
+  memberCount?: Maybe<Scalars['Int']>;
+  memberCount_not?: Maybe<Scalars['Int']>;
+  memberCount_gt?: Maybe<Scalars['Int']>;
+  memberCount_lt?: Maybe<Scalars['Int']>;
+  memberCount_gte?: Maybe<Scalars['Int']>;
+  memberCount_lte?: Maybe<Scalars['Int']>;
+  memberCount_in?: Maybe<Array<Scalars['Int']>>;
+  memberCount_not_in?: Maybe<Array<Scalars['Int']>>;
 };
 
 export enum RandomBeaconGroup_OrderBy {
   Id = 'id',
   CreatedAt = 'createdAt',
-  Members = 'members'
+  Members = 'members',
+  MemberCount = 'memberCount'
 }
 
 export type RedeemedEvent = Event & {
@@ -2823,6 +2833,11 @@ export enum RegisteredPubKeyEvent_OrderBy {
 export type RelayEntry = {
   __typename?: 'RelayEntry';
   id: Scalars['ID'];
+  requestId: Scalars['BigInt'];
+  value?: Maybe<Scalars['BigInt']>;
+  requestedAt: Scalars['BigInt'];
+  requestedBy?: Maybe<Scalars['Bytes']>;
+  generatedAt?: Maybe<Scalars['BigInt']>;
 };
 
 export type RelayEntry_Filter = {
@@ -2834,10 +2849,53 @@ export type RelayEntry_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_in?: Maybe<Array<Scalars['ID']>>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  requestId?: Maybe<Scalars['BigInt']>;
+  requestId_not?: Maybe<Scalars['BigInt']>;
+  requestId_gt?: Maybe<Scalars['BigInt']>;
+  requestId_lt?: Maybe<Scalars['BigInt']>;
+  requestId_gte?: Maybe<Scalars['BigInt']>;
+  requestId_lte?: Maybe<Scalars['BigInt']>;
+  requestId_in?: Maybe<Array<Scalars['BigInt']>>;
+  requestId_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  value?: Maybe<Scalars['BigInt']>;
+  value_not?: Maybe<Scalars['BigInt']>;
+  value_gt?: Maybe<Scalars['BigInt']>;
+  value_lt?: Maybe<Scalars['BigInt']>;
+  value_gte?: Maybe<Scalars['BigInt']>;
+  value_lte?: Maybe<Scalars['BigInt']>;
+  value_in?: Maybe<Array<Scalars['BigInt']>>;
+  value_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  requestedAt?: Maybe<Scalars['BigInt']>;
+  requestedAt_not?: Maybe<Scalars['BigInt']>;
+  requestedAt_gt?: Maybe<Scalars['BigInt']>;
+  requestedAt_lt?: Maybe<Scalars['BigInt']>;
+  requestedAt_gte?: Maybe<Scalars['BigInt']>;
+  requestedAt_lte?: Maybe<Scalars['BigInt']>;
+  requestedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  requestedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  requestedBy?: Maybe<Scalars['Bytes']>;
+  requestedBy_not?: Maybe<Scalars['Bytes']>;
+  requestedBy_in?: Maybe<Array<Scalars['Bytes']>>;
+  requestedBy_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  requestedBy_contains?: Maybe<Scalars['Bytes']>;
+  requestedBy_not_contains?: Maybe<Scalars['Bytes']>;
+  generatedAt?: Maybe<Scalars['BigInt']>;
+  generatedAt_not?: Maybe<Scalars['BigInt']>;
+  generatedAt_gt?: Maybe<Scalars['BigInt']>;
+  generatedAt_lt?: Maybe<Scalars['BigInt']>;
+  generatedAt_gte?: Maybe<Scalars['BigInt']>;
+  generatedAt_lte?: Maybe<Scalars['BigInt']>;
+  generatedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  generatedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum RelayEntry_OrderBy {
-  Id = 'id'
+  Id = 'id',
+  RequestId = 'requestId',
+  Value = 'value',
+  RequestedAt = 'requestedAt',
+  RequestedBy = 'requestedBy',
+  GeneratedAt = 'generatedAt'
 }
 
 export type SetupFailedEvent = Event & {
@@ -3704,6 +3762,17 @@ export enum User_OrderBy {
   NumOwnDepositsRedeemed = 'numOwnDepositsRedeemed'
 }
 
+export type GetRelayEntriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetRelayEntriesQuery = (
+  { __typename?: 'Query' }
+  & { relayEntries: Array<(
+    { __typename?: 'RelayEntry' }
+    & Pick<RelayEntry, 'id' | 'requestId'>
+  )> }
+);
+
 export type GetDepositQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -3946,6 +4015,39 @@ export const NiceStateLabelFragmentDoc = gql`
   }
 }
     `;
+export const GetRelayEntriesDocument = gql`
+    query GetRelayEntries {
+  relayEntries(orderBy: requestedAt, orderDirection: desc) {
+    id
+    requestId
+  }
+}
+    `;
+
+/**
+ * __useGetRelayEntriesQuery__
+ *
+ * To run a query within a React component, call `useGetRelayEntriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRelayEntriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRelayEntriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetRelayEntriesQuery(baseOptions?: Apollo.QueryHookOptions<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>) {
+        return Apollo.useQuery<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>(GetRelayEntriesDocument, baseOptions);
+      }
+export function useGetRelayEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>) {
+          return Apollo.useLazyQuery<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>(GetRelayEntriesDocument, baseOptions);
+        }
+export type GetRelayEntriesQueryHookResult = ReturnType<typeof useGetRelayEntriesQuery>;
+export type GetRelayEntriesLazyQueryHookResult = ReturnType<typeof useGetRelayEntriesLazyQuery>;
+export type GetRelayEntriesQueryResult = Apollo.QueryResult<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>;
 export const GetDepositDocument = gql`
     query GetDeposit($id: ID!) {
   deposit(id: $id) {
@@ -4373,6 +4475,14 @@ export const NiceStateLabel = gql`
   }
   depositSetup {
     failureReason
+  }
+}
+    `;
+export const GetRelayEntries = gql`
+    query GetRelayEntries {
+  relayEntries(orderBy: requestedAt, orderDirection: desc) {
+    id
+    requestId
   }
 }
     `;
