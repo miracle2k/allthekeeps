@@ -2,7 +2,7 @@ import {gql, useQuery} from "@apollo/client";
 import React from "react";
 import {Paper} from "../design-system/Paper";
 import {css} from "emotion";
-import { Address } from "../components/Address";
+import {Address, Hash} from "../components/Address";
 import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Helmet} from "react-helmet";
@@ -16,6 +16,13 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 
 const BEACON_QUERY = gql`
     query GetRelayEntries {
+        randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection:desc) {
+            id,
+            pubKey,
+            createdAt,
+            memberCount,
+            rewardPerMember
+        }
         relayEntries(first: 1000, orderBy: requestedAt, orderDirection:desc) {
             id,
             requestId,
@@ -43,6 +50,7 @@ export function Beacon() {
     </h1>
     <Paper padding>
       <RelayEntriesTable data={data} />
+      <BeaconGroupsTable data={data} />
     </Paper>
   </div>
 }
@@ -58,7 +66,7 @@ export function RelayEntriesTable(props: {
     <thead>
     <tr>
       <th>Request ID</th>
-      <th>Fee</th>
+      <th>Reward per group member</th>
       <th>
         Random Value
       </th>
@@ -84,6 +92,46 @@ export function RelayEntriesTable(props: {
         <td>
           <TimeBetween earlier={entry.requestedAt} later={entry.generatedAt} />
         </td>
+      </tr>
+    })}
+    </tbody>
+  </Table>
+}
+
+
+export function BeaconGroupsTable(props: {
+  data: any,
+}) {
+  const {data} = props;
+
+  return <Table
+      style={{width: '100%'}}>
+    <thead>
+    <tr>
+      <th>
+        Pubkey
+      </th>
+      <th>
+        Created At
+      </th>
+      <th>
+        Reward
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    {data.randomBeaconGroups.map((group: any) => {
+      return  <tr key={group.id}>
+        <td>
+          <Hash hash={group.pubKey} to={`/group/${group.pubKey}`} />
+        </td>
+        <td>
+          {group.memberCount}
+        </td>
+        <td>
+          {getWeiAsEth(group.rewardPerMember)}
+        </td>
+        <td><TimeToNow time={group.createdAt} /></td>
       </tr>
     })}
     </tbody>

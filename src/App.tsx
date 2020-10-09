@@ -19,6 +19,7 @@ import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
 import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
 import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
+import {BeaconGroup} from "./pages/Group";
 
 
 function makeApolloLink(uri: string) {
@@ -105,6 +106,9 @@ function AppInternal() {
                 </Route>
                 <Route path="/beacon" exact>
                   <Beacon />
+                </Route>
+                <Route path="/group/:id" exact>
+                  <BeaconGroup />
                 </Route>
                 <Route path="/operator/:operatorId" exact>
                   <Operator />

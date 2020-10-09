@@ -11,6 +11,8 @@ import {usePriceFeed} from "../components/PriceFeed";
 import {Box} from "../components/Box";
 import {GetOperatorsQuery} from "../generated/graphql";
 import {useEtherscanDomain} from "../NetworkContext";
+import {getWeiAsEth} from "../utils/getWeiAsEth";
+import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -32,6 +34,7 @@ const OPERATOR_QUERY = gql`
             totalFaultCount,
             attributableFaultCount,
             totalTBTCRewards,
+            totalETHRewards
         }
     }
 `;
@@ -138,6 +141,11 @@ export function OperatorsTable(props: {
         </SortableHeader>
       </th>
       <th>
+        <SortableHeader fieldId={"totalETHRewards"} state={props.sortState}>
+          ETH Rewards <InfoTooltip>The ETH fees earned by this operator.</InfoTooltip>
+        </SortableHeader>
+      </th>
+      <th>
         <SortableHeader fieldId={"totalFaultCount"} state={props.sortState}>
           Faults <InfoTooltip>How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault.</InfoTooltip>
         </SortableHeader>
@@ -180,7 +188,10 @@ export function OperatorsTable(props: {
           <span style={{color: 'gray', fontSize: '0.8em'}}>KEEP</span> {formatterSimple.format(member.stakedAmount)}
         </td>
         <td>
-          <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span> {formatterBTC.format(member.totalTBTCRewards)}
+          <span style={{color: 'gray', fontSize: '0.8em'}}>TBTC</span> {formatterBTC.format(getSatoshiesAsTBTC(member.totalTBTCRewards))}
+        </td>
+        <td>
+          <span style={{color: 'gray', fontSize: '0.8em'}}>ETH</span> {formatter.format(getWeiAsEth(member.totalETHRewards))}
         </td>
         <td>
           {member.attributableFaultCount > 0 ? <>

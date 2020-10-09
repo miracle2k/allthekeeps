@@ -19,6 +19,7 @@ import {CollaterizationStatusWithPrice} from "../components/CollateralizationSta
 import {usePriceFeed} from "../components/PriceFeed";
 import { Table } from "../components/Table";
 import {useEtherscanDomain} from "../NetworkContext";
+import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
 
 
 const OPERATOR_QUERY = gql`
@@ -58,6 +59,9 @@ const OPERATOR_QUERY = gql`
                     
                     ...NiceStateLabel
                 }
+            }
+            randomBeaconGroups {
+                id
             }
         }
     }
@@ -144,7 +148,7 @@ export function Content() {
 
       <Box label={"rewards"}>
         <div>
-          {formatterBTC.format(data.operator.totalTBTCRewards)} BTC
+          {formatterBTC.format(getSatoshiesAsTBTC(data.operator.totalTBTCRewards))} TBTC
         </div>
       </Box>
     </div>
@@ -152,6 +156,7 @@ export function Content() {
 
     <Paper padding>
       <h3 style={{marginTop: 0}}>Keeps</h3>
+
       <KeepsTable keeps={data.operator.keeps} />
     </Paper>
   </div>
