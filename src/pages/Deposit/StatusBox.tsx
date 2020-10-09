@@ -70,7 +70,7 @@ export function StatusBox(props: {
                   flex-direction: row;
                   align-items: center;
               ` }>
-            <TBTCIcon /> <span style={{paddingLeft: 5}}>tBTC minted</span>
+            <TBTCIcon /> <span style={{paddingLeft: 5}}>TBTC minted</span>
           </div>
           : null
     }

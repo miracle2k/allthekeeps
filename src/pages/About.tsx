@@ -10,7 +10,7 @@ export function About() {
       <p>
         Provide insight into the workings of the Keep and tBTC systems - deposits, redemptions,
         who bonds for what, governance actions, etc. It does <strong>not</strong> desire to track ownership and
-        transfers of the KEEP and tBTC tokens themselves - for that you may want to have a look at
+        transfers of the KEEP and TBTC tokens themselves - for that you may want to have a look at
         {" "} <a href={"https://keep-explorer.herokuapp.com/"}>KeepExplorer</a> or even
         {" "} <a href={"https://etherscan.io/token/0x85eee30c52b0b379b046fb0f85f4f3dc3009afec"}>Etherscan</a>.
       </p>

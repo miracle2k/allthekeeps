@@ -153,7 +153,7 @@ export function Content() {
             {
               hasDepositBeenUsedToMint(data.deposit.tdtToken.owner, data.deposit.currentState)
                   ? <div>
-                    This deposit has been used to mint tBTC. The corresponding TDT token is now
+                    This deposit has been used to mint TBTC. The corresponding TDT token is now
                     owned by the <a href={`https://${etherscan}/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
                   </div>
                   : (data.deposit.tdtToken.owner == data.deposit.tdtToken.minter) ? <div>
@@ -176,7 +176,7 @@ export function Content() {
 
           {(canBeRedeemedByAnyone) ?
             <div style={{marginTop: 20}}>
-              This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange tBTC for the Bitcoin deposited here.</InfoTooltip>
+              This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange TBTC for the Bitcoin deposited here.</InfoTooltip>
               <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://${dAppDomain}/deposit/${data.deposit.contractAddress}/redeem`}>
                 Redeem
               </Button></div>
@@ -208,7 +208,7 @@ export function Content() {
                   data.deposit.endOfTerm ? {
                     key: 'endOfTerm',
                     label: "End Of Term",
-                    tooltip: "Within the term, only the owner can redeem the deposit or mint tBTC.",
+                    tooltip: "Within the term, only the owner can redeem the deposit or mint TBTC.",
                     value: <TimeToNow time={data.deposit.endOfTerm} />
                   } : undefined,
                   {

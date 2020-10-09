@@ -129,7 +129,7 @@ export function DepositsTable(props: {
             </div>
             &nbsp;
             {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
-                ? <><Tippy content="tBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
+                ? <><Tippy content="TBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
                 : ""
             }
             {getNiceStateLabel(deposit)}

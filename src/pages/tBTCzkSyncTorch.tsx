@@ -117,7 +117,7 @@ function Step(props: {
       <a href={`https://zkscan.io/explorer/accounts/${from}`}>{from}</a>
     </div>
     {props.amount ? <div>
-      <strong>{amount / 1000000000000000000} tBTC</strong>
+      <strong>{amount / 1000000000000000000} TBTC</strong>
     </div> : null}
 
     {tweetId ? <TwitterTweetEmbed
