@@ -391,6 +391,7 @@ export type Deposit = {
   /** The timeout after which the current state can be notified, if any. This does not include non-timeout actions that are time-locked, such as courtesy calls or liquidation auctions. */
   currentStateTimesOutAt?: Maybe<Scalars['BigInt']>;
   owner: Scalars['Bytes'];
+  failureReason?: Maybe<SetupFailedReason>;
   /** The address which created the deposit initially. In contrast to the owner, this cannot change. */
   creator: Scalars['Bytes'];
   keepAddress?: Maybe<Scalars['Bytes']>;
@@ -405,7 +406,10 @@ export type Deposit = {
   depositLiquidation?: Maybe<DepositLiquidation>;
   depositRedemption?: Maybe<DepositRedemption>;
   depositSetup?: Maybe<DepositSetup>;
+  /** True if the deposit state is LIQUIDATED, LIQUIDATION_IN_PROGRESS, FRAUD_LIQUIDATION_IN_PROGRESS or COURTESY_CALL. */
   filter_liquidationLikeState: Scalars['Boolean'];
+  /** True if the deposit state is either liquidation like, or a signer setup failure. */
+  filter_liquidationLikeOrSignerFailureState: Scalars['Boolean'];
   filter_activeLikeState: Scalars['Boolean'];
   filter_unmintedTDT: Scalars['Boolean'];
   filter_redeemableAsOf: Scalars['BigInt'];
@@ -769,6 +773,8 @@ export type Deposit_Filter = {
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner_contains?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
+  failureReason?: Maybe<SetupFailedReason>;
+  failureReason_not?: Maybe<SetupFailedReason>;
   creator?: Maybe<Scalars['Bytes']>;
   creator_not?: Maybe<Scalars['Bytes']>;
   creator_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -883,6 +889,10 @@ export type Deposit_Filter = {
   filter_liquidationLikeState_not?: Maybe<Scalars['Boolean']>;
   filter_liquidationLikeState_in?: Maybe<Array<Scalars['Boolean']>>;
   filter_liquidationLikeState_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  filter_liquidationLikeOrSignerFailureState?: Maybe<Scalars['Boolean']>;
+  filter_liquidationLikeOrSignerFailureState_not?: Maybe<Scalars['Boolean']>;
+  filter_liquidationLikeOrSignerFailureState_in?: Maybe<Array<Scalars['Boolean']>>;
+  filter_liquidationLikeOrSignerFailureState_not_in?: Maybe<Array<Scalars['Boolean']>>;
   filter_activeLikeState?: Maybe<Scalars['Boolean']>;
   filter_activeLikeState_not?: Maybe<Scalars['Boolean']>;
   filter_activeLikeState_in?: Maybe<Array<Scalars['Boolean']>>;
@@ -912,6 +922,7 @@ export enum Deposit_OrderBy {
   RedemptionStartedAt = 'redemptionStartedAt',
   CurrentStateTimesOutAt = 'currentStateTimesOutAt',
   Owner = 'owner',
+  FailureReason = 'failureReason',
   Creator = 'creator',
   KeepAddress = 'keepAddress',
   LotSizeSatoshis = 'lotSizeSatoshis',
@@ -926,6 +937,7 @@ export enum Deposit_OrderBy {
   DepositRedemption = 'depositRedemption',
   DepositSetup = 'depositSetup',
   FilterLiquidationLikeState = 'filter_liquidationLikeState',
+  FilterLiquidationLikeOrSignerFailureState = 'filter_liquidationLikeOrSignerFailureState',
   FilterActiveLikeState = 'filter_activeLikeState',
   FilterUnmintedTdt = 'filter_unmintedTDT',
   FilterRedeemableAsOf = 'filter_redeemableAsOf'
@@ -3964,7 +3976,7 @@ export type GetRelayEntriesQuery = (
   { __typename?: 'Query' }
   & { randomBeaconGroups: Array<(
     { __typename?: 'RandomBeaconGroup' }
-    & Pick<RandomBeaconGroup, 'id' | 'pubKey' | 'createdAt' | 'memberCount'>
+    & Pick<RandomBeaconGroup, 'id' | 'pubKey' | 'createdAt' | 'memberCount' | 'rewardPerMember'>
   )>, relayEntries: Array<(
     { __typename?: 'RelayEntry' }
     & Pick<RelayEntry, 'id' | 'requestId' | 'value' | 'requestedAt' | 'generatedAt' | 'rewardPerMember'>
@@ -3980,7 +3992,7 @@ export type GetDepositQuery = (
   { __typename?: 'Query' }
   & { deposit?: Maybe<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'currentStateTimesOutAt' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'id' | 'tokenID' | 'owner' | 'minter'>
@@ -4129,7 +4141,7 @@ export type GetRandomBeaconGroupQuery = (
   { __typename?: 'Query' }
   & { randomBeaconGroup?: Maybe<(
     { __typename?: 'RandomBeaconGroup' }
-    & Pick<RandomBeaconGroup, 'id' | 'createdAt'>
+    & Pick<RandomBeaconGroup, 'id' | 'createdAt' | 'rewardPerMember'>
     & { members: Array<(
       { __typename?: 'Operator' }
       & Pick<Operator, 'id' | 'address'>
@@ -4202,7 +4214,7 @@ export type GetUsersQuery = (
 
 export type NiceStateLabelFragment = (
   { __typename?: 'Deposit' }
-  & Pick<Deposit, 'currentState'>
+  & Pick<Deposit, 'currentState' | 'currentStateTimesOutAt' | 'updatedAt'>
   & { bondedECDSAKeep?: Maybe<(
     { __typename?: 'BondedECDSAKeep' }
     & Pick<BondedEcdsaKeep, 'publicKey'>
@@ -4232,6 +4244,8 @@ export const NiceStateLabelFragmentDoc = gql`
   depositSetup {
     failureReason
   }
+  currentStateTimesOutAt
+  updatedAt
 }
     `;
 export const GetRelayEntriesDocument = gql`
@@ -4241,6 +4255,7 @@ export const GetRelayEntriesDocument = gql`
     pubKey
     createdAt
     memberCount
+    rewardPerMember
   }
   relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
     id
@@ -4287,6 +4302,7 @@ export const GetDepositDocument = gql`
     keepAddress
     lotSizeSatoshis
     endOfTerm
+    currentStateTimesOutAt
     tdtToken {
       id
       tokenID
@@ -4545,6 +4561,7 @@ export const GetRandomBeaconGroupDocument = gql`
   randomBeaconGroup(id: $id) {
     id
     createdAt
+    rewardPerMember
     members {
       id
       address
@@ -4750,6 +4767,8 @@ export const NiceStateLabel = gql`
   depositSetup {
     failureReason
   }
+  currentStateTimesOutAt
+  updatedAt
 }
     `;
 export const GetRelayEntries = gql`
@@ -4759,6 +4778,7 @@ export const GetRelayEntries = gql`
     pubKey
     createdAt
     memberCount
+    rewardPerMember
   }
   relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
     id
@@ -4780,6 +4800,7 @@ export const GetDeposit = gql`
     keepAddress
     lotSizeSatoshis
     endOfTerm
+    currentStateTimesOutAt
     tdtToken {
       id
       tokenID
@@ -4912,6 +4933,7 @@ export const GetRandomBeaconGroup = gql`
   randomBeaconGroup(id: $id) {
     id
     createdAt
+    rewardPerMember
     members {
       id
       address

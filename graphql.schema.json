@@ -3847,6 +3847,18 @@
             "deprecationReason": null
           },
           {
+            "name": "failureReason",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "SetupFailedReason",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "creator",
             "description": "The address which created the deposit initially. In contrast to the owner, this cannot change.",
             "args": [],
@@ -4008,7 +4020,23 @@
           },
           {
             "name": "filter_liquidationLikeState",
-            "description": null,
+            "description": "True if the deposit state is LIQUIDATED, LIQUIDATION_IN_PROGRESS, FRAUD_LIQUIDATION_IN_PROGRESS or COURTESY_CALL.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "filter_liquidationLikeOrSignerFailureState",
+            "description": "True if the deposit state is either liquidation like, or a signer setup failure.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -7885,6 +7913,26 @@
             "defaultValue": null
           },
           {
+            "name": "failureReason",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "SetupFailedReason",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "failureReason_not",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "SetupFailedReason",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "creator",
             "description": null,
             "type": {
@@ -9233,6 +9281,62 @@
             "defaultValue": null
           },
           {
+            "name": "filter_liquidationLikeOrSignerFailureState",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "filter_liquidationLikeOrSignerFailureState_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "filter_liquidationLikeOrSignerFailureState_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "filter_liquidationLikeOrSignerFailureState_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "filter_activeLikeState",
             "description": null,
             "type": {
@@ -9514,6 +9618,12 @@
             "deprecationReason": null
           },
           {
+            "name": "failureReason",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "creator",
             "description": null,
             "isDeprecated": false,
@@ -9593,6 +9703,12 @@
           },
           {
             "name": "filter_liquidationLikeState",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "filter_liquidationLikeOrSignerFailureState",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

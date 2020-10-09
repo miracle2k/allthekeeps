@@ -6,7 +6,13 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateBoxStyle, NiceStateLabel} from "../../utils/depositStates";
+import {
+  getNiceStateLabel,
+  getStateBoxStyle,
+  getStateTooltip,
+  NiceStateLabel,
+  useTimeRemaining
+} from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
 import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
@@ -18,6 +24,7 @@ import {useEtherscanDomain} from "../../NetworkContext";
 import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {DepositViewID} from "./index";
+import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
@@ -34,7 +41,8 @@ const DEPOSITS_QUERY = gql`
             keepAddress,
             updatedAt,
             createdAt,
-            redemptionStartedAt
+            redemptionStartedAt,
+            currentStateTimesOutAt
             
             tdtToken {
                 owner
@@ -123,29 +131,51 @@ export function DepositsTable(props: {
       </thead>
       <tbody>
       {data.deposits.map((deposit: any) => {
-        return  <tr key={deposit.id}>
-          <td>
-            <TimeToNow time={deposit[dateColumn]} />
-          </td>
-          <td>
-            <Link to={`/deposit/${deposit.id}`}>
-              {deposit.contractAddress}
-            </Link>
-            <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
+        return <DepositRow
+          deposit={deposit}
+          key={deposit.id}
+          dateColumn={dateColumn}
+          etherscan={etherscan}
+          price={price}
+          target={target}
+        />
+      })}
+      </tbody>
+    </Table>
+  </>;
+}
+
+const DepositRow = React.memo((props: {
+  deposit: any,
+  dateColumn: string,
+  etherscan: string,
+  price: any,
+  target: any
+}) => {
+  const {deposit, dateColumn, etherscan, price, target} = props;
+  return  <tr key={deposit.id}>
+    <td>
+      <TimeToNow time={deposit[dateColumn]} />
+    </td>
+    <td>
+      <Link to={`/deposit/${deposit.id}`}>
+        {deposit.contractAddress}
+      </Link>
+      <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;
                `}>
-              <ExternalLinkIcon />
-            </a>
-          </td>
-          <td>
-            <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span>&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
-          </td>
-          <td className={css`
+        <ExternalLinkIcon />
+      </a>
+    </td>
+    <td>
+      <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span>&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
+    </td>
+    <td className={css`
             display: flex;
             align-items: center;
           `}>
-            <div className={css`
+      <div className={css`
               display: inline-block;
               width: 1.2em;
               height: 1.2em;
@@ -153,25 +183,34 @@ export function DepositsTable(props: {
               padding: 0.2em;
               box-sizing: border-box;
             `} style={getStateBoxStyle(deposit.currentState)}>
-            </div>
-            &nbsp;
-            {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
-                ? <><Tippy content="TBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
-                : ""
-            }
-            {getNiceStateLabel(deposit)}
+      </div>
+      &nbsp;
+      {hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
+          ? <><Tippy content="TBTC was minted" singleton={target}><TBTCIcon /></Tippy>&nbsp;</>
+          : ""
+      }
+      <StateLabelWithProgressBar deposit={deposit} />
 
-            <FundingStatus deposit={deposit}/>
-          </td>
-          <td>
-            <CollaterizationStatusWithPrice deposit={deposit} price={price} />
-          </td>
-        </tr>
-      })}
-      </tbody>
-    </Table>
-  </>;
+      <FundingStatus deposit={deposit}/>
+    </td>
+    <td>
+      <CollaterizationStatusWithPrice deposit={deposit} price={price} />
+    </td>
+  </tr>
+});
+
+
+export function StateLabelWithProgressBar(props: {
+  deposit: any
+}) {
+  const timing = useTimeRemaining(props.deposit, 5);
+  return <LabelWithBackgroundProgress
+      progress={timing?.percentage}
+  >
+    {getNiceStateLabel(props.deposit)}
+  </LabelWithBackgroundProgress>
 }
+
 
 function FundingStatus(props: {
   deposit: any

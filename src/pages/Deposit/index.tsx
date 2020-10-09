@@ -35,6 +35,8 @@ const DEPOSIT_QUERY = gql`
             keepAddress,
             lotSizeSatoshis,
             endOfTerm,
+
+            currentStateTimesOutAt,
             
             tdtToken {
                 id,
@@ -298,6 +300,10 @@ export function Content() {
         padding: 20px;
       `}>
         <h3 style={{marginTop: 0}}>Log</h3>
+        {/*<div style={{marginBottom: '20px'}}>*/}
+        {/*  <div><strong>Next Step</strong></div>*/}
+        {/*  The depositor must submit proof of having sent to Bitcoin to the deposit address, once at least 6 confirmations have been reached. <TimeToNow time={data.deposit.currentStateTimesOutAt} /> left to do so.*/}
+        {/*</div>*/}
         <Log depositId={data.deposit.id} />
       </div>
     </Paper>

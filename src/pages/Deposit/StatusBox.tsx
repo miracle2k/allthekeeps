@@ -1,4 +1,4 @@
-import {getNiceStateLabel, getStateTooltip} from "../../utils/depositStates";
+import {getNiceStateLabel, getStateTooltip, useTimeRemaining} from "../../utils/depositStates";
 import {css} from "emotion";
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
@@ -8,59 +8,92 @@ import {Loading} from "../../components/Loading";
 import {Box} from "../../components/Box";
 import React, {useState} from "react";
 import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
-import {useBlockchainBaseUrl} from "../../NetworkContext";
+import {useBlockchainBaseUrl, useDAppDomain} from "../../NetworkContext";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {useWallet} from "use-wallet";
 import {Button} from "../../design-system/Button";
 import {getLiquidationCauseAsString} from "./log";
+import {formatSeconds} from "../../components/FormattedTime";
 
+/**
+ * Displays the deposit status in a <Box />.
+ */
 export function StatusBox(props: {
   deposit: any
 }) {
   const {deposit} = props;
   const blockChainBaseUrl = useBlockchainBaseUrl();
+  const dAppDomain = useDAppDomain();
   const btcAddress = useBtcAddressFromPublicKey(deposit.bondedECDSAKeep.publicKey);
   const shouldShowConfirmationInfo = deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
   const btcTxState = useBitcoinTxState(btcAddress, deposit.lotSizeSatoshis, shouldShowConfirmationInfo)
+  const timing = useTimeRemaining(deposit);
 
+  // Secondary information/actions shown below the status.
   let secondLine: any;
   if (['LIQUIDATED', 'LIQUIDATION_IN_PROGRESS', 'FRAUD_LIQUIDATION_IN_PROGRESS'].indexOf(deposit.currentState) > -1) {
       secondLine = <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
         {getLiquidationCauseAsString(deposit.depositLiquidation.cause)}
       </span>;
   }
-  else {
-    secondLine = <>
-      {
-        (shouldShowConfirmationInfo && btcTxState) ?
-            <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
-              {btcTxState.hasTransaction
-                    ? <>{btcTxState?.numConfirmations} confirmations</>
-                    : <>waiting for transaction</>}
 
-              <a title={"Open on blockchain.com"} href={
+  else if (shouldShowConfirmationInfo) {
+    if (!btcTxState) {
+      // wait until it is loaded
+      secondLine = null;
+    }
+    else {
+      let action: any;
+      if (btcTxState.hasTransaction && btcTxState.numConfirmations >= 6) {
+        action = <Button size={"tiny"} to={`https://${dAppDomain}/deposit/${deposit.contractAddress}/pay/confirming`}>Go to dApp</Button>;
+      }
+      else if (timing === undefined) {
+        action = null;
+      }
+      else if (timing?.remaining > 0) {
+        action = <span style={{fontSize: 20, flex: 1, color: 'gray', textAlign: 'right'}}>
+          {formatSeconds(timing?.remaining)} <InfoTooltip size={0.8}>When this timer reaches zero, anyone can close the deposit, returning the bonded funds to the signers.</InfoTooltip>
+        </span>
+      }
+      else {
+        action = <NotifyButton deposit={deposit} />;
+      }
+      secondLine = <>
+        <span style={{fontSize: 20, flex: 1, color: 'gray'}}>
+          {btcTxState.hasTransaction
+              ? <>{btcTxState?.numConfirmations} confirmations</>
+              : <>waiting for transaction</>}
+
+          <a
+              title={"Open on blockchain.com"}
+              href={
                 btcTxState.transactionHash
                     ? `${blockChainBaseUrl}/tx/${btcTxState.transactionHash}`
                     : `${blockChainBaseUrl}/address/${btcAddress}`
-              } className={css`
-                    font-size: 0.8em;
-                    padding-left: 0.2em;
-                   `}>
-                <ExternalLinkIcon />
-              </a>
-              <span style={{fontSize: 12}}><Loading /></span>
-            </span>
-          : null}
-      <NotifyButton deposit={deposit} />
-    </>;
+              }
+              className={css`
+                font-size: 0.8em;
+                padding-left: 0.2em;
+             `}
+          >
+            <ExternalLinkIcon/>
+          </a>
+
+          <span style={{fontSize: 12, paddingLeft: 5}}><Loading/></span>
+        </span>
+        {action}
+      </>;
+    }
   }
 
   return <Box label={"state"}>
-    <div>
+    <LabelWithBackgroundProgress
+        progress={timing?.percentage}
+    >
       {getNiceStateLabel(deposit)} {getStateTooltip(deposit.currentState)
         ? <span className={css`position: relative; top: -0.5em; font-size: 0.6em;`}><InfoTooltip>{getStateTooltip(deposit.currentState)}</InfoTooltip></span>
         : null}
-    </div>
+    </LabelWithBackgroundProgress>
 
     {
       hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
@@ -84,12 +117,53 @@ export function StatusBox(props: {
 }
 
 
+export function LabelWithBackgroundProgress(props: {
+  children: any,
+  progress: number|undefined,
+}) {
+  if (props.progress === undefined) {
+    return props.children;
+  }
+
+  let color: string = '';
+  if (props.progress <= 0.5) {
+    color = '#d3f7ce';
+  }
+  else if (props.progress <= 0.8) {
+    color = '#f7e4ce';
+  }
+  else {
+    color = '#f7cece';
+  }
+
+  return <div style={{
+    position: 'relative',
+    zIndex: 1
+  }}>
+    {props.children}
+    <div style={{
+      position: 'absolute',
+      backgroundColor: color,
+      left: 0,
+      top: 0,
+      bottom: 0,
+      width: `${props.progress * 100}%`,
+      zIndex: -4
+    }}>
+    </div>
+  </div>
+}
+
+
 const depositAbi = [
   "function notifyFundingTimedOut()",
   "function notifySignerSetupFailed()"
 ];
 
 
+/**
+ * Show a notification button for this deposit.
+ */
 function NotifyButton(props: {
   deposit: any
 }) {

@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client';
-import React from "react";
+import React, {useState} from "react";
 import {NiceStateLabelFragment} from "../generated/graphql";
+import {dateTimeFrom} from "../components/FormattedTime";
+import {useInterval} from "./useInterval";
 
 export const NiceStateLabel = gql`
     fragment NiceStateLabel on Deposit {
@@ -10,9 +12,40 @@ export const NiceStateLabel = gql`
         },
         depositSetup {
             failureReason
-        }
+        },
+        currentStateTimesOutAt,
+        updatedAt
     }
-`
+`;
+
+/**
+ * Percentage of the current phase of the deposit that has passed, for example, 50% until AWAITING_BTC_FUNDING
+ * times out. Returns `undefined` if the current state does not expire.
+ */
+export function getTimeRemaining(deposit: NiceStateLabelFragment) {
+  if (!deposit.currentStateTimesOutAt) { return; }
+
+  const updatedAt = dateTimeFrom(deposit.updatedAt);
+  const currentStateTimesOutAt = dateTimeFrom(deposit.currentStateTimesOutAt);
+
+  const {seconds: totalSeconds} = currentStateTimesOutAt.diff(updatedAt, ['seconds']);
+  const {seconds: secondsNow} = currentStateTimesOutAt.diffNow(['seconds']);
+  const percentage = Math.min(1 - (secondsNow / totalSeconds), 1);
+
+  return {remaining: secondsNow, total: totalSeconds, percentage};
+}
+
+/**
+ * Self-updating hook version of `getTimeRemaining()`.
+ */
+export function useTimeRemaining(deposit: NiceStateLabelFragment, interval?: number) {
+  const [value, setValue] = useState(getTimeRemaining(deposit));
+  useInterval(() => {
+    setValue(getTimeRemaining(deposit));
+  }, (interval ?? 0.8) * 1000)
+  return value;
+}
+
 
 export function getNiceStateLabel(deposit: NiceStateLabelFragment) {
   const {currentState: state, depositSetup} = deposit;

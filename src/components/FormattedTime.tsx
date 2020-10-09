@@ -1,7 +1,7 @@
-import {DateTime} from "luxon";
+import {DateTime, Duration} from "luxon";
 import React from "react";
 
-function dateTimeFrom(time: string|number) {
+export function dateTimeFrom(time: string|number) {
   return DateTime.fromSeconds(typeof time === 'string' ? parseInt(time) : time);
 }
 
@@ -26,6 +26,19 @@ export function TimeToNow(props: {
     {relString}
   </span>
 }
+
+export function formatSeconds(seconds: number) {
+  if (seconds < 120) {
+    return Duration.fromObject({seconds }).toFormat("s's'")
+  }
+  else if (seconds < 3600 + 1800) {
+    return Duration.fromObject({seconds }).toFormat("m'm' s's'")
+  }
+  else {
+    return Duration.fromObject({seconds }).toFormat("h'h 'm'm'")
+  }
+}
+
 
 export function FormattedTime(props: {
   time: string|number
