@@ -17,12 +17,14 @@ import {DateTime} from "luxon";
 import {useEtherscanDomain} from "../../NetworkContext";
 import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
+import {DepositViewID} from "./index";
 
 const DEPOSITS_QUERY = gql`
-    query GetDeposits($where: Deposit_filter) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
         deposits(
             first: 1000, 
-            orderBy: updatedAt, orderDirection: desc
+            orderBy: $orderBy, 
+            orderDirection: desc
             where: $where
         ) {
             id,
@@ -31,6 +33,8 @@ const DEPOSITS_QUERY = gql`
             currentState,
             keepAddress,
             updatedAt,
+            createdAt,
+            redemptionStartedAt
             
             tdtToken {
                 owner
@@ -57,17 +61,30 @@ const DEPOSITS_QUERY = gql`
 `;
 
 export function DepositsTable(props: {
-  view: 'all'|'active'|'liquidations'|'redeemable'|'unminted'
+  view: DepositViewID
 }) {
   const where = ({
-    all: {},
+    "": {},
     active: {'filter_activeLikeState': true},
     liquidations: {'filter_liquidationLikeState': true},
     redeemable: {'filter_redeemableAsOf_gt': Math.round(DateTime.utc().toMillis() / 1000)},
     unminted: {'filter_unmintedTDT': true},
-  } as any)[props.view || 'all'];
+    notifiable: {'currentStateTimesOutAt_lt': Math.round(DateTime.utc().toMillis() / 1000)},
+    redemptions: {'redemptionStartedAt_not': null},
+  } as any)[props.view || ''] || {};
 
-  const { loading, error, data } = useQuery(DEPOSITS_QUERY, {variables: {where: where}});
+  const dateColumn: string = ({
+    "": "updatedAt",
+    operations: "createdAt",
+    redemptions: "redemptionStartedAt",
+  } as {[key in DepositViewID]: string})[props.view || ''] || "updatedAt";
+
+  const {loading, error, data} = useQuery(DEPOSITS_QUERY, {
+    variables: {
+      where: where,
+      orderBy: dateColumn
+    }
+  });
   const [source, target] = useSingleton();
   const price = usePriceFeed();
   const etherscan = useEtherscanDomain();
@@ -82,9 +99,19 @@ export function DepositsTable(props: {
     >
       <thead>
       <tr>
-        <th>Updated <InfoTooltip>
-          When this deposit last changed state, during the funding, redemption or liquidation processes.
-        </InfoTooltip></th>
+        {
+          (dateColumn == "updatedAt") ? <th>Updated <InfoTooltip>
+            When this deposit last changed state, during the funding, redemption or liquidation processes.
+          </InfoTooltip></th>
+              :
+              (dateColumn == "redemptionStartedAt") ? <th>Started <InfoTooltip>
+                When the redemption process, or liquidation, started.
+              </InfoTooltip></th>
+                  : <th>Created <InfoTooltip>
+                    When this deposit was created.
+                  </InfoTooltip></th>
+        }
+
         <th>
           Contract <InfoTooltip>
           Every deposit is represented on-chain by a contract.
@@ -98,7 +125,7 @@ export function DepositsTable(props: {
       {data.deposits.map((deposit: any) => {
         return  <tr key={deposit.id}>
           <td>
-            <TimeToNow time={deposit.updatedAt} />
+            <TimeToNow time={deposit[dateColumn]} />
           </td>
           <td>
             <Link to={`/deposit/${deposit.id}`}>
