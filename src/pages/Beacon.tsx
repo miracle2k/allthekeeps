@@ -11,16 +11,18 @@ import {usePriceFeed} from "../components/PriceFeed";
 import {Box} from "../components/Box";
 import {GetOperatorsQuery, GetRelayEntriesQuery, GetUsersQuery} from "../generated/graphql";
 import {useEtherscanDomain} from "../NetworkContext";
-import {TimeToNow} from "../components/FormattedTime";
+import {TimeBetween, TimeToNow} from "../components/FormattedTime";
+import {getWeiAsEth} from "../utils/getWeiAsEth";
 
 const BEACON_QUERY = gql`
     query GetRelayEntries {
-        relayEntries(orderBy: requestedAt, orderDirection:desc) {
+        relayEntries(first: 1000, orderBy: requestedAt, orderDirection:desc) {
             id,
             requestId,
             value,
             requestedAt,
-            generatedAt
+            generatedAt,
+            rewardPerMember
         }
     }
 `;
@@ -56,6 +58,7 @@ export function RelayEntriesTable(props: {
     <thead>
     <tr>
       <th>Request ID</th>
+      <th>Fee</th>
       <th>
         Random Value
       </th>
@@ -63,7 +66,7 @@ export function RelayEntriesTable(props: {
         Requested At
       </th>
       <th>
-        Created At
+        Provided At
       </th>
     </tr>
     </thead>
@@ -73,10 +76,13 @@ export function RelayEntriesTable(props: {
         <td>
           {entry.requestId}
         </td>
+        <td>
+          {getWeiAsEth(entry.rewardPerMember)}
+        </td>
         <td>{entry.value}</td>
         <td><TimeToNow time={entry.requestedAt} /></td>
         <td>
-          <TimeToNow time={entry.generatedAt} />
+          <TimeBetween earlier={entry.requestedAt} later={entry.generatedAt} />
         </td>
       </tr>
     })}

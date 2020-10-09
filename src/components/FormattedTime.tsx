@@ -1,13 +1,17 @@
 import {DateTime} from "luxon";
 import React from "react";
 
+function dateTimeFrom(time: string|number) {
+  return DateTime.fromSeconds(typeof time === 'string' ? parseInt(time) : time);
+}
+
 export function TimeToNow(props: {
   time: string|number
 }) {
   if (!props.time) {
     return null;
   }
-  const dateTime = DateTime.fromSeconds(typeof props.time === 'string' ? parseInt(props.time) : props.time);
+  const dateTime = dateTimeFrom(props.time);
 
   // toRelative(): always contains a single unit, the options only allow you to switch to unrounded ("1.3 days"),
   // You can define a padding, but this does seem to only work right if your padding matches the time, i.e. you
@@ -26,6 +30,25 @@ export function TimeToNow(props: {
 export function FormattedTime(props: {
   time: string|number
 }) {
-  const dateTime = DateTime.fromSeconds(typeof props.time === 'string' ? parseInt(props.time) : props.time);
+  const dateTime = dateTimeFrom(props.time);
   return <span>{dateTime.toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+}
+
+export function TimeBetween(props: {
+  earlier: string|number
+  later: string|number
+}) {
+  if (!props.earlier || !props.later) {
+    return null;
+  }
+  const earlier = dateTimeFrom(props.earlier);
+  const later = dateTimeFrom(props.later);
+
+  // Or, we can use diffNow?
+  // const diff = dateTime.diffNow(['days', 'hours', 'minutes', 'months', 'years'])
+  const diff = later.diff(earlier, ['seconds'])
+
+  return <span title={later.toLocaleString(DateTime.DATETIME_FULL)}>
+    {diff.seconds} seconds
+  </span>
 }
