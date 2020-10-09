@@ -85,6 +85,9 @@ function AppInternal() {
                 <Route exact path="/deposits">
                   <Deposits />
                 </Route>
+                <Route exact path="/deposits/:view">
+                  <Deposits />
+                </Route>
                 <Route path="/about" exact>
                   <About />
                 </Route>

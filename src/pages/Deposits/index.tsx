@@ -7,6 +7,7 @@ import Dropdown from "react-dropdown-aria";
 import {DropdownStyle, ExtraState} from "react-dropdown-aria/dist/utils/types";
 import { css } from "emotion";
 import {useDAppDomain} from "../../NetworkContext";
+import {useHistory, useLocation, useParams} from "react-router";
 
 
 // See: https://github.com/jfangrad/react-dropdown-aria/blob/68e730d1ba8894ded9ee6cfb665c7aabf985d1dc/packages/react-dropdown-aria/styles/index.ts
@@ -79,7 +80,8 @@ const style: DropdownStyle = {
 
 
 export function Deposits() {
-  const [view, setView] = useState("all");
+  const {view} = useParams<any>();
+  const location = useHistory();
   const dAppDomain = useDAppDomain();
 
   return  <div style={{padding: '20px'}}>
@@ -107,7 +109,7 @@ export function Deposits() {
               style={style}
               value={view}
               onChange={(value) => {
-                setView(value.value);
+                location.push(`/deposits/${value.value}`);
               }}
               optionItemRenderer={item => {
                 return <span>{item.option.title}</span>
