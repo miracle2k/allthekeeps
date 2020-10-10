@@ -62,6 +62,10 @@ export function TimeBetween(props: {
   const diff = later.diff(earlier, ['seconds'])
 
   return <span title={later.toLocaleString(DateTime.DATETIME_FULL)}>
-    {diff.seconds} seconds
+    {diff.seconds}<Gray>s</Gray>
   </span>
+}
+
+function Gray(props: {children: any}) {
+  return <span style={{color: 'gray'}}>{props.children}</span>
 }

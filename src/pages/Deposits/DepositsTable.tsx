@@ -25,6 +25,7 @@ import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {DepositViewID} from "./index";
 import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
+import {BTCTag} from "../../components/CurrencyTags";
 
 const DEPOSITS_QUERY = gql`
     query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
@@ -169,7 +170,7 @@ const DepositRow = React.memo((props: {
       </a>
     </td>
     <td>
-      <span style={{color: 'gray', fontSize: '0.8em'}}>BTC</span>&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
+      <BTCTag />&nbsp;{getSatoshisAsBitcoin(deposit.lotSizeSatoshis ?? 0)}
     </td>
     <td className={css`
             display: flex;

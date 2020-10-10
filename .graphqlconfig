@@ -1,10 +1,10 @@
 {
-  "name": "All The KEeps",
+  "name": "All The Keeps",
   "schemaPath": "schema.graphql",
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps",
+        "url": "https://api.thegraph.com/subgraphs/name/miracle2k/keep-network",
         "headers": {
           "user-agent": "JS GraphQL"
         },
