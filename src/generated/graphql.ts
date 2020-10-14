@@ -4247,9 +4247,6 @@ export type GetDepositsQuery = (
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount' | 'publicKey'>
     )> }
     & NiceStateLabelFragment
-  )>, stats?: Maybe<(
-    { __typename?: 'StatsRecord' }
-    & Pick<StatsRecord, 'depositCount'>
   )> }
 );
 
@@ -4307,16 +4304,17 @@ export type GetRandomBeaconGroupQuery = (
   )> }
 );
 
-export type GetOperatorQueryVariables = Exact<{
+export type GetOperatorKeepsQueryVariables = Exact<{
   id: Scalars['ID'];
+  orderBy?: Maybe<BondedEcdsaKeep_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
 }>;
 
 
-export type GetOperatorQuery = (
+export type GetOperatorKeepsQuery = (
   { __typename?: 'Query' }
   & { operator?: Maybe<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards'>
     & { keeps?: Maybe<Array<(
       { __typename?: 'BondedECDSAKeep' }
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount'>
@@ -4332,12 +4330,26 @@ export type GetOperatorQuery = (
         )> }
         & NiceStateLabelFragment
       ) }
-    )>>, beaconGroupMemberships: Array<(
+    )>> }
+  )> }
+);
+
+export type GetOperatorQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetOperatorQuery = (
+  { __typename?: 'Query' }
+  & { operator?: Maybe<(
+    { __typename?: 'Operator' }
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards'>
+    & { beaconGroupMemberships: Array<(
       { __typename?: 'RandomBeaconGroupMembership' }
-      & Pick<RandomBeaconGroupMembership, 'count'>
+      & Pick<RandomBeaconGroupMembership, 'count' | 'reward'>
       & { group: (
         { __typename?: 'RandomBeaconGroup' }
-        & Pick<RandomBeaconGroup, 'id' | 'pubKey'>
+        & Pick<RandomBeaconGroup, 'id' | 'pubKey' | 'createdAt'>
       ) }
     )> }
   )> }
@@ -4634,9 +4646,6 @@ export const GetDepositsDocument = gql`
     }
     ...NiceStateLabel
   }
-  stats: statsRecord(id: "current") {
-    depositCount
-  }
 }
     ${NiceStateLabelFragmentDoc}`;
 
@@ -4768,18 +4777,10 @@ export function useGetRandomBeaconGroupLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetRandomBeaconGroupQueryHookResult = ReturnType<typeof useGetRandomBeaconGroupQuery>;
 export type GetRandomBeaconGroupLazyQueryHookResult = ReturnType<typeof useGetRandomBeaconGroupLazyQuery>;
 export type GetRandomBeaconGroupQueryResult = Apollo.QueryResult<GetRandomBeaconGroupQuery, GetRandomBeaconGroupQueryVariables>;
-export const GetOperatorDocument = gql`
-    query GetOperator($id: ID!) {
+export const GetOperatorKeepsDocument = gql`
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
   operator(id: $id) {
-    id
-    address
-    bonded
-    unboundAvailable
-    stakedAmount
-    totalFaultCount
-    attributableFaultCount
-    totalTBTCRewards
-    keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
+    keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       totalBondAmount
       deposit {
@@ -4801,16 +4802,60 @@ export const GetOperatorDocument = gql`
         ...NiceStateLabel
       }
     }
-    beaconGroupMemberships {
+  }
+}
+    ${NiceStateLabelFragmentDoc}`;
+
+/**
+ * __useGetOperatorKeepsQuery__
+ *
+ * To run a query within a React component, call `useGetOperatorKeepsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperatorKeepsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperatorKeepsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      orderBy: // value for 'orderBy'
+ *      orderDirection: // value for 'orderDirection'
+ *   },
+ * });
+ */
+export function useGetOperatorKeepsQuery(baseOptions?: Apollo.QueryHookOptions<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>) {
+        return Apollo.useQuery<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>(GetOperatorKeepsDocument, baseOptions);
+      }
+export function useGetOperatorKeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>) {
+          return Apollo.useLazyQuery<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>(GetOperatorKeepsDocument, baseOptions);
+        }
+export type GetOperatorKeepsQueryHookResult = ReturnType<typeof useGetOperatorKeepsQuery>;
+export type GetOperatorKeepsLazyQueryHookResult = ReturnType<typeof useGetOperatorKeepsLazyQuery>;
+export type GetOperatorKeepsQueryResult = Apollo.QueryResult<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>;
+export const GetOperatorDocument = gql`
+    query GetOperator($id: ID!) {
+  operator(id: $id) {
+    id
+    address
+    bonded
+    unboundAvailable
+    stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
+    beaconGroupMemberships(orderBy: reward) {
       count
+      reward
       group {
         id
         pubKey
+        createdAt
       }
     }
   }
 }
-    ${NiceStateLabelFragmentDoc}`;
+    `;
 
 /**
  * __useGetOperatorQuery__
@@ -5073,9 +5118,6 @@ export const GetDeposits = gql`
     }
     ...NiceStateLabel
   }
-  stats: statsRecord(id: "current") {
-    depositCount
-  }
 }
     ${NiceStateLabel}`;
 export const GetGovernance = gql`
@@ -5129,18 +5171,10 @@ export const GetRandomBeaconGroup = gql`
   }
 }
     `;
-export const GetOperator = gql`
-    query GetOperator($id: ID!) {
+export const GetOperatorKeeps = gql`
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
   operator(id: $id) {
-    id
-    address
-    bonded
-    unboundAvailable
-    stakedAmount
-    totalFaultCount
-    attributableFaultCount
-    totalTBTCRewards
-    keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
+    keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       totalBondAmount
       deposit {
@@ -5162,16 +5196,32 @@ export const GetOperator = gql`
         ...NiceStateLabel
       }
     }
-    beaconGroupMemberships {
+  }
+}
+    ${NiceStateLabel}`;
+export const GetOperator = gql`
+    query GetOperator($id: ID!) {
+  operator(id: $id) {
+    id
+    address
+    bonded
+    unboundAvailable
+    stakedAmount
+    totalFaultCount
+    attributableFaultCount
+    totalTBTCRewards
+    beaconGroupMemberships(orderBy: reward) {
       count
+      reward
       group {
         id
         pubKey
+        createdAt
       }
     }
   }
 }
-    ${NiceStateLabel}`;
+    `;
 export const GetOperators = gql`
     query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection) {
   stats: statsRecord(id: "current") {

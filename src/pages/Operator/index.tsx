@@ -11,6 +11,7 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {GetOperatorQuery} from "../../generated/graphql";
 import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
+import {useSort} from "../../components/Table";
 
 
 const OPERATOR_QUERY = gql`
@@ -24,33 +25,6 @@ const OPERATOR_QUERY = gql`
             totalFaultCount,
             attributableFaultCount,
             totalTBTCRewards,
-            keeps(first: 300, orderBy: createdAt, orderDirection: desc) {
-                id,
-                # TODO: How much is bonded in this keep for this operator?
-                totalBondAmount,
-                deposit {
-                    id,
-                    contractAddress,
-                    lotSizeSatoshis,
-                    currentState,
-                    keepAddress,
-                    createdAt,
-                    tdtToken {
-                        owner
-                    }
-
-                    undercollateralizedThresholdPercent,
-                    severelyUndercollateralizedThresholdPercent,
-                    
-                    # Should take it from the parent intead.
-                    bondedECDSAKeep {
-                        id,
-                        totalBondAmount
-                    },
-                    
-                    ...NiceStateLabel
-                }
-            }
             beaconGroupMemberships(orderBy: reward) {
                 count,
                 reward,
@@ -62,8 +36,6 @@ const OPERATOR_QUERY = gql`
             }
         }
     }
-  
-    ${NiceStateLabel}
 `;
 
 
@@ -168,7 +140,7 @@ export function Content() {
       <TabPanel>
         <Paper padding>
           <h3 style={{marginTop: 0}}>Keeps</h3>
-          <KeepsTable keeps={operator.keeps} />
+          <KeepsTable operatorId={operatorId} />
         </Paper>
       </TabPanel>
       <TabPanel>

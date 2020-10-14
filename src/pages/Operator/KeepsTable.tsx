@@ -1,31 +1,81 @@
 import Tippy, {useSingleton} from "@tippyjs/react";
 import {usePriceFeed} from "../../components/PriceFeed";
 import {useEtherscanDomain} from "../../NetworkContext";
-import {Table} from "../../components/Table";
+import {SortableHeader, Table, useSort} from "../../components/Table";
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {TimeToNow} from "../../components/FormattedTime";
 import {Link} from "react-router-dom";
 import {css} from "emotion";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
-import {getNiceStateLabel, getStateBoxStyle} from "../../utils/depositStates";
+import {getNiceStateLabel, getStateBoxStyle, NiceStateLabel} from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
 import {TBTCIcon} from "../../design-system/tbtcIcon";
 import {CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import React from "react";
+import {gql, useQuery} from "@apollo/client";
+import {GetOperatorKeepsQuery, GetOperatorQuery} from "../../generated/graphql";
 
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
 });
 
+const KEEPS_QUERY = gql`
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
+        operator(id: $id) {
+            keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
+                id,
+                # TODO: How much is bonded in this keep for this operator?
+                totalBondAmount,
+                deposit {
+                    id,
+                    contractAddress,
+                    lotSizeSatoshis,
+                    currentState,
+                    keepAddress,
+                    createdAt,
+                    tdtToken {
+                        owner
+                    }
+
+                    undercollateralizedThresholdPercent,
+                    severelyUndercollateralizedThresholdPercent,
+
+                    # Should take it from the parent intead.
+                    bondedECDSAKeep {
+                        id,
+                        totalBondAmount
+                    },
+
+                    ...NiceStateLabel
+                }
+            }
+        }
+    }
+
+    ${NiceStateLabel}
+`;
+
 
 export function KeepsTable(props: {
-  keeps: any
+  operatorId: string
 }) {
   const [source, target] = useSingleton();
   const price = usePriceFeed();
   const etherscan = useEtherscanDomain();
+  const sortState = useSort("createdAt");
+
+  const { loading, error, data } = useQuery<GetOperatorKeepsQuery>(KEEPS_QUERY, {variables: {
+    id: props.operatorId,
+    orderBy: sortState.column,
+    orderDirection: sortState.direction
+  }});
+
+  if (loading) return <p>Loading...</p>;
+  if (error || !data) return <p>Error :( {""+ error}</p>;
+
+  const keeps = data.operator?.keeps;
 
   // const totalActive = props.keeps.filter((keep: any) => {
   //   return (
@@ -36,25 +86,33 @@ export function KeepsTable(props: {
   // }).map((keep: any) => parseFloat(keep.totalBondAmount) / 3).reduce((a: any, b: any) => a + b, 0)
 
   return <>
-    <Table
-        style={{width: '100%'}}
-    >
+    <Table style={{width: '100%'}}>
       <thead>
       <tr>
-        <th>Date</th>
+        <th>
+          <SortableHeader fieldId={"createdAt"} state={sortState}>
+            Created
+          </SortableHeader>
+        </th>
         <th>
           Contract <InfoTooltip>
           Every deposit is represented on-chain by a contract.
         </InfoTooltip>
         </th>
-        <th>Lot Size</th>
+        <th>
+          Lot Size
+        </th>
         <th>State</th>
         <th>Collateralization</th>
-        <th>Bond</th>
+        <th>
+          <SortableHeader fieldId={"totalBondAmount"} state={sortState}>
+            Bond
+          </SortableHeader>
+        </th>
       </tr>
       </thead>
       <tbody>
-      {props.keeps.map((keep: any) => {
+      {keeps?.map((keep: any) => {
         const deposit = keep.deposit;
         return <tr key={deposit.id}>
           <td>
