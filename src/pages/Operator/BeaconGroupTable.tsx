@@ -20,7 +20,7 @@ export function BeaconGroupsTable(props: {
         Group
       </th>
       <th>
-        Multiplier
+        Weight <InfoTooltip>An operator can fill multiple membership slots in a group, and will then earn a multiple of rewards.</InfoTooltip>
       </th>
       <th>
         ETH Earned <InfoTooltip>ETH earned by the operator through membership in the group.</InfoTooltip>
