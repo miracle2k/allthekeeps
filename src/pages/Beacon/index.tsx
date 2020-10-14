@@ -26,7 +26,7 @@ const BEACON_QUERY = gql`
             id,
             pubKey,
             createdAt,
-            memberCount,
+            uniqueMemberCount,
             rewardPerMember,
         }
         relayEntries(first: 1000, orderBy: requestedAt, orderDirection:desc) {
@@ -100,7 +100,7 @@ export function RelayEntriesTable(props: {
         Provided After
       </th>
       <th>
-        Group <InfoTooltip>The group providing this result.</InfoTooltip>rewards.service.js
+        Group <InfoTooltip>The group providing this result.</InfoTooltip>
       </th>
       <th>
         Reward <InfoTooltip>ETH earned by each member of the group providing this value.</InfoTooltip>
@@ -119,7 +119,7 @@ export function RelayEntriesTable(props: {
           <TimeBetween earlier={entry.requestedAt} later={entry.generatedAt} />
         </td>
         <td>
-          <Hash hash={entry.group.pubKey} to={`/group/${entry.group.pubKey}`}>{getGroupName(entry.group.id)}</Hash>
+          <Hash hash={entry.group.pubKey} to={`/group/${entry.group.id}`}>{getGroupName(entry.group.id)}</Hash>
         </td>
         <td>
           {
@@ -166,7 +166,7 @@ export function BeaconGroupsTable(props: {
     {data.randomBeaconGroups.map((group: any) => {
       return  <tr key={group.id}>
         <td>
-          <Hash hash={group.pubKey} to={`/group/${group.pubKey}`}>{getGroupName(group.id)}</Hash>
+          <Hash hash={group.pubKey} to={`/group/${group.id}`}>{getGroupName(group.id)}</Hash>
         </td>
         {/*<td>*/}
         {/*  {group.memberCount}*/}

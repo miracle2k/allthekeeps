@@ -20,6 +20,12 @@ import {usePriceFeed} from "../components/PriceFeed";
 import { Table } from "../components/Table";
 import {useEtherscanDomain} from "../NetworkContext";
 import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {Hash} from "../components/Address";
+import {getGroupName} from "./Beacon/GroupName";
+import {ETHTag} from "../components/CurrencyTags";
+import {ETHValue} from "../components/ETHValue";
+import {GetOperatorQuery} from "../generated/graphql";
 
 
 const OPERATOR_QUERY = gql`
@@ -60,8 +66,14 @@ const OPERATOR_QUERY = gql`
                     ...NiceStateLabel
                 }
             }
-            randomBeaconGroups {
-                id
+            beaconGroupMemberships(orderBy: reward) {
+                count,
+                reward,
+                group {
+                    id,
+                    pubKey,
+                    createdAt,
+                }
             }
         }
     }
@@ -92,13 +104,17 @@ const formatterBTC = new Intl.NumberFormat("en-US", {
 
 export function Content() {
   let { operatorId } = useParams<any>();
-  const { loading, error, data } = useQuery(OPERATOR_QUERY, {variables: {id: operatorId}});
+  const { loading, error, data } = useQuery<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :( {""+ error}</p>;
+  if (error || !data) return <p>Error :( {""+ error}</p>;
+  const operator = data.operator;
+  if (!operator) {
+    return <p>No such operator.</p>
+  }
 
-  const total = (parseFloat(data.operator.unboundAvailable) + parseFloat(data.operator.bonded));
-  const bonded = parseFloat(data.operator.bonded);
+  const total = (parseFloat(operator.unboundAvailable) + parseFloat(operator.bonded));
+  const bonded = parseFloat(operator.bonded);
 
   return <div>
     <div className={css`
@@ -107,7 +123,7 @@ export function Content() {
       font-size: 30px;
       margin-bottom: 15px;
   `}>
-      Operator: {data.operator.address}
+      Operator: {operator.address}
     </div>
 
 
@@ -117,9 +133,10 @@ export function Content() {
       & > * {
         margin-right: 20px;
       }
+      margin-bottom: 20px;
   `}>
       <Box label={"bonded"}>
-        <div>{formatter.format(data.operator.bonded)} ETH</div>
+        <div>{formatter.format(operator.bonded)} ETH</div>
 
         {total > 0 ? <div style={{fontSize: '20px', color: 'gray'}}>
           {formatter.format((bonded / total * 100))}% of {formatter.format(total)} ETH
@@ -128,37 +145,55 @@ export function Content() {
 
       <Box label={"available to bond"}>
         <div>
-          {formatter.format(data.operator.unboundAvailable)} ETH
+          {formatter.format(operator.unboundAvailable)} ETH
         </div>
       </Box>
 
       <Box label={"staked"}>
         <div>
-          {formatter.format(data.operator.stakedAmount)} KEEP
+          {formatter.format(operator.stakedAmount)} KEEP
         </div>
       </Box>
 
       <Box label={"faults"} tooltip={"How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault."}>
         <div>
-          {data.operator.attributableFaultCount > 0 ? <>
-            {data.operator.attributableFaultCount} / </> : null}
-          {data.operator.totalFaultCount}
+          {operator.attributableFaultCount > 0 ? <>
+            {operator.attributableFaultCount} / </> : null}
+          {operator.totalFaultCount}
         </div>
       </Box>
 
       <Box label={"rewards"}>
         <div>
-          {formatterBTC.format(getSatoshiesAsTBTC(data.operator.totalTBTCRewards))} TBTC
+          {formatterBTC.format(getSatoshiesAsTBTC(operator.totalTBTCRewards))} TBTC
         </div>
       </Box>
     </div>
 
 
-    <Paper padding>
-      <h3 style={{marginTop: 0}}>Keeps</h3>
+    <Tabs>
+      <TabList>
+        <Tab>
+          Keeps
+        </Tab>
+        <Tab>
+          Beacon Groups
+        </Tab>
+      </TabList>
 
-      <KeepsTable keeps={data.operator.keeps} />
-    </Paper>
+      <TabPanel>
+        <Paper padding>
+          <h3 style={{marginTop: 0}}>Keeps</h3>
+          <KeepsTable keeps={operator.keeps} />
+        </Paper>
+      </TabPanel>
+      <TabPanel>
+        <Paper padding>
+          <h3 style={{marginTop: 0}}>Random Beacon Groups</h3>
+          <BeaconGroupsTable memberships={operator.beaconGroupMemberships} />
+        </Paper>
+      </TabPanel>
+    </Tabs>
   </div>
 }
 
@@ -253,4 +288,47 @@ export function KeepsTable(props: {
       </tbody>
     </Table>
   </>;
+}
+
+function BeaconGroupsTable(props: {
+  memberships: any,
+}) {
+  const {memberships} = props;
+
+  return <Table
+      style={{width: '100%'}}>
+    <thead>
+    <tr>
+      <th>
+        Group
+      </th>
+      <th>
+        Multiplier
+      </th>
+      <th>
+        ETH Earned <InfoTooltip>ETH earned by the operator through membership in the group.</InfoTooltip>
+      </th>
+      <th>
+        Created At
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    {memberships.map((membership: any) => {
+      const {group} = membership;
+      return  <tr key={group.id}>
+        <td>
+          <Hash hash={group.pubKey} to={`/group/${group.id}`}>{getGroupName(group.id)}</Hash>
+        </td>
+        <td>
+          {membership.count}
+        </td>
+        <td>
+          <ETHTag /> <ETHValue unit={"eth"} wei={membership.reward} />
+        </td>
+        <td><TimeToNow time={group.createdAt} /></td>
+      </tr>
+    })}
+    </tbody>
+  </Table>
 }

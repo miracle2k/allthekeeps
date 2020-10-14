@@ -378,6 +378,8 @@ export enum CreatedEvent_OrderBy {
 export type Deposit = {
   __typename?: 'Deposit';
   id: Scalars['ID'];
+  /** An incrementing unique number for this deposit, starting at 1. */
+  index: Scalars['Int'];
   tbtcSystem: Scalars['Bytes'];
   contractAddress: Scalars['Bytes'];
   tdtToken: TbtcDepositToken;
@@ -707,6 +709,14 @@ export type Deposit_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_in?: Maybe<Array<Scalars['ID']>>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  index?: Maybe<Scalars['Int']>;
+  index_not?: Maybe<Scalars['Int']>;
+  index_gt?: Maybe<Scalars['Int']>;
+  index_lt?: Maybe<Scalars['Int']>;
+  index_gte?: Maybe<Scalars['Int']>;
+  index_lte?: Maybe<Scalars['Int']>;
+  index_in?: Maybe<Array<Scalars['Int']>>;
+  index_not_in?: Maybe<Array<Scalars['Int']>>;
   tbtcSystem?: Maybe<Scalars['Bytes']>;
   tbtcSystem_not?: Maybe<Scalars['Bytes']>;
   tbtcSystem_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -913,6 +923,7 @@ export type Deposit_Filter = {
 
 export enum Deposit_OrderBy {
   Id = 'id',
+  Index = 'index',
   TbtcSystem = 'tbtcSystem',
   ContractAddress = 'contractAddress',
   TdtToken = 'tdtToken',
@@ -1827,7 +1838,7 @@ export type Operator = {
   keeps?: Maybe<Array<BondedEcdsaKeep>>;
   bonds: Array<Bond>;
   locks: Array<Lock>;
-  randomBeaconGroups: Array<RandomBeaconGroup>;
+  beaconGroupMemberships: Array<RandomBeaconGroupMembership>;
   owner?: Maybe<Scalars['Bytes']>;
   operator?: Maybe<Scalars['Bytes']>;
   beneficiary?: Maybe<Scalars['Bytes']>;
@@ -1911,12 +1922,12 @@ export type OperatorLocksArgs = {
  * in our graph, through the Operator entity. Understand that in staking terms, only a single owner can delegate
  * their tokens to a particular owner, so the tokens staked always come from the samea address.
  */
-export type OperatorRandomBeaconGroupsArgs = {
+export type OperatorBeaconGroupMembershipsArgs = {
   skip?: Maybe<Scalars['Int']>;
   first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<RandomBeaconGroup_OrderBy>;
+  orderBy?: Maybe<RandomBeaconGroupMembership_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
-  where?: Maybe<RandomBeaconGroup_Filter>;
+  where?: Maybe<RandomBeaconGroupMembership_Filter>;
 };
 
 export type Operator_Filter = {
@@ -2054,7 +2065,7 @@ export enum Operator_OrderBy {
   Keeps = 'keeps',
   Bonds = 'bonds',
   Locks = 'locks',
-  RandomBeaconGroups = 'randomBeaconGroups',
+  BeaconGroupMemberships = 'beaconGroupMemberships',
   Owner = 'owner',
   Operator = 'operator',
   Beneficiary = 'beneficiary',
@@ -2133,6 +2144,8 @@ export type Query = {
   randomBeaconGroups: Array<RandomBeaconGroup>;
   relayEntry?: Maybe<RelayEntry>;
   relayEntries: Array<RelayEntry>;
+  randomBeaconGroupMembership?: Maybe<RandomBeaconGroupMembership>;
+  randomBeaconGroupMemberships: Array<RandomBeaconGroupMembership>;
   event?: Maybe<Event>;
   events: Array<Event>;
 };
@@ -2570,6 +2583,22 @@ export type QueryRelayEntriesArgs = {
 };
 
 
+export type QueryRandomBeaconGroupMembershipArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryRandomBeaconGroupMembershipsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<RandomBeaconGroupMembership_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<RandomBeaconGroupMembership_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type QueryEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -2590,19 +2619,23 @@ export type RandomBeaconGroup = {
   id: Scalars['ID'];
   pubKey: Scalars['Bytes'];
   createdAt: Scalars['BigInt'];
-  members: Array<Operator>;
-  memberCount: Scalars['Int'];
+  /** A membership record for each unique member in the group. */
+  memberships: Array<RandomBeaconGroupMembership>;
+  /** The total number of slots. Since operators may appear multiple times, this is distinct from the unique number count of the group. */
+  size: Scalars['Int'];
+  /** How many unique operators are in this group - the number of membership records. */
+  uniqueMemberCount: Scalars['Int'];
   rewardPerMember: Scalars['BigInt'];
   relayEntries: Array<RelayEntry>;
 };
 
 
-export type RandomBeaconGroupMembersArgs = {
+export type RandomBeaconGroupMembershipsArgs = {
   skip?: Maybe<Scalars['Int']>;
   first?: Maybe<Scalars['Int']>;
-  orderBy?: Maybe<Operator_OrderBy>;
+  orderBy?: Maybe<RandomBeaconGroupMembership_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
-  where?: Maybe<Operator_Filter>;
+  where?: Maybe<RandomBeaconGroupMembership_Filter>;
 };
 
 
@@ -2613,6 +2646,81 @@ export type RandomBeaconGroupRelayEntriesArgs = {
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<RelayEntry_Filter>;
 };
+
+/** Represents the membership of an operator in a beacon group. */
+export type RandomBeaconGroupMembership = {
+  __typename?: 'RandomBeaconGroupMembership';
+  id: Scalars['ID'];
+  group: RandomBeaconGroup;
+  operator: Operator;
+  /** The same operator can fill multiple membership slots within a group. */
+  count: Scalars['Int'];
+  /** ETH reward amount (in wei) earned by this operator through membership in this group. */
+  reward: Scalars['BigInt'];
+};
+
+export type RandomBeaconGroupMembership_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  group?: Maybe<Scalars['String']>;
+  group_not?: Maybe<Scalars['String']>;
+  group_gt?: Maybe<Scalars['String']>;
+  group_lt?: Maybe<Scalars['String']>;
+  group_gte?: Maybe<Scalars['String']>;
+  group_lte?: Maybe<Scalars['String']>;
+  group_in?: Maybe<Array<Scalars['String']>>;
+  group_not_in?: Maybe<Array<Scalars['String']>>;
+  group_contains?: Maybe<Scalars['String']>;
+  group_not_contains?: Maybe<Scalars['String']>;
+  group_starts_with?: Maybe<Scalars['String']>;
+  group_not_starts_with?: Maybe<Scalars['String']>;
+  group_ends_with?: Maybe<Scalars['String']>;
+  group_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+  count?: Maybe<Scalars['Int']>;
+  count_not?: Maybe<Scalars['Int']>;
+  count_gt?: Maybe<Scalars['Int']>;
+  count_lt?: Maybe<Scalars['Int']>;
+  count_gte?: Maybe<Scalars['Int']>;
+  count_lte?: Maybe<Scalars['Int']>;
+  count_in?: Maybe<Array<Scalars['Int']>>;
+  count_not_in?: Maybe<Array<Scalars['Int']>>;
+  reward?: Maybe<Scalars['BigInt']>;
+  reward_not?: Maybe<Scalars['BigInt']>;
+  reward_gt?: Maybe<Scalars['BigInt']>;
+  reward_lt?: Maybe<Scalars['BigInt']>;
+  reward_gte?: Maybe<Scalars['BigInt']>;
+  reward_lte?: Maybe<Scalars['BigInt']>;
+  reward_in?: Maybe<Array<Scalars['BigInt']>>;
+  reward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum RandomBeaconGroupMembership_OrderBy {
+  Id = 'id',
+  Group = 'group',
+  Operator = 'operator',
+  Count = 'count',
+  Reward = 'reward'
+}
 
 export type RandomBeaconGroup_Filter = {
   id?: Maybe<Scalars['ID']>;
@@ -2637,18 +2745,26 @@ export type RandomBeaconGroup_Filter = {
   createdAt_lte?: Maybe<Scalars['BigInt']>;
   createdAt_in?: Maybe<Array<Scalars['BigInt']>>;
   createdAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  members?: Maybe<Array<Scalars['String']>>;
-  members_not?: Maybe<Array<Scalars['String']>>;
-  members_contains?: Maybe<Array<Scalars['String']>>;
-  members_not_contains?: Maybe<Array<Scalars['String']>>;
-  memberCount?: Maybe<Scalars['Int']>;
-  memberCount_not?: Maybe<Scalars['Int']>;
-  memberCount_gt?: Maybe<Scalars['Int']>;
-  memberCount_lt?: Maybe<Scalars['Int']>;
-  memberCount_gte?: Maybe<Scalars['Int']>;
-  memberCount_lte?: Maybe<Scalars['Int']>;
-  memberCount_in?: Maybe<Array<Scalars['Int']>>;
-  memberCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  memberships?: Maybe<Array<Scalars['String']>>;
+  memberships_not?: Maybe<Array<Scalars['String']>>;
+  memberships_contains?: Maybe<Array<Scalars['String']>>;
+  memberships_not_contains?: Maybe<Array<Scalars['String']>>;
+  size?: Maybe<Scalars['Int']>;
+  size_not?: Maybe<Scalars['Int']>;
+  size_gt?: Maybe<Scalars['Int']>;
+  size_lt?: Maybe<Scalars['Int']>;
+  size_gte?: Maybe<Scalars['Int']>;
+  size_lte?: Maybe<Scalars['Int']>;
+  size_in?: Maybe<Array<Scalars['Int']>>;
+  size_not_in?: Maybe<Array<Scalars['Int']>>;
+  uniqueMemberCount?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_not?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_gt?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_lt?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_gte?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_lte?: Maybe<Scalars['Int']>;
+  uniqueMemberCount_in?: Maybe<Array<Scalars['Int']>>;
+  uniqueMemberCount_not_in?: Maybe<Array<Scalars['Int']>>;
   rewardPerMember?: Maybe<Scalars['BigInt']>;
   rewardPerMember_not?: Maybe<Scalars['BigInt']>;
   rewardPerMember_gt?: Maybe<Scalars['BigInt']>;
@@ -2663,8 +2779,9 @@ export enum RandomBeaconGroup_OrderBy {
   Id = 'id',
   PubKey = 'pubKey',
   CreatedAt = 'createdAt',
-  Members = 'members',
-  MemberCount = 'memberCount',
+  Memberships = 'memberships',
+  Size = 'size',
+  UniqueMemberCount = 'uniqueMemberCount',
   RewardPerMember = 'rewardPerMember',
   RelayEntries = 'relayEntries'
 }
@@ -3206,9 +3323,12 @@ export enum StartedLiquidationEvent_OrderBy {
   Cause = 'cause'
 }
 
+/** Exposes some global system statistics. Only a single record with the id "current" is available. */
 export type StatsRecord = {
   __typename?: 'StatsRecord';
   id: Scalars['ID'];
+  /** Total number of deposits ever created, regardless of their current state. */
+  depositCount: Scalars['Int'];
   availableToBeBonded: Scalars['BigDecimal'];
   totalBonded: Scalars['BigDecimal'];
   totalBondsSeized: Scalars['BigDecimal'];
@@ -3227,6 +3347,14 @@ export type StatsRecord_Filter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_in?: Maybe<Array<Scalars['ID']>>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  depositCount?: Maybe<Scalars['Int']>;
+  depositCount_not?: Maybe<Scalars['Int']>;
+  depositCount_gt?: Maybe<Scalars['Int']>;
+  depositCount_lt?: Maybe<Scalars['Int']>;
+  depositCount_gte?: Maybe<Scalars['Int']>;
+  depositCount_lte?: Maybe<Scalars['Int']>;
+  depositCount_in?: Maybe<Array<Scalars['Int']>>;
+  depositCount_not_in?: Maybe<Array<Scalars['Int']>>;
   availableToBeBonded?: Maybe<Scalars['BigDecimal']>;
   availableToBeBonded_not?: Maybe<Scalars['BigDecimal']>;
   availableToBeBonded_gt?: Maybe<Scalars['BigDecimal']>;
@@ -3271,6 +3399,7 @@ export type StatsRecord_Filter = {
 
 export enum StatsRecord_OrderBy {
   Id = 'id',
+  DepositCount = 'depositCount',
   AvailableToBeBonded = 'availableToBeBonded',
   TotalBonded = 'totalBonded',
   TotalBondsSeized = 'totalBondsSeized',
@@ -3372,6 +3501,8 @@ export type Subscription = {
   randomBeaconGroups: Array<RandomBeaconGroup>;
   relayEntry?: Maybe<RelayEntry>;
   relayEntries: Array<RelayEntry>;
+  randomBeaconGroupMembership?: Maybe<RandomBeaconGroupMembership>;
+  randomBeaconGroupMemberships: Array<RandomBeaconGroupMembership>;
   event?: Maybe<Event>;
   events: Array<Event>;
 };
@@ -3809,6 +3940,22 @@ export type SubscriptionRelayEntriesArgs = {
 };
 
 
+export type SubscriptionRandomBeaconGroupMembershipArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionRandomBeaconGroupMembershipsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<RandomBeaconGroupMembership_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<RandomBeaconGroupMembership_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type SubscriptionEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -3976,10 +4123,14 @@ export type GetRelayEntriesQuery = (
   { __typename?: 'Query' }
   & { randomBeaconGroups: Array<(
     { __typename?: 'RandomBeaconGroup' }
-    & Pick<RandomBeaconGroup, 'id' | 'pubKey' | 'createdAt' | 'memberCount' | 'rewardPerMember'>
+    & Pick<RandomBeaconGroup, 'id' | 'pubKey' | 'createdAt' | 'uniqueMemberCount' | 'rewardPerMember'>
   )>, relayEntries: Array<(
     { __typename?: 'RelayEntry' }
     & Pick<RelayEntry, 'id' | 'requestId' | 'value' | 'requestedAt' | 'generatedAt' | 'rewardPerMember'>
+    & { group: (
+      { __typename?: 'RandomBeaconGroup' }
+      & Pick<RandomBeaconGroup, 'id' | 'pubKey'>
+    ) }
   )> }
 );
 
@@ -4087,7 +4238,7 @@ export type GetDepositsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'currentStateTimesOutAt' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'owner'>
@@ -4096,6 +4247,9 @@ export type GetDepositsQuery = (
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount' | 'publicKey'>
     )> }
     & NiceStateLabelFragment
+  )>, stats?: Maybe<(
+    { __typename?: 'StatsRecord' }
+    & Pick<StatsRecord, 'depositCount'>
   )> }
 );
 
@@ -4142,9 +4296,13 @@ export type GetRandomBeaconGroupQuery = (
   & { randomBeaconGroup?: Maybe<(
     { __typename?: 'RandomBeaconGroup' }
     & Pick<RandomBeaconGroup, 'id' | 'createdAt' | 'rewardPerMember'>
-    & { members: Array<(
-      { __typename?: 'Operator' }
-      & Pick<Operator, 'id' | 'address'>
+    & { memberships: Array<(
+      { __typename?: 'RandomBeaconGroupMembership' }
+      & Pick<RandomBeaconGroupMembership, 'id' | 'count'>
+      & { operator: (
+        { __typename?: 'Operator' }
+        & Pick<Operator, 'address'>
+      ) }
     )> }
   )> }
 );
@@ -4174,9 +4332,13 @@ export type GetOperatorQuery = (
         )> }
         & NiceStateLabelFragment
       ) }
-    )>>, randomBeaconGroups: Array<(
-      { __typename?: 'RandomBeaconGroup' }
-      & Pick<RandomBeaconGroup, 'id'>
+    )>>, beaconGroupMemberships: Array<(
+      { __typename?: 'RandomBeaconGroupMembership' }
+      & Pick<RandomBeaconGroupMembership, 'count'>
+      & { group: (
+        { __typename?: 'RandomBeaconGroup' }
+        & Pick<RandomBeaconGroup, 'id' | 'pubKey'>
+      ) }
     )> }
   )> }
 );
@@ -4254,7 +4416,7 @@ export const GetRelayEntriesDocument = gql`
     id
     pubKey
     createdAt
-    memberCount
+    uniqueMemberCount
     rewardPerMember
   }
   relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
@@ -4264,6 +4426,10 @@ export const GetRelayEntriesDocument = gql`
     requestedAt
     generatedAt
     rewardPerMember
+    group {
+      id
+      pubKey
+    }
   }
 }
     `;
@@ -4455,6 +4621,7 @@ export const GetDepositsDocument = gql`
     updatedAt
     createdAt
     redemptionStartedAt
+    currentStateTimesOutAt
     tdtToken {
       owner
     }
@@ -4466,6 +4633,9 @@ export const GetDepositsDocument = gql`
       publicKey
     }
     ...NiceStateLabel
+  }
+  stats: statsRecord(id: "current") {
+    depositCount
   }
 }
     ${NiceStateLabelFragmentDoc}`;
@@ -4562,9 +4732,12 @@ export const GetRandomBeaconGroupDocument = gql`
     id
     createdAt
     rewardPerMember
-    members {
+    memberships {
       id
-      address
+      count
+      operator {
+        address
+      }
     }
   }
 }
@@ -4628,8 +4801,12 @@ export const GetOperatorDocument = gql`
         ...NiceStateLabel
       }
     }
-    randomBeaconGroups {
-      id
+    beaconGroupMemberships {
+      count
+      group {
+        id
+        pubKey
+      }
     }
   }
 }
@@ -4777,7 +4954,7 @@ export const GetRelayEntries = gql`
     id
     pubKey
     createdAt
-    memberCount
+    uniqueMemberCount
     rewardPerMember
   }
   relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
@@ -4787,6 +4964,10 @@ export const GetRelayEntries = gql`
     requestedAt
     generatedAt
     rewardPerMember
+    group {
+      id
+      pubKey
+    }
   }
 }
     `;
@@ -4879,6 +5060,7 @@ export const GetDeposits = gql`
     updatedAt
     createdAt
     redemptionStartedAt
+    currentStateTimesOutAt
     tdtToken {
       owner
     }
@@ -4890,6 +5072,9 @@ export const GetDeposits = gql`
       publicKey
     }
     ...NiceStateLabel
+  }
+  stats: statsRecord(id: "current") {
+    depositCount
   }
 }
     ${NiceStateLabel}`;
@@ -4934,9 +5119,12 @@ export const GetRandomBeaconGroup = gql`
     id
     createdAt
     rewardPerMember
-    members {
+    memberships {
       id
-      address
+      count
+      operator {
+        address
+      }
     }
   }
 }
@@ -4974,8 +5162,12 @@ export const GetOperator = gql`
         ...NiceStateLabel
       }
     }
-    randomBeaconGroups {
-      id
+    beaconGroupMemberships {
+      count
+      group {
+        id
+        pubKey
+      }
     }
   }
 }

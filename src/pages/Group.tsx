@@ -5,6 +5,7 @@ import {Helmet} from "react-helmet";
 import type {GetRandomBeaconGroup} from "../generated/graphql";
 import {useParams} from "react-router";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
+import {getGroupName} from "./Beacon/GroupName";
 
 const BEACONGROUP_QUERY = gql`
     query GetRandomBeaconGroup($id: ID!) {
@@ -12,9 +13,12 @@ const BEACONGROUP_QUERY = gql`
             id,
             createdAt,
             rewardPerMember,
-            members {
+            memberships {
                 id,
-                address
+                count,
+                operator {
+                    address   
+                }
             }
         }
     }
@@ -28,23 +32,26 @@ export function BeaconGroup() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
+  const group = data.randomBeaconGroup;
+
   return  <div style={{padding: '20px'}}>
     <Helmet>
-      <title>Random Beacon Group</title>
+      <title>Random Beacon Group: {getGroupName(group.id)}</title>
     </Helmet>
     <h1 style={{marginTop: 0, marginBottom: 25}}>
       Random Beacon Group
     </h1>
 
     <div>
-      {getWeiAsEth(data.randomBeaconGroup.rewardPerMember)}
+      Reward per member: {getWeiAsEth(group.rewardPerMember)}
     </div>
 
     <Paper padding>
       <ol>
-      {data!.randomBeaconGroup.members.map((member: any) => {
+      {group.memberships.map((member: any) => {
         return <li>
-          {member.address}
+          {member.operator.address}
+          ({member.count})
         </li>
       })}
       </ol>

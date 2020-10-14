@@ -167,7 +167,6 @@ const Views: {
 
 export function Deposits() {
   const {view: viewName} = useParams<any>();
-  const location = useHistory();
   const dAppDomain = useDAppDomain();
   const tippy = useRef<any>();
 
