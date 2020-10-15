@@ -1,4 +1,3 @@
-import {gql, useQuery} from "@apollo/client";
 import Tippy, {useSingleton} from "@tippyjs/react";
 import {css} from "emotion";
 import {InfoTooltip} from "../../components/InfoTooltip";
@@ -9,8 +8,6 @@ import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {
   getNiceStateLabel,
   getStateBoxStyle,
-  getStateTooltip,
-  NiceStateLabel,
   useTimeRemaining
 } from "../../utils/depositStates";
 import {hasDepositBeenUsedToMint} from "../../utils/contracts";
@@ -19,81 +16,18 @@ import React from "react";
 import {CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {usePriceFeed} from "../../components/PriceFeed";
 import { Table } from "../../components/Table";
-import {DateTime} from "luxon";
 import {useEtherscanDomain} from "../../NetworkContext";
 import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
-import {DepositViewID} from "./index";
 import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
 import {BTCTag} from "../../components/CurrencyTags";
+import {UseDepositQuery, useDepositQuery} from "./Views";
 
-const DEPOSITS_QUERY = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
-        deposits(
-            first: 1000, 
-            orderBy: $orderBy, 
-            orderDirection: desc
-            where: $where
-        ) {
-            id,
-            contractAddress,
-            lotSizeSatoshis,
-            currentState,
-            keepAddress,
-            updatedAt,
-            createdAt,
-            redemptionStartedAt,
-            currentStateTimesOutAt
-            
-            tdtToken {
-                owner
-            }
-            
-            #            endOfTerm,
-            # you can redeem it if: you are the owner, it is at term, is in courtesy call
-            # thus the status is:  
-            # canBeRedeemedByAnyone = CourtesyFlag || atTerm
-            
-            undercollateralizedThresholdPercent,
-            severelyUndercollateralizedThresholdPercent,
-            bondedECDSAKeep {
-                id,
-                totalBondAmount,
-                publicKey
-            }
-            
-            ...NiceStateLabel
-        }
-    }
-  
-    ${NiceStateLabel}
-`;
 
 export function DepositsTable(props: {
-  view: DepositViewID
+  query: UseDepositQuery
 }) {
-  const where = ({
-    "": {},
-    active: {'filter_activeLikeState': true},
-    liquidations: {'filter_liquidationLikeState': true},
-    redeemable: {'filter_redeemableAsOf_gt': Math.round(DateTime.utc().toMillis() / 1000)},
-    unminted: {'filter_unmintedTDT': true},
-    notifiable: {'currentStateTimesOutAt_lt': Math.round(DateTime.utc().toMillis() / 1000)},
-    redemptions: {'redemptionStartedAt_not': null},
-  } as any)[props.view || ''] || {};
-
-  const dateColumn: string = ({
-    "": "updatedAt",
-    operations: "createdAt",
-    redemptions: "redemptionStartedAt",
-  } as {[key in DepositViewID]: string})[props.view || ''] || "updatedAt";
-
-  const {loading, error, data} = useQuery(DEPOSITS_QUERY, {
-    variables: {
-      where: where,
-      orderBy: dateColumn
-    }
-  });
+  const {loading, error, dateColumn, view, data} = props.query;
   const [source, target] = useSingleton();
   const price = usePriceFeed();
   const etherscan = useEtherscanDomain();
