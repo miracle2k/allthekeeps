@@ -3,7 +3,6 @@ import React from "react";
 import {useParams} from 'react-router';
 import {css} from "emotion";
 import {Paper} from "../../design-system/Paper";
-import {NiceStateLabel} from "../../utils/depositStates";
 import {Helmet} from "react-helmet";
 import {Box} from "../../components/Box";
 import {getSatoshiesAsTBTC} from "../../utils/getSatoshisAsTBTC";
@@ -11,7 +10,6 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {GetOperatorQuery} from "../../generated/graphql";
 import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
-import {useSort} from "../../components/Table";
 
 
 const OPERATOR_QUERY = gql`
@@ -25,7 +23,7 @@ const OPERATOR_QUERY = gql`
             totalFaultCount,
             attributableFaultCount,
             totalTBTCRewards,
-            beaconGroupMemberships(orderBy: reward) {
+            beaconGroupMemberships(orderBy: groupCreatedAt, orderDirection: desc) {
                 count,
                 reward,
                 group {
