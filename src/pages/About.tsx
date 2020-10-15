@@ -30,19 +30,6 @@ export function About() {
       <p>
         Built by <a href={"http://twitter.com/elsdoerfer/"}>@elsdoerfer</a>
       </p>
-
-      <h3>Todos</h3>
-      <p>
-        <em>Still working on this...</em>
-      </p>
-      <ul>
-        <li>FRT Tokens, signer Fees</li>
-        <li>More bonding data</li>
-        <li>Global Event Log</li>
-        <li>Use <a href={"https://www.apollographql.com/docs/react/data/subscriptions/"}>subscriptions</a> to live-udpate.</li>
-        <li>Filter & Sort lists</li>
-        <li>Switch to ropsten</li>
-      </ul>
     </Paper>
 
   </div>
