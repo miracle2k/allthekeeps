@@ -66,7 +66,13 @@ export function Content() {
           return <div className={css`
             margin-bottom: 10px;
           `}>
-            <Step num={chain!.length - idx + 1} from={item.to} amount={item.amount} time={item.timestamp} />
+            <Step
+                num={chain!.length - idx + 1}
+                from={item.to}
+                amount={item.amount}
+                time={item.timestamp}
+                txid={item.tx_id}
+            />
             <div style={{
               textAlign: 'center',
               margin: 20
@@ -82,6 +88,7 @@ export function Content() {
 }
 
 function Step(props: {
+  txid?: string,
   num: number,
   from: any,
   amount: any,
@@ -89,7 +96,10 @@ function Step(props: {
 }) {
   const {from, amount, time} = props;
 
-  const tweetUrl = (TorchMapping as any)[from];
+  let tweetUrl = (TorchMapping as any)[from];
+  if (typeof tweetUrl == 'object') {
+    tweetUrl = tweetUrl[props.txid ?? ""];
+  }
   let tweetId;
   if (tweetUrl) {
     const match = tweetUrl.match(/status\/(\d+)$/);

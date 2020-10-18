@@ -7,7 +7,10 @@ export const TorchMapping = {
     '0xb9ab101eb21561ee343f88271654986dbd397070': 'https://twitter.com/gakonst/status/1311652009582493697',
     '0xf253266c062014482b7b00473ca3b63211ad913e': 'https://twitter.com/gtklocker/status/1311707875358711809',
     '0xe1b06c08aa24d03bec4ac4799f7aadd183a22e5c': 'https://twitter.com/viktorbunin/status/1311728473074003969',
-    '0xc8e0345596d7196941e61d3ab607e57fe61f85e7': 'https://twitter.com/oleveraging/status/1311731142429679621',
+    '0xc8e0345596d7196941e61d3ab607e57fe61f85e7': {
+        '3836,140': 'https://twitter.com/oleveraging/status/1311731142429679621',
+        '4226,1': 'https://twitter.com/statelayer/status/1316593462532284417'
+    },
     '0x0536e7dd2f63f5bbe2b581b704f98f8716e40b58': 'https://twitter.com/dzack23/status/1311732655491354624',
     '0x7889296d06cd861fe6e2cd9cc671e488259ba3cf': 'https://twitter.com/pedrouid/status/1311742902998097924',
     '0xd0769849c3af28a9df5a89e602c013853eb674ed': 'https://twitter.com/lightcoin/status/1311752269818458114',
