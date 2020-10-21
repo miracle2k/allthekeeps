@@ -91,11 +91,12 @@ export function getStateBoxStyle(state: string) {
     'ACTIVE': active,
     'FAILED_SETUP': 'transparent',
     "LIQUIDATED": failed,
-    "LIQUIDATION_IN_PROGRESS": inProgress
+    "LIQUIDATION_IN_PROGRESS": '#ffcdd2'
   } as any)[state] || "transparent";
 
   const borderColor = ({
     'FAILED_SETUP': failed,
+    "LIQUIDATION_IN_PROGRESS": failed
   } as any)[state] || color;
 
   return {
