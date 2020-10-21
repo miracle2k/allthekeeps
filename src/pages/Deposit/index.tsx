@@ -249,16 +249,32 @@ export function Content() {
               </div>
             },
             {
+              key: 'collateralization',
+              label: "Collaterialization",
+              tooltip: "If ETH loses value, the keep may become undercollaterized",
+              value: <CollaterizationStatus deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
+            },
+            {
               key: 'bondedAmount',
               label: "Bond",
               tooltip: "The total value the signers have bonded to guarantee this deposit.",
               value: <span>{getWeiAsEth(data.deposit.bondedECDSAKeep.totalBondAmount).toFixed(2)} ETH</span>
             },
+            btcAddress ? {
+              key: 'publicKey',
+              label: "BTC Address",
+              value: <BitcoinAddress address={btcAddress} />
+            } : undefined,
             {
-              key: 'collateralization',
-              label: "Collaterialization",
-              tooltip: "If ETH loses value, the keep may become undercollaterized",
-              value: <CollaterizationStatus deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
+              key: 'status',
+              label: "Status",
+              value: data.deposit.bondedECDSAKeep.status
+            },
+            {
+              key: 'keepAddress',
+              label: "Contract Address",
+              tooltip: "The contract managing the keep",
+              value: <Address address={data.deposit.keepAddress} />
             },
             {
               key: 'thresholds',
@@ -274,28 +290,12 @@ export function Content() {
               tooltip: "How many signers must be honest for the bond not be lost.",
               value: <span>{formatter.format(data.deposit.bondedECDSAKeep.honestThreshold / data.deposit.bondedECDSAKeep.members.length)}</span>
             },
-            {
-              key: 'keepAddress',
-              label: "Contract Address",
-              tooltip: "The contract managing the keep",
-              value: <Address address={data.deposit.keepAddress} />
-            },
-            btcAddress ? {
-              key: 'publicKey',
-              label: "BTC Address",
-              value: <BitcoinAddress address={btcAddress} />
-            } : undefined,
-            {
-              key: 'status',
-              label: "Status",
-              value: data.deposit.bondedECDSAKeep.status
-            }
           ]} />
         </Paper>
       </div>
     </div>
 
-    <Paper>
+    <Paper style={{marginTop: '20px'}}>
       <div className={css`           
         padding: 20px;
       `}>
