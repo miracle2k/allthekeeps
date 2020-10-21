@@ -116,7 +116,7 @@ export function useDepositQuery(view: DepositViewID) {
   const where = ({
     "": {},
     active: {'filter_activeLikeState': true},
-    liquidations: {'filter_liquidationLikeState': true},
+    liquidations: {'filter_liquidationLikeOrSignerFailureState': true},
     redeemable: {'filter_redeemableAsOf_gt': Math.round(DateTime.utc().toMillis() / 1000)},
     unminted: {'filter_unmintedTDT': true},
     notifiable: {'currentStateTimesOutAt_lt': Math.round(DateTime.utc().toMillis() / 1000)},
