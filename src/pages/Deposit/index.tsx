@@ -107,16 +107,19 @@ export function Deposit() {
 
 export function Content() {
   let { depositId } = useParams<any>();
+  depositId = depositId.toLowerCase();
+
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
   const etherscan = useEtherscanDomain();
   const dAppDomain = useDAppDomain();
   const price = usePriceFeed();
 
-  const btcAddress = useBtcAddressFromPublicKey(data?.deposit.bondedECDSAKeep.publicKey);
+  const btcAddress = useBtcAddressFromPublicKey(data?.deposit?.bondedECDSAKeep.publicKey);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
+  if (!data.deposit) return <p>Not found.</p>;
 
   const canBeRedeemed = ['ACTIVE', 'COURTESY_CALL'].indexOf(data.deposit.currentState) > -1;
   const isAtTerm = false;  // XXX still needs to be fixed
