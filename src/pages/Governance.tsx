@@ -175,7 +175,7 @@ function PriceInfo() {
   }
   else {
     content = <div>
-      <div>{price.val.toFixed(5)} ETH</div>
+      <div>{price.val.toFixed(5)} BTC</div>
       <div style={{
         marginTop: '0.5em',
         fontSize: '0.8em'
@@ -186,7 +186,7 @@ function PriceInfo() {
   }
 
   return <Paper padding>
-    <Block title={"Price Feed"} tooltip={"The price of a Bitcoin in ETH - affects collateralization ratios. Updates live."}>
+    <Block title={"ETH Price Feed"} tooltip={"The price of 1 Ether in BTC - affects collateralization ratios. Updates live."}>
       {content}
     </Block>
   </Paper>

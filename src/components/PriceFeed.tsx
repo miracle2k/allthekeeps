@@ -39,6 +39,9 @@ export type PriceData = {
   transactionHash: string
 }
 
+/**
+ * This is the price of 1 ETH in BTC.
+ */
 export function usePriceFeed() {
   const [data, setData] = useState<PriceData|null>(null);
   useEffect(() => {
