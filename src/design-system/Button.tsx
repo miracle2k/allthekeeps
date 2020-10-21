@@ -89,7 +89,7 @@ export function Button(props: {
     font-size: ${fontSize}px;
     padding: ${0.9 * paddingFactor}em ${1.2 * paddingFactor}em;
   `}
-                    {...extraProps}
+      {...extraProps}
       onClick={handleClick}
   >
     {props.children}

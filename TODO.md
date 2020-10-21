@@ -5,12 +5,6 @@ See the contract:
 
 https://github.com/keep-network/keep-ecdsa/commit/97bd500c00e531873cc74d121e0a11b7e1dbb320
 
-Support Paging
---------------
-
-Now that we have > 1000 deposits, and that is the limit the graph will return, we will 
-need to support paging. We might also want to limit the table to 500 rows for performance.
-
 
 Search function
 ---------------

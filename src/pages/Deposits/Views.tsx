@@ -68,9 +68,10 @@ export const Views: {
 
 
 const DEPOSITS_QUERY = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int) {
         deposits(
-            first: 1000,
+            first: 500,
+            skip: $skip,
             orderBy: $orderBy,
             orderDirection: desc
             where: $where
@@ -112,7 +113,7 @@ const DEPOSITS_QUERY = gql`
     ${NiceStateLabel}
 `;
 
-export function useDepositQuery(view: DepositViewID) {
+export function useDepositQuery(view: DepositViewID, pageNumber?: number) {
   const where = ({
     "": {},
     active: {'filter_activeLikeState': true},
@@ -129,10 +130,13 @@ export function useDepositQuery(view: DepositViewID) {
     redemptions: "redemptionStartedAt",
   } as {[key in DepositViewID]: string})[view || ''] || "updatedAt";
 
+  const perPage = 500;
+
   const {loading, error, data} = useQuery(DEPOSITS_QUERY, {
     variables: {
       where: where,
-      orderBy: dateColumn
+      orderBy: dateColumn,
+      skip: perPage * ((pageNumber ?? 1) - 1)
     }
   });
 
