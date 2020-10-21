@@ -3,17 +3,17 @@ import {TimeToNow} from "../../components/FormattedTime";
 import {Address, BitcoinAddress, Transaction} from "../../components/Address";
 import React from "react";
 import BitcoinHelpers from "../../utils/BitcoinHelpers";
-import {useQuery} from "@apollo/client";
 import { gql } from '@apollo/client';
 import {GetDepositLogsQuery} from "../../generated/graphql";
+import {useQueryWithTimeTravel} from "../../TimeTravel";
 
 export function Log(props: {
   depositId: string
 }) {
-  const {loading, error, data} = useQuery<GetDepositLogsQuery>(gql`
-      query GetDepositLogs($depositId: String!)
+  const {loading, error, data} = useQueryWithTimeTravel<GetDepositLogsQuery>(gql`
+      query GetDepositLogs($depositId: String!, $block: Block_height)
       {
-          events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection:desc) {
+          events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc, block: $block) {
               __typename,
               id,
               transactionHash,

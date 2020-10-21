@@ -1,5 +1,5 @@
-import {gql, useQuery, useSubscription} from "@apollo/client";
-import React, {useState} from "react";
+import {gql, useSubscription} from "@apollo/client";
+import React from "react";
 import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../../components/FormattedTime";
@@ -17,9 +17,7 @@ import {InfoTooltip} from "../../components/InfoTooltip";
 import {Helmet} from "react-helmet";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import {
-  CollaterizationStatus,
   CollaterizationStatusWithPrice,
-  getPriceAtCollateralizationRatio
 } from "../../components/CollateralizationStatus";
 import {Box} from "../../components/Box";
 import {Button} from "../../design-system/Button";
@@ -28,11 +26,12 @@ import {useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {StatusBox} from "./StatusBox";
 import {usePriceFeed} from "../../components/PriceFeed";
+import {useQueryWithTimeTravel, useTimeTravelBlock, useTimeTravelSafeSubscription} from "../../TimeTravel";
 
 
 const DEPOSIT_QUERY = gql`
-    query GetDeposit($id: ID!) {
-        deposit(id: $id) {
+    query GetDeposit($id: ID!, $block: Block_height) {
+        deposit(id: $id, block: $block) {
             id,
             contractAddress,
             currentState,
@@ -114,8 +113,8 @@ export function Content() {
     depositId = 'dp-' + depositId;
   }
 
-  const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
-  useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
+  const { loading, error, data } = useQueryWithTimeTravel(DEPOSIT_QUERY, {variables: {id: depositId, block: {number: 11058393}}});
+  useTimeTravelSafeSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId }});
   const etherscan = useEtherscanDomain();
   const dAppDomain = useDAppDomain();
   const price = usePriceFeed();

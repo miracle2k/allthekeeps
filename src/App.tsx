@@ -20,6 +20,7 @@ import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
 import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
 import {BeaconGroup} from "./pages/Group";
+import {TimeTravelContext, TimeTravelState} from "./TimeTravel";
 
 
 function makeApolloLink(uri: string) {
@@ -69,58 +70,60 @@ function AppInternal() {
   }, []);
 
   return (
-      <ApolloProvider client={client}>
-        <UseWalletProvider
-            chainId={isRopsten ? 3 : 1}
-        >
-          <Router>
-            <Header />
-            <Helmet titleTemplate="%s | AllTheKeeps">
-            </Helmet>
-            <div className={css`            
-            `}>
-              <Switch>
-                <Route path="/" exact>
-                  <Redirect to="/deposits" />
-                </Route>
-                <Route exact path="/deposits">
-                  <Deposits />
-                </Route>
-                <Route exact path="/deposits/:view">
-                  <Deposits />
-                </Route>
-                <Route path="/about" exact>
-                  <About />
-                </Route>
-                <Route path="/torch" exact>
-                  <ZksyncTorch />
-                </Route>
-                <Route path="/governance" exact>
-                  <Governance />
-                </Route>
-                <Route path="/operators" exact>
-                  <Operators />
-                </Route>
-                <Route path="/users" exact>
-                  <Users />
-                </Route>
-                <Route path="/beacon" exact>
-                  <Beacon />
-                </Route>
-                <Route path="/group/:id" exact>
-                  <BeaconGroup />
-                </Route>
-                <Route path="/operator/:operatorId" exact>
-                  <Operator />
-                </Route>
-                <Route path="/deposit/:depositId" exact>
-                  <Deposit />
-                </Route>
-              </Switch>
-            </div>
-          </Router>
-        </UseWalletProvider>
-      </ApolloProvider>
+      <Router>
+        <ApolloProvider client={client}>
+          <TimeTravelState>
+            <UseWalletProvider
+                chainId={isRopsten ? 3 : 1}
+            >
+              <Header />
+              <Helmet titleTemplate="%s | AllTheKeeps">
+              </Helmet>
+              <div className={css`            
+              `}>
+                <Switch>
+                  <Route path="/" exact>
+                    <Redirect to="/deposits" />
+                  </Route>
+                  <Route exact path="/deposits">
+                    <Deposits />
+                  </Route>
+                  <Route exact path="/deposits/:view">
+                    <Deposits />
+                  </Route>
+                  <Route path="/about" exact>
+                    <About />
+                  </Route>
+                  <Route path="/torch" exact>
+                    <ZksyncTorch />
+                  </Route>
+                  <Route path="/governance" exact>
+                    <Governance />
+                  </Route>
+                  <Route path="/operators" exact>
+                    <Operators />
+                  </Route>
+                  <Route path="/users" exact>
+                    <Users />
+                  </Route>
+                  <Route path="/beacon" exact>
+                    <Beacon />
+                  </Route>
+                  <Route path="/group/:id" exact>
+                    <BeaconGroup />
+                  </Route>
+                  <Route path="/operator/:operatorId" exact>
+                    <Operator />
+                  </Route>
+                  <Route path="/deposit/:depositId" exact>
+                    <Deposit />
+                  </Route>
+                </Switch>
+              </div>
+            </UseWalletProvider>
+          </TimeTravelState>
+        </ApolloProvider>
+      </Router>
   );
 }
 
