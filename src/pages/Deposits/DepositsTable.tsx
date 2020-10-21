@@ -93,7 +93,7 @@ const DepositRow = React.memo((props: {
       <TimeToNow time={deposit[dateColumn]} />
     </td>
     <td>
-      <Link to={`/deposit/${deposit.id}`}>
+      <Link to={`/deposit/${deposit.contractAddress}`}>
         {deposit.contractAddress}
       </Link>
       <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`

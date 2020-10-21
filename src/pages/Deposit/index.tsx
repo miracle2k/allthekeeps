@@ -107,7 +107,12 @@ export function Deposit() {
 
 export function Content() {
   let { depositId } = useParams<any>();
+
+  // Fix up deposit id
   depositId = depositId.toLowerCase();
+  if (depositId.slice(0, 3) != 'dp-') {
+    depositId = 'dp-' + depositId;
+  }
 
   const { loading, error, data } = useQuery(DEPOSIT_QUERY, {variables: {id: depositId}});
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
