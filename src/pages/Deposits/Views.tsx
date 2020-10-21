@@ -1,6 +1,7 @@
 import {DateTime} from "luxon";
 import {gql, useQuery} from "@apollo/client";
 import {NiceStateLabel} from "../../utils/depositStates";
+import {useQueryWithTimeTravel} from "../../TimeTravel";
 
 export type DepositViewID =
     ''
@@ -68,13 +69,14 @@ export const Views: {
 
 
 const DEPOSITS_QUERY = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
         deposits(
             first: 500,
             skip: $skip,
             orderBy: $orderBy,
             orderDirection: desc
-            where: $where
+            where: $where,
+            block: $block
         ) {
             id,
             contractAddress,
@@ -132,7 +134,7 @@ export function useDepositQuery(view: DepositViewID, pageNumber?: number) {
 
   const perPage = 500;
 
-  const {loading, error, data} = useQuery(DEPOSITS_QUERY, {
+  const {loading, error, data} = useQueryWithTimeTravel(DEPOSITS_QUERY, {
     variables: {
       where: where,
       orderBy: dateColumn,
