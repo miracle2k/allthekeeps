@@ -31,6 +31,7 @@ It would be nice to show who owns the FRT token for each deposit (if it should e
 and in general layout more clearly who paid the fee to who in which case (the tbtc whitepaper contains a list of
 possible scenarios)
 
+
 Improved Staking Stats
 ----------------------
 

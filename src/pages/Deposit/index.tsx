@@ -217,7 +217,18 @@ export function Content() {
                     key: 'depositContract',
                     label: "Deposit Contract",
                     value: <Address address={data.deposit.contractAddress}  />
-                  }
+                  },
+                  {
+                    key: 'keepContract',
+                    label: "Keep Contract",
+                    tooltip: "The Keep holds the original BTC in custody, and signers stake ETH as a security bond.",
+                    value: <Address address={data.deposit.keepAddress}  />
+                  },
+                  {
+                    key: 'status',
+                    label: "Keep Status",
+                    value: data.deposit.bondedECDSAKeep.status
+                  },
                 ]}
             />
           </Paper>
@@ -231,15 +242,15 @@ export function Content() {
             padding: 20px;
             padding-bottom: 0;
           `}>
-            Keep <InfoTooltip>
-              The Keep holds the original BTC in custody, and signers stake ETH as a security bond.
+            Collateral <InfoTooltip>
+              The  BTC is custodied by a group of randomly chosen signing nodes which stake ETH as a security bond.
             </InfoTooltip>
           </div>
           <PropertyTable data={[
             {
               key: 'signers',
               label: "Signers",
-              tooltip: "The node operators collectively holding the Bitcoin private key",
+              tooltip: "The node operators collectively holding the Bitcoin private key.",
               value: <div>
                 {data.deposit.bondedECDSAKeep.members.map((m: any) => {
                   return <div key={m.address}>
@@ -251,7 +262,7 @@ export function Content() {
             {
               key: 'collateralization',
               label: "Collaterialization",
-              tooltip: "If ETH loses value, the keep may become undercollaterized",
+              tooltip: "If ETH loses value, the keep may become undercollaterized.",
               value: <CollaterizationStatus deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
             },
             {
@@ -265,17 +276,6 @@ export function Content() {
               label: "BTC Address",
               value: <BitcoinAddress address={btcAddress} />
             } : undefined,
-            {
-              key: 'status',
-              label: "Status",
-              value: data.deposit.bondedECDSAKeep.status
-            },
-            {
-              key: 'keepAddress',
-              label: "Contract Address",
-              tooltip: "The contract managing the keep",
-              value: <Address address={data.deposit.keepAddress} />
-            },
             {
               key: 'thresholds',
               label: "Thresholds",
