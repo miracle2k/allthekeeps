@@ -16,13 +16,18 @@ import {
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {Helmet} from "react-helmet";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
-import {CollaterizationStatus} from "../../components/CollateralizationStatus";
+import {
+  CollaterizationStatus,
+  CollaterizationStatusWithPrice,
+  getPriceAtCollateralizationRatio
+} from "../../components/CollateralizationStatus";
 import {Box} from "../../components/Box";
 import {Button} from "../../design-system/Button";
 import {Log} from "./log";
 import {useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {StatusBox} from "./StatusBox";
+import {usePriceFeed} from "../../components/PriceFeed";
 
 
 const DEPOSIT_QUERY = gql`
@@ -106,6 +111,7 @@ export function Content() {
   useSubscription(DEPOSIT_SUBSCRIPTION, { variables: { id: depositId } });
   const etherscan = useEtherscanDomain();
   const dAppDomain = useDAppDomain();
+  const price = usePriceFeed();
 
   const btcAddress = useBtcAddressFromPublicKey(data?.deposit.bondedECDSAKeep.publicKey);
 
@@ -263,8 +269,16 @@ export function Content() {
               key: 'collateralization',
               label: "Collaterialization",
               tooltip: "If ETH loses value, the keep may become undercollaterized.",
-              value: <CollaterizationStatus deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
+              value: <CollaterizationStatusWithPrice price={price} deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
             },
+            // {
+            //   key: 'courtesyCallPrice',
+            //   label: "Courtesy Call Price",
+            //   tooltip: "If ETH falls to this level, a courtesy call can be initiated.",
+            //   value: <div>
+            //     {getPriceAtCollateralizationRatio(data.deposit, data.deposit.initialCollateralizedPercent / 100)}
+            //   </div>
+            // },
             {
               key: 'bondedAmount',
               label: "Bond",

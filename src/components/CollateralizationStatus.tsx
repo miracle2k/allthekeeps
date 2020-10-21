@@ -1,4 +1,4 @@
-import {usePriceFeed} from "./PriceFeed";
+import {PriceData, usePriceFeed} from "./PriceFeed";
 import React from "react";
 
 
@@ -17,9 +17,15 @@ export function CollaterizationStatus(props: {
   return <CollaterizationStatusWithPrice {...props} price={price} />
 }
 
+export function getPriceAtCollateralizationRatio(deposit: any, ratio: number) {
+  const bondValueWei = parseInt(deposit.bondedECDSAKeep.totalBondAmount);
+  const lotValueSatoshis = parseInt(deposit.lotSizeSatoshis);
+  return bondValueWei / (ratio * lotValueSatoshis);
+}
+
 export function CollaterizationStatusWithPrice(props: {
   deposit: any,
-  price: any|null
+  price: PriceData|null
 
   style?: any,
   highlightNormal?: boolean
@@ -30,14 +36,9 @@ export function CollaterizationStatusWithPrice(props: {
     return <span>-</span>;
   }
 
-  // Given with 18 decimal places
-  const btcPerEth = props.price.val;
-  const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
-  const weiPerSat = 1 / satPerWei;
-
   const bondValueWei = parseInt(deposit.bondedECDSAKeep.totalBondAmount);
   const lotValueSatoshis = parseInt(deposit.lotSizeSatoshis);
-  const lotValueWei = lotValueSatoshis * weiPerSat;
+  const lotValueWei = lotValueSatoshis * props.price.weiPerSat;
 
   const ratio = bondValueWei / lotValueWei;
 
