@@ -1,35 +1,30 @@
 import {gql, useQuery} from "@apollo/client";
 import React from "react";
 import {Paper} from "../../design-system/Paper";
-import {css} from "emotion";
-import {Address, Hash} from "../../components/Address";
-import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
+import {Hash} from "../../components/Address";
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {Helmet} from "react-helmet";
-import {SortableHeader, SortState, Table, useSort} from "../../components/Table";
-import {usePriceFeed} from "../../components/PriceFeed";
-import {Box} from "../../components/Box";
-import {GetOperatorsQuery, GetRelayEntriesQuery, GetUsersQuery} from "../../generated/graphql";
-import {useEtherscanDomain} from "../../NetworkContext";
+import {Table} from "../../components/Table";
+import {GetRelayEntriesQuery} from "../../generated/graphql";
 import {TimeBetween, TimeToNow} from "../../components/FormattedTime";
-import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import {Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import 'react-tabs/style/react-tabs.css';
 import {ETHValue} from "../../components/ETHValue";
 import {ETHTag, GweiTag} from "../../components/CurrencyTags";
 import {getGroupName} from "./GroupName";
+import {useQueryWithTimeTravel} from "../../TimeTravel";
 
 
 const BEACON_QUERY = gql`
-    query GetRelayEntries {
-        randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection:desc) {
+    query GetRelayEntries($block: Block_height) {
+        randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc, block: $block) {
             id,
             pubKey,
             createdAt,
             uniqueMemberCount,
             rewardPerMember,
         }
-        relayEntries(first: 1000, orderBy: requestedAt, orderDirection:desc) {
+        relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc, block: $block) {
             id,
             requestId,
             value,
@@ -46,7 +41,7 @@ const BEACON_QUERY = gql`
 
 
 export function Beacon() {
-  const { loading, error, data } = useQuery<GetRelayEntriesQuery>(BEACON_QUERY, );
+  const { loading, error, data } = useQueryWithTimeTravel<GetRelayEntriesQuery>(BEACON_QUERY, );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;

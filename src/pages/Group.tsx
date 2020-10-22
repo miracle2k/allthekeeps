@@ -15,10 +15,11 @@ import {css} from "emotion";
 import {Box} from "../components/Box";
 import {TimeBetween, TimeToNow} from "../components/FormattedTime";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import {useQueryWithTimeTravel} from "../TimeTravel";
 
 const BEACONGROUP_QUERY = gql`
-    query GetRandomBeaconGroup($id: ID!) {
-        randomBeaconGroup(id: $id) {
+    query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
+        randomBeaconGroup(id: $id, block: $block) {
             id,
             createdAt,
             rewardPerMember,
@@ -49,7 +50,7 @@ const BEACONGROUP_QUERY = gql`
 
 export function BeaconGroup() {
   const {id} = useParams<any>();
-  const { loading, error, data } = useQuery<GetRandomBeaconGroupQuery>(BEACONGROUP_QUERY, {variables: {id}});
+  const { loading, error, data } = useQueryWithTimeTravel<GetRandomBeaconGroupQuery>(BEACONGROUP_QUERY, {variables: {id}});
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
