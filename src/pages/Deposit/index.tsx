@@ -17,7 +17,7 @@ import {InfoTooltip} from "../../components/InfoTooltip";
 import {Helmet} from "react-helmet";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import {
-  CollaterizationStatusWithPrice,
+  CollaterizationStatusWithPrice, getPriceAtCollateralizationRatio,
 } from "../../components/CollateralizationStatus";
 import {Box} from "../../components/Box";
 import {Button} from "../../design-system/Button";
@@ -278,14 +278,15 @@ export function Content() {
               tooltip: "If ETH loses value, the keep may become undercollaterized.",
               value: <CollaterizationStatusWithPrice price={price} deposit={data.deposit} highlightNormal={true} style={{fontWeight: 'bold'}} />
             },
-            // {
-            //   key: 'courtesyCallPrice',
-            //   label: "Courtesy Call Price",
-            //   tooltip: "If ETH falls to this level, a courtesy call can be initiated.",
-            //   value: <div>
-            //     {getPriceAtCollateralizationRatio(data.deposit, data.deposit.initialCollateralizedPercent / 100)}
-            //   </div>
-            // },
+            {
+              key: 'courtesyCallPrice',
+              label: "Liquidation Price",
+              tooltip: "If the price of ETH falls to the first level, a courtesy call can be initiated, if it falls to the second, the deposit can be liquidated.",
+              value: <div>
+                {getPriceAtCollateralizationRatio(data.deposit, data.deposit.undercollateralizedThresholdPercent / 100).toFixed(5)} BTC / {" "}
+                {getPriceAtCollateralizationRatio(data.deposit, data.deposit.severelyUndercollateralizedThresholdPercent / 100).toFixed(5)} BTC
+              </div>
+            },
             {
               key: 'bondedAmount',
               label: "Bond",

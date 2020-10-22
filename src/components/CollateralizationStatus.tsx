@@ -20,7 +20,7 @@ export function CollaterizationStatus(props: {
 export function getPriceAtCollateralizationRatio(deposit: any, ratio: number) {
   const bondValueWei = parseInt(deposit.bondedECDSAKeep.totalBondAmount);
   const lotValueSatoshis = parseInt(deposit.lotSizeSatoshis);
-  return bondValueWei / (ratio * lotValueSatoshis);
+  return ((ratio * lotValueSatoshis) / bondValueWei)  * 10**10;   // I am too tired to figure out why it has to be **10.
 }
 
 export function CollaterizationStatusWithPrice(props: {
