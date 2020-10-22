@@ -13,17 +13,15 @@ import {GetOperatorsQuery} from "../generated/graphql";
 import {useEtherscanDomain} from "../NetworkContext";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
+import {useQueryWithTimeTravel} from "../TimeTravel";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
         $orderBy: Operator_orderBy,
-        $direction: OrderDirection
+        $direction: OrderDirection,
+        $block: Block_height
     ) {
-        stats: statsRecord(id: "current") {
-            availableToBeBonded,
-            totalBonded
-        }
-        operators(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+        operators(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
             id,
             address,
             bonded,
@@ -35,6 +33,10 @@ const OPERATOR_QUERY = gql`
             attributableFaultCount,
             totalTBTCRewards,
             totalETHRewards
+        },
+        stats: statsRecord(id: "current", block: $block) {
+            availableToBeBonded,
+            totalBonded
         }
     }
 `;
@@ -42,13 +44,13 @@ const OPERATOR_QUERY = gql`
 
 export function Operators() {
   const sortState = useSort("activeKeepCount");
-  const { loading, error, data } = useQuery<GetOperatorsQuery>(OPERATOR_QUERY, {
+  const { loading, error, data } = useQueryWithTimeTravel<GetOperatorsQuery>(OPERATOR_QUERY, {
     variables: {
       orderBy: sortState.column,
       direction: sortState.direction
     }
   });
-  const price = usePriceFeed();
+  const price: any = usePriceFeed();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;

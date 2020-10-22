@@ -20,7 +20,9 @@ import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
 import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
 import {BeaconGroup} from "./pages/Group";
-import {TimeTravelContext, TimeTravelState, useTimeTravelBlock} from "./TimeTravel";
+import {TimeTravelState, useTimeTravelBlock} from "./TimeTravel";
+import {DateTime, Duration} from "luxon";
+import {FormattedTime} from "./components/FormattedTime";
 
 
 function makeApolloLink(uri: string) {
@@ -182,7 +184,15 @@ function Header() {
 }
 
 
-// Estimating block time: https://blocklytics.org/blog/ethereum-blocks-subgraph-made-for-time-travel/
+// Estimating block time https://blocklytics.org/blog/ethereum-blocks-subgraph-made-for-time-travel/
+// NB: This does not really work at all, why?
+const anchor = 10867845;
+const anchorTime = 1600188773;
+function timeOfBlock(number: number) {
+  return DateTime.fromSeconds(anchorTime + ((number - anchor) * 14));
+}
+
+
 function TimeTravelWarning() {
   const block = useTimeTravelBlock();
 

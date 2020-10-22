@@ -1,7 +1,10 @@
 import {DateTime, Duration} from "luxon";
 import React from "react";
 
-export function dateTimeFrom(time: string|number) {
+export function dateTimeFrom(time: string|number|DateTime) {
+  if (time instanceof DateTime) {
+    return time;
+  }
   return DateTime.fromSeconds(typeof time === 'string' ? parseInt(time) : time);
 }
 
@@ -41,7 +44,7 @@ export function formatSeconds(seconds: number) {
 
 
 export function FormattedTime(props: {
-  time: string|number
+  time: string|number|DateTime
 }) {
   const dateTime = dateTimeFrom(props.time);
   return <span>{dateTime.toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
