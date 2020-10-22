@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {ApolloClient, ApolloProvider, HttpLink, InMemoryCache, split} from '@apollo/client';
-import {BrowserRouter as Router, Route, Switch,} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Switch, useLocation,} from "react-router-dom";
 import {css} from 'emotion'
 import {Operators} from "./pages/Operators";
 import {Operator} from "./pages/Operator";
@@ -20,7 +20,7 @@ import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
 import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
 import {BeaconGroup} from "./pages/Group";
-import {TimeTravelContext, TimeTravelState} from "./TimeTravel";
+import {TimeTravelContext, TimeTravelState, useTimeTravelBlock} from "./TimeTravel";
 
 
 function makeApolloLink(uri: string) {
@@ -76,9 +76,9 @@ function AppInternal() {
             <UseWalletProvider
                 chainId={isRopsten ? 3 : 1}
             >
+              <Helmet titleTemplate="%s | AllTheKeeps"></Helmet>
               <Header />
-              <Helmet titleTemplate="%s | AllTheKeeps">
-              </Helmet>
+              <TimeTravelWarning />
               <div className={css`            
               `}>
                 <Switch>
@@ -178,6 +178,31 @@ function Header() {
     <NavigationButton to={"/about"}>
       About
     </NavigationButton>
+  </div>
+}
 
+
+// Estimating block time: https://blocklytics.org/blog/ethereum-blocks-subgraph-made-for-time-travel/
+function TimeTravelWarning() {
+  const block = useTimeTravelBlock();
+
+  const location = useLocation();
+  const nonTimeTravelLink = useMemo(() => {
+    const query = new URLSearchParams(location.search);
+    if (query.has("block")) { query.delete("block"); }
+    return `${location.pathname}${query.toString()}`
+  }, [location.pathname, location.search]);
+
+  if (!block) {
+    return null;
+  }
+
+  return <div className={css`
+    padding: 8px;
+    font-size: 14px;
+    background-color: #fff9c4;
+  `}>
+    You are viewing the state at a block height of <strong>{block}</strong>.
+    {" "}<Link to={nonTimeTravelLink} style={{color: '#5519d3'}}>Exit Time Travel</Link>.
   </div>
 }
