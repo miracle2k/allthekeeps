@@ -1,23 +1,21 @@
 import {gql, useQuery} from "@apollo/client";
 import React from "react";
 import {Paper} from "../design-system/Paper";
-import {css} from "emotion";
 import { Address } from "../components/Address";
-import {ExternalLinkIcon} from "../components/ExternalLinkIcon";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Helmet} from "react-helmet";
 import {SortableHeader, SortState, Table, useSort} from "../components/Table";
-import {usePriceFeed} from "../components/PriceFeed";
-import {Box} from "../components/Box";
-import {GetOperatorsQuery, GetUsersQuery} from "../generated/graphql";
+import {GetUsersQuery} from "../generated/graphql";
 import {useEtherscanDomain} from "../NetworkContext";
+import {useQueryWithTimeTravel} from "../TimeTravel";
 
 const USERS_QUERY = gql`
     query GetUsers(
         $orderBy: User_orderBy,
-        $direction: OrderDirection
+        $direction: OrderDirection,
+        $block: Block_height
     ) {
-        users(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+        users(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
             id,
             address,
             numDepositsCreated,
@@ -31,7 +29,7 @@ const USERS_QUERY = gql`
 
 export function Users() {
   const sortState = useSort("numDepositsCreated");
-  const { loading, error, data } = useQuery<GetUsersQuery>(USERS_QUERY, {
+  const { loading, error, data } = useQueryWithTimeTravel<GetUsersQuery>(USERS_QUERY, {
     variables: {
       orderBy: sortState.column,
       direction: sortState.direction
