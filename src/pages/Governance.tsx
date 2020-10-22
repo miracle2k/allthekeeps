@@ -12,21 +12,11 @@ import {FormattedTime, TimeToNow} from "../components/FormattedTime";
 import {ExplainerIcon} from "../components/ExplainerIcon";
 import {usePriceFeed} from "../components/PriceFeed";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
+import {useQueryWithTimeTravel} from "../TimeTravel";
 
 const GOVERNANCE_QUERY = gql`
-    fragment Change on GovernanceChange {
-        type,
-        requestedAt,
-        takesEffectAfter,
-        
-        newLotSizes,
-        newFactorySelector,
-        newFullyBackedFactory,
-        newKeepStakedFactory,
-    }
-    
-    query GetGovernance {
-        governance(id: "GOVERNANCE") {
+    query GetGovernance($block: Block_height) {
+        governance(id: "GOVERNANCE", block: $block) {
             newDepositsAllowed
             
             lotSizes,
@@ -47,7 +37,7 @@ const GOVERNANCE_QUERY = gql`
             priceFeeds,
         },
         
-        governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc) {
+        governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc, block: $block) {
             id,
             timestamp,
             transactionHash,
@@ -57,6 +47,17 @@ const GOVERNANCE_QUERY = gql`
                 ...Change
             }
         }
+    }
+
+    fragment Change on GovernanceChange {
+        type,
+        requestedAt,
+        takesEffectAfter,
+
+        newLotSizes,
+        newFactorySelector,
+        newFullyBackedFactory,
+        newKeepStakedFactory,
     }
 `;
 
@@ -73,7 +74,7 @@ export function Governance() {
 
 
 export function Content() {
-  const { loading, error, data } = useQuery(GOVERNANCE_QUERY);
+  const { loading, error, data } = useQueryWithTimeTravel(GOVERNANCE_QUERY);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;

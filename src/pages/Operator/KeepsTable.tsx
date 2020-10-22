@@ -14,16 +14,17 @@ import {TBTCIcon} from "../../design-system/tbtcIcon";
 import {CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {getWeiAsEth} from "../../utils/getWeiAsEth";
 import React from "react";
-import {gql, useQuery} from "@apollo/client";
-import {GetOperatorKeepsQuery, GetOperatorQuery} from "../../generated/graphql";
+import {gql} from "@apollo/client";
+import {GetOperatorKeepsQuery} from "../../generated/graphql";
+import {useQueryWithTimeTravel} from "../../TimeTravel";
 
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
 });
 
 const KEEPS_QUERY = gql`
-    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
-        operator(id: $id) {
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
+        operator(id: $id, block: $block) {
             keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
                 id,
                 # TODO: How much is bonded in this keep for this operator?
@@ -66,7 +67,7 @@ export function KeepsTable(props: {
   const etherscan = useEtherscanDomain();
   const sortState = useSort("createdAt");
 
-  const { loading, error, data } = useQuery<GetOperatorKeepsQuery>(KEEPS_QUERY, {variables: {
+  const { loading, error, data } = useQueryWithTimeTravel<GetOperatorKeepsQuery>(KEEPS_QUERY, {variables: {
     id: props.operatorId,
     orderBy: sortState.column,
     orderDirection: sortState.direction
