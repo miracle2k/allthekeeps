@@ -1,12 +1,18 @@
 import {useElectrumClient} from "./useElectrumClient";
 import {useCallback, useEffect, useState} from "react";
 import BitcoinHelpers from "./BitcoinHelpers";
+import {useIsTimeTravel} from "../TimeTravel";
 
 
-// A bug:
-// - first findScript() does return null even though findorWaitfor() finds one.
+/**
+ * NB: Will disable itself if time travel mode is on.
+ *
+ * A bug:
+ * - first findScript() does return null even though findorWaitfor() finds one.
+ */
 export function useBitcoinTxState(address: string, lotSizeSatoshis: number|string, isEnabled: boolean) {
   const client = useElectrumClient();
+  const isTimeTravelMode = useIsTimeTravel();
   const [txHash, setTxHash] = useState("");
   const [isInitialized, setInitialized] = useState(false);
   const [confirmations, setConfirmations] = useState(0);
@@ -53,7 +59,7 @@ export function useBitcoinTxState(address: string, lotSizeSatoshis: number|strin
   }, [address, lotSizeSatoshisInt, setConfirmations, setTxHash, client]);
 
   useEffect(() => {
-    if (!address || !lotSizeSatoshisInt || !isEnabled || !client) {
+    if (!address || !lotSizeSatoshisInt || !isEnabled || !client || isTimeTravelMode) {
       return;
     }
 
@@ -67,7 +73,7 @@ export function useBitcoinTxState(address: string, lotSizeSatoshis: number|strin
         cancelToken.unsubscribe();
       }
     }
-  }, [address, lotSizeSatoshisInt, client]);
+  }, [address, lotSizeSatoshisInt, client, isEnabled, isTimeTravelMode]);
 
   // isInitialized makes sure we do not return "no tx" if we really don't know yet.
   return isInitialized ? {

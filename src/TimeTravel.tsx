@@ -33,6 +33,11 @@ export function useTimeTravelBlock(): number|null {
   return context.block ? context.block : null;
 }
 
+export function useIsTimeTravel(): boolean {
+  const context = useContext(TimeTravelContext);
+  return !!context.block;
+}
+
 /**
  * TheGraph does not allow us to make the block-height argument optional - when given, it needs to have a
  * valid value. So we would have to write two versions of each query where we want to time travel.

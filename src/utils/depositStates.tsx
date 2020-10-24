@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import {NiceStateLabelFragment} from "../generated/graphql";
 import {dateTimeFrom} from "../components/FormattedTime";
 import {useInterval} from "./useInterval";
+import {useIsTimeTravel, useTimeTravelBlock} from "../TimeTravel";
 
 export const NiceStateLabel = gql`
     fragment NiceStateLabel on Deposit {
@@ -39,10 +40,11 @@ export function getTimeRemaining(deposit: NiceStateLabelFragment) {
  * Self-updating hook version of `getTimeRemaining()`.
  */
 export function useTimeRemaining(deposit: NiceStateLabelFragment, interval?: number) {
-  const [value, setValue] = useState(getTimeRemaining(deposit));
+  const isTimeTravel = useIsTimeTravel();
+  const [value, setValue] = useState(isTimeTravel ? null : getTimeRemaining(deposit));
   useInterval(() => {
     setValue(getTimeRemaining(deposit));
-  }, (interval ?? 0.8) * 1000)
+  }, (isTimeTravel ? null : interval ?? 0.8 * 1000));
   return value;
 }
 

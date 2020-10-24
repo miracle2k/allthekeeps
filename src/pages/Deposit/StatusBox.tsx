@@ -14,6 +14,7 @@ import {useWallet} from "use-wallet";
 import {Button} from "../../design-system/Button";
 import {getLiquidationCauseAsString} from "./log";
 import {formatSeconds} from "../../components/FormattedTime";
+import {useIsTimeTravel} from "../../TimeTravel";
 
 /**
  * Displays the deposit status in a <Box />.
@@ -25,7 +26,8 @@ export function StatusBox(props: {
   const blockChainBaseUrl = useBlockchainBaseUrl();
   const dAppDomain = useDAppDomain();
   const btcAddress = useBtcAddressFromPublicKey(deposit.bondedECDSAKeep.publicKey);
-  const shouldShowConfirmationInfo = deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
+  const isTimeTravel = useIsTimeTravel();
+  const shouldShowConfirmationInfo = !isTimeTravel && deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF';
   const btcTxState = useBitcoinTxState(btcAddress, deposit.lotSizeSatoshis, shouldShowConfirmationInfo)
   const timing = useTimeRemaining(deposit);
 
@@ -50,9 +52,9 @@ export function StatusBox(props: {
       else if (timing === undefined) {
         action = null;
       }
-      else if (timing?.remaining > 0) {
+      else if ((timing?.remaining ?? 0) > 0) {
         action = <span style={{fontSize: 20, flex: 1, color: 'gray', textAlign: 'right'}}>
-          {formatSeconds(timing?.remaining)} <InfoTooltip size={0.8}>When this timer reaches zero, anyone can close the deposit, returning the bonded funds to the signers.</InfoTooltip>
+          {formatSeconds(timing?.remaining!)} <InfoTooltip size={0.8}>When this timer reaches zero, anyone can close the deposit, returning the bonded funds to the signers.</InfoTooltip>
         </span>
       }
       else {
@@ -167,9 +169,14 @@ const depositAbi = [
 function NotifyButton(props: {
   deposit: any
 }) {
+  const isTimeTravel = useIsTimeTravel();
   const wallet = useWallet()
   const deposit = props.deposit;
   const [isBusy, setBusy] = useState(false);
+
+  if (isTimeTravel) {
+    return null;
+  }
 
   let func: string;
   if (deposit.currentState == 'AWAITING_SIGNER_SETUP') {

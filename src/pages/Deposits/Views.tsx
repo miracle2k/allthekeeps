@@ -107,7 +107,7 @@ const DEPOSITS_QUERY = gql`
 
             ...NiceStateLabel
         }
-        stats: statsRecord(id: "current") {
+        stats: statsRecord(id: "current", block: $block) {
             depositCount
         }
     }
