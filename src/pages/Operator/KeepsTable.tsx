@@ -4,7 +4,6 @@ import {useEtherscanDomain} from "../../NetworkContext";
 import {SortableHeader, Table, useSort} from "../../components/Table";
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {TimeToNow} from "../../components/FormattedTime";
-import {Link} from "react-router-dom";
 import {css} from "emotion";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
@@ -17,6 +16,7 @@ import React from "react";
 import {gql} from "@apollo/client";
 import {GetOperatorKeepsQuery} from "../../generated/graphql";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
+import { Link } from "../../components/Link";
 
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
@@ -122,7 +122,7 @@ export function KeepsTable(props: {
             />
           </td>
           <td>
-            <Link to={`/deposit/${deposit.id}`}>
+            <Link to={`/deposit/${deposit.contractAddress}`}>
               {deposit.contractAddress}
             </Link>
             <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`}

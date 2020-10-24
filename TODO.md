@@ -61,7 +61,6 @@ The base for this exists, but it needs to be added to all screens, plus:
 
 - The ability to maintain the current block height while browsing.
 - A UI to select the current block and enter/exit time travel mode.
-- Disable things such as notify buttons / progress bars.
 
 
 More Liquidation Details

@@ -2,7 +2,7 @@ import Tippy, {useSingleton} from "@tippyjs/react";
 import {css} from "emotion";
 import {InfoTooltip} from "../../components/InfoTooltip";
 import {TimeToNow} from "../../components/FormattedTime";
-import {Link} from "react-router-dom";
+import {Link} from "../../components/Link";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {

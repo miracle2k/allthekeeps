@@ -1,6 +1,7 @@
 import React from "react";
 import {css} from "emotion";
-import {Link, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
+import {Link} from "../components/Link";
 
 export function NavigationButton(props: {
   children: any,

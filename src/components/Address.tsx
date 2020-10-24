@@ -1,9 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {css} from "emotion";
 import {ExternalLinkIcon} from "./ExternalLinkIcon";
 import {isVendingMachine} from "../utils/contracts";
 import {useBlockchainBaseUrl, useEtherscanDomain} from "../NetworkContext";
+import { Link } from "./Link";
 
 
 export function Address(props: {
