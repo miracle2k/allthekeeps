@@ -11,6 +11,7 @@ import {GetOperatorQuery} from "../../generated/graphql";
 import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
+import {Properties} from "./Properties";
 
 
 const OPERATOR_QUERY = gql`

@@ -45,6 +45,7 @@ export type PriceData = {
 /**
  * This is the price of 1 ETH in BTC.
  */
+// TODO: Add this to the existing graph.
 export function usePriceFeed() {
   const [data, setData] = useState<PriceData|null>(null);
   useEffect(() => {

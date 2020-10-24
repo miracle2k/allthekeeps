@@ -21,8 +21,7 @@ import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
 import {BeaconGroup} from "./pages/Group";
 import {TimeTravelState, useTimeTravelBlock} from "./TimeTravel";
-import {DateTime, Duration} from "luxon";
-import {FormattedTime} from "./components/FormattedTime";
+import {DateTime} from "luxon";
 
 
 function makeApolloLink(uri: string) {
