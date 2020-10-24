@@ -38,6 +38,9 @@ export function getTimeRemaining(deposit: NiceStateLabelFragment) {
 
 /**
  * Self-updating hook version of `getTimeRemaining()`.
+ *
+ * TODO: If we have a lot of "avaiting funding proof", this gets slow. We should use a shared, global timer.
+ * Or, use https://reactjs.org/docs/concurrent-mode-adoption.html
  */
 export function useTimeRemaining(deposit: NiceStateLabelFragment, interval?: number) {
   const isTimeTravel = useIsTimeTravel();
