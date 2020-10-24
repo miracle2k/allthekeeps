@@ -257,7 +257,7 @@ function SettingsDropdownButton() {
         </div>
       </Paper>
     }>
-      <NavigationButton onClick={() => tippy.current.show() }>
+      <NavigationButton onClick={(e: any) => {e.preventDefault(); tippy.current.show() }}>
         <img alt="Preferences Icon" style={{height: '2em'}}  src="data:image/png;base64,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"/>
       </NavigationButton>
   </Tippy>
@@ -272,7 +272,7 @@ function TimeTravelField() {
 
   const apply = () => {
     const blockNumber = parseInt(text);
-    if (!blockNumber) { return; }
+    if (!blockNumber || !text) { return; }
 
     const query = new URLSearchParams(location.search);
     query.set('block', blockNumber.toString());
