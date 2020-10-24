@@ -175,8 +175,8 @@ export function Deposits() {
             : null}
       </div>
 
-      {currentView.id == "" ? <div style={{color: 'gray', visibility: depositQuery.data?.stats.depositCount ? 'visible' : 'hidden'}}>
-        {depositQuery.data?.stats.depositCount} deposits.
+      {currentView.id == "" ? <div style={{color: 'gray', visibility: depositQuery.data?.stats?.depositCount ? 'visible' : 'hidden'}}>
+        {depositQuery.data?.stats?.depositCount} deposits.
       </div> : null}
     </div>
 

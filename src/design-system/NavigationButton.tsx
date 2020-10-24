@@ -3,13 +3,14 @@ import {css} from "emotion";
 import {useLocation} from "react-router-dom";
 import {Link} from "../components/Link";
 
-export function NavigationButton(props: {
+export const NavigationButton = React.forwardRef((props: {
   children: any,
-  to: string
-}) {
+  to?: string,
+  onClick?: any
+}, ref) => {
   const isActive = useLocation().pathname == props.to;
 
-  return <Link to={props.to} data-active={isActive ? "true" : ""} className={css`
+  return <Link innerRef={ref as any} to={props.to ?? ""} onClick={props.onClick} data-active={isActive ? "true" : ""} className={css`
     padding: 0.5em;    
                
     font-size: 14px;
@@ -41,4 +42,4 @@ export function NavigationButton(props: {
   `}>
     {props.children}
   </Link>
-}
+});

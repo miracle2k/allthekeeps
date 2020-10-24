@@ -51,18 +51,6 @@ A switch to see Testnet data
 A subgraph for this already exists.
 
 
-Time-Travel Mode
-----------------
-
-The graph can query by block-height, so we could easily allow a view to browse the state of the network
-at a certain time in the past.
-
-The base for this exists, but it needs to be added to all screens, plus:
-
-- The ability to maintain the current block height while browsing.
-- A UI to select the current block and enter/exit time travel mode.
-
-
 More Liquidation Details
 ------------------------
 

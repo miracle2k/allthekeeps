@@ -54,6 +54,9 @@ export function usePriceFeed() {
   return useMemo<PriceData>(() => {
     if (!data) { return null; }
     const price = data.priceFeed;
+    if (!data.priceFeed) { // i.e. when block too early
+      return null;
+    }
 
     // Given with 18 decimal places
     const btcPerEth = parseInt(price.val) / 10 ** 18;
