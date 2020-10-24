@@ -2,34 +2,32 @@
  * We use a special subgraph that gives us access to the the on-chain price feed.
  */
 
-import {useEffect, useState} from 'react';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import {useMemo} from 'react';
+import {gql, useQuery, useSubscription} from "@apollo/client";
+import {useTimeTravelBlock} from "../TimeTravel";
 
 
-const GRAPHQL_ENDPOINT = 'wss://api.thegraph.com/subgraphs/name/miracle2k/keep-pricefeed';
-
-const query = `
-  subscription GetPrice {
-    price(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed") {
+const WATCH_QUERY = gql`
+  subscription WatchPrice {
+    priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed") {
       val,
       timestamp,
       blockNumber,
       transactionHash
     }
   }
-`
+`;
 
-
-const client = new SubscriptionClient(GRAPHQL_ENDPOINT, {
-  reconnect: true,
-  lazy: true,
-  connectionCallback: error => {
-    error && console.error(error)
-  }
-});
-
-
-const subscription = client.request({query});
+const QUERY_FOR_BLOCK = gql`
+    query GetBlockPrice($block: Block_height) {
+        priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed", block: $block) {
+            val,
+            timestamp,
+            blockNumber,
+            transactionHash
+        }
+    }
+`;
 
 
 export type PriceData = {
@@ -45,31 +43,28 @@ export type PriceData = {
 /**
  * This is the price of 1 ETH in BTC.
  */
-// TODO: Add this to the existing graph.
 export function usePriceFeed() {
-  const [data, setData] = useState<PriceData|null>(null);
-  useEffect(() => {
-    const s = subscription.subscribe({
-      next ({data}) {
-        if (data) {
-          const price = data.price;
+  const timeTravelBlock = useTimeTravelBlock();
+  const sResult = useSubscription(WATCH_QUERY, {skip: !!timeTravelBlock});
+  const qResult = useQuery(QUERY_FOR_BLOCK, {skip: !timeTravelBlock, variables: {block: {number: timeTravelBlock}}});
 
-          // Given with 18 decimal places
-          const btcPerEth = parseInt(price.val) / 10**18;
-          const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
-          const weiPerSat = 1 / satPerWei;
+  const result = timeTravelBlock ? qResult : sResult;
+  const {data, loading, error} = result;
 
-          setData({
-              ...price,
-            val: btcPerEth,
-            satPerWei,
-            weiPerSat
-          });
-        }
-      }
-    });
-    return () => { s.unsubscribe() };
-  }, [setData])
+  return useMemo<PriceData>(() => {
+    if (!data) { return null; }
+    const price = data.priceFeed;
 
-  return data;
+    // Given with 18 decimal places
+    const btcPerEth = parseInt(price.val) / 10 ** 18;
+    const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
+    const weiPerSat = 1 / satPerWei;
+
+    return {
+      ...price,
+      val: btcPerEth,
+      satPerWei,
+      weiPerSat
+    };
+  }, [data]);
 }

@@ -1,4 +1,4 @@
-import {gql, useSubscription} from "@apollo/client";
+import {gql} from "@apollo/client";
 import React from "react";
 import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
@@ -26,7 +26,7 @@ import {useDAppDomain, useEtherscanDomain} from "../../NetworkContext";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {StatusBox} from "./StatusBox";
 import {usePriceFeed} from "../../components/PriceFeed";
-import {useQueryWithTimeTravel, useTimeTravelBlock, useTimeTravelSafeSubscription} from "../../TimeTravel";
+import {useQueryWithTimeTravel, useTimeTravelSafeSubscription} from "../../TimeTravel";
 
 
 const DEPOSIT_QUERY = gql`
