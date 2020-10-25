@@ -16,15 +16,15 @@ import {UseWalletProvider} from 'use-wallet'
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {getMainDefinition} from "@apollo/client/utilities";
 import {ZksyncTorch} from "./pages/tBTCzkSyncTorch";
-import {Network, SetNetwork, useIsRopsten} from "./NetworkContext";
+import {Network, SetNetwork, useIsRopsten, useNetwork} from "./NetworkContext";
 import {Users} from "./pages/Users";
 import {Beacon} from "./pages/Beacon";
 import {BeaconGroup} from "./pages/Group";
 import {TimeTravelState, useTimeTravelBlock} from "./TimeTravel";
 import {DateTime} from "luxon";
 import {Paper} from "./design-system/Paper";
-import {Views} from "./pages/Deposits/Views";
 import Tippy from "@tippyjs/react";
+import {Button} from "./design-system/Button";
 
 
 function makeApolloLink(uri: string) {
@@ -132,7 +132,8 @@ function AppInternal() {
 }
 
 function App() {
-  return <SetNetwork network={Network.MAINNET}>
+  const network = (window.location.host.indexOf("ropsten") > -1) ? Network.ROPSTEN : Network.MAINNET;
+  return <SetNetwork network={network}>
     <AppInternal />
   </SetNetwork>
 }
@@ -242,17 +243,31 @@ function SettingsDropdownButton() {
     content={
       <Paper>
         <div className={css`
-          display: inline-block;
-          padding: 10px;
-        `}>
-          <div>
-            <strong>Time Travel</strong>
-            <div style={{color: 'gray'}}>
-              Browse state at a specific block time.
+          display: flex;
+          flex-direction: column;
+        `}
+        >
+          <NetSwitcher />
+
+          <hr className={css`
+            width: 100%;
+            border: none;
+            border-top: 1px solid silver;
+          `} />
+
+          <div className={css`
+            display: inline-block;
+            padding: 10px;
+          `}>
+            <div>
+              <strong>Time Travel</strong>
+              <div style={{color: 'gray'}}>
+                Browse state at a specific block time.
+              </div>
             </div>
-          </div>
-          <div>
-            <TimeTravelField />
+            <div>
+              <TimeTravelField />
+            </div>
           </div>
         </div>
       </Paper>
@@ -263,6 +278,30 @@ function SettingsDropdownButton() {
   </Tippy>
 }
 
+function NetSwitcher() {
+  const network = useNetwork();
+
+  const handleClick = () => {
+    if (network == Network.MAINNET) {
+      window.location.href = "https://ropsten.allthekeeps.com";
+    }
+    else {
+      window.location.href = "https://allthekeeps.com";
+    }
+  }
+
+  return <div className={css`
+    display: inline-block;
+    padding: 10px;
+  `}>
+    <div style={{marginBottom: 5}}>
+      <strong>{network == Network.MAINNET ? "Mainnet" : "Ropsten Testnet"}</strong>
+    </div>
+    <Button size={"tiny"} onClick={handleClick}>
+      {network == Network.MAINNET ? "Switch to Ropsten Testnet" : "Switch to Mainnet"}
+    </Button>
+  </div>
+}
 
 function TimeTravelField() {
   const block = useTimeTravelBlock();
