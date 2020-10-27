@@ -4,7 +4,7 @@
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "https://api.thegraph.com/subgraphs/name/miracle2k/keep-network",
+        "url": "https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps",
         "headers": {
           "user-agent": "JS GraphQL"
         },

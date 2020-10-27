@@ -4,12 +4,12 @@ import {FormattedTime} from "../../components/FormattedTime";
 
 
 const PROPERTIES_QUERY = gql`
-    query GetOperatorProperties($id: ID!) {
-        stakeEvents(where: {operator: $id}, orderBy: timestamp, orderDirection: desc) {
-            id,
-            message
-            timestamp
-        }
+    query GetOperatorProperties($id: ID!, $address: Bytes!) {
+#        stakeEvents(where: {operator: $address}, orderBy: timestamp, orderDirection: desc) {
+#            id,
+#            message
+#            timestamp
+#        }
         
         operator(id: $id) {
             locks {
@@ -30,6 +30,7 @@ export function Properties(props: {
 }) {
   const { loading, error, data } = useQuery(PROPERTIES_QUERY, {variables: {
       id: props.operatorId,
+      address: props.operatorId,
     }});
 
   if (loading) return <p>Loading...</p>;

@@ -25,6 +25,7 @@ import {DateTime} from "luxon";
 import {Paper} from "./design-system/Paper";
 import Tippy from "@tippyjs/react";
 import {Button} from "./design-system/Button";
+import {Stakedrop} from "./pages/Stakedrop";
 
 
 function makeApolloLink(uri: string) {
@@ -61,9 +62,9 @@ function AppInternal() {
   }
   else {
     // DEV:
-    url = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
+    //url = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
     // LIVE
-    //url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+    url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
   }
 
   const client = useMemo(() => {
@@ -121,6 +122,9 @@ function AppInternal() {
                   </Route>
                   <Route path="/deposit/:depositId" exact>
                     <Deposit />
+                  </Route>
+                  <Route path="/stakedrop" exact>
+                    <Stakedrop />
                   </Route>
                 </Switch>
               </div>

@@ -45,12 +45,6 @@ Live Updates
 We could try to use GraphQL subscriptions to make more part of the system self-update.
         
 
-A switch to see Testnet data
------------------------------
-
-A subgraph for this already exists.
-
-
 More Liquidation Details
 ------------------------
 

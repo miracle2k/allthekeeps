@@ -122,6 +122,8 @@ export type BondedEcdsaKeep = {
   status?: Maybe<BondedEcdsaKeepStatus>;
   honestThreshold?: Maybe<Scalars['Int']>;
   members: Array<Maybe<Operator>>;
+  /** Which stakedrop interval this keep belongs to, if any. */
+  stakedropInterval?: Maybe<StakedropInterval>;
   /** The nodes which have submitted their pubkey. */
   pubkeySubmissions: Array<Maybe<Operator>>;
 };
@@ -215,6 +217,20 @@ export type BondedEcdsaKeep_Filter = {
   members_not?: Maybe<Array<Scalars['String']>>;
   members_contains?: Maybe<Array<Scalars['String']>>;
   members_not_contains?: Maybe<Array<Scalars['String']>>;
+  stakedropInterval?: Maybe<Scalars['String']>;
+  stakedropInterval_not?: Maybe<Scalars['String']>;
+  stakedropInterval_gt?: Maybe<Scalars['String']>;
+  stakedropInterval_lt?: Maybe<Scalars['String']>;
+  stakedropInterval_gte?: Maybe<Scalars['String']>;
+  stakedropInterval_lte?: Maybe<Scalars['String']>;
+  stakedropInterval_in?: Maybe<Array<Scalars['String']>>;
+  stakedropInterval_not_in?: Maybe<Array<Scalars['String']>>;
+  stakedropInterval_contains?: Maybe<Scalars['String']>;
+  stakedropInterval_not_contains?: Maybe<Scalars['String']>;
+  stakedropInterval_starts_with?: Maybe<Scalars['String']>;
+  stakedropInterval_not_starts_with?: Maybe<Scalars['String']>;
+  stakedropInterval_ends_with?: Maybe<Scalars['String']>;
+  stakedropInterval_not_ends_with?: Maybe<Scalars['String']>;
   pubkeySubmissions?: Maybe<Array<Scalars['String']>>;
   pubkeySubmissions_not?: Maybe<Array<Scalars['String']>>;
   pubkeySubmissions_contains?: Maybe<Array<Scalars['String']>>;
@@ -231,6 +247,7 @@ export enum BondedEcdsaKeep_OrderBy {
   Status = 'status',
   HonestThreshold = 'honestThreshold',
   Members = 'members',
+  StakedropInterval = 'stakedropInterval',
   PubkeySubmissions = 'pubkeySubmissions'
 }
 
@@ -1691,6 +1708,164 @@ export enum Governance_OrderBy {
   PendingCollateralizationThresholdsChange = 'pendingCollateralizationThresholdsChange'
 }
 
+export type Grant = {
+  __typename?: 'Grant';
+  id: Scalars['ID'];
+  grantManager: Scalars['Bytes'];
+  grantee: Scalars['Bytes'];
+  revokedAt: Scalars['BigInt'];
+  revokedAmount: Scalars['BigInt'];
+  revokedWithdrawn: Scalars['BigInt'];
+  revocable: Scalars['Boolean'];
+  amount: Scalars['BigInt'];
+  duration: Scalars['BigInt'];
+  start: Scalars['BigInt'];
+  cliff: Scalars['BigInt'];
+  withdrawn: Scalars['BigInt'];
+  staked: Scalars['BigInt'];
+  stakingPolicy: Scalars['Bytes'];
+  transactionHash: Scalars['Bytes'];
+  timestamp?: Maybe<Scalars['BigInt']>;
+};
+
+export type Grant_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  grantManager?: Maybe<Scalars['Bytes']>;
+  grantManager_not?: Maybe<Scalars['Bytes']>;
+  grantManager_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantManager_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantManager_contains?: Maybe<Scalars['Bytes']>;
+  grantManager_not_contains?: Maybe<Scalars['Bytes']>;
+  grantee?: Maybe<Scalars['Bytes']>;
+  grantee_not?: Maybe<Scalars['Bytes']>;
+  grantee_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantee_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantee_contains?: Maybe<Scalars['Bytes']>;
+  grantee_not_contains?: Maybe<Scalars['Bytes']>;
+  revokedAt?: Maybe<Scalars['BigInt']>;
+  revokedAt_not?: Maybe<Scalars['BigInt']>;
+  revokedAt_gt?: Maybe<Scalars['BigInt']>;
+  revokedAt_lt?: Maybe<Scalars['BigInt']>;
+  revokedAt_gte?: Maybe<Scalars['BigInt']>;
+  revokedAt_lte?: Maybe<Scalars['BigInt']>;
+  revokedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  revokedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  revokedAmount?: Maybe<Scalars['BigInt']>;
+  revokedAmount_not?: Maybe<Scalars['BigInt']>;
+  revokedAmount_gt?: Maybe<Scalars['BigInt']>;
+  revokedAmount_lt?: Maybe<Scalars['BigInt']>;
+  revokedAmount_gte?: Maybe<Scalars['BigInt']>;
+  revokedAmount_lte?: Maybe<Scalars['BigInt']>;
+  revokedAmount_in?: Maybe<Array<Scalars['BigInt']>>;
+  revokedAmount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  revokedWithdrawn?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_not?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_gt?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_lt?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_gte?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_lte?: Maybe<Scalars['BigInt']>;
+  revokedWithdrawn_in?: Maybe<Array<Scalars['BigInt']>>;
+  revokedWithdrawn_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  revocable?: Maybe<Scalars['Boolean']>;
+  revocable_not?: Maybe<Scalars['Boolean']>;
+  revocable_in?: Maybe<Array<Scalars['Boolean']>>;
+  revocable_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  amount?: Maybe<Scalars['BigInt']>;
+  amount_not?: Maybe<Scalars['BigInt']>;
+  amount_gt?: Maybe<Scalars['BigInt']>;
+  amount_lt?: Maybe<Scalars['BigInt']>;
+  amount_gte?: Maybe<Scalars['BigInt']>;
+  amount_lte?: Maybe<Scalars['BigInt']>;
+  amount_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  duration?: Maybe<Scalars['BigInt']>;
+  duration_not?: Maybe<Scalars['BigInt']>;
+  duration_gt?: Maybe<Scalars['BigInt']>;
+  duration_lt?: Maybe<Scalars['BigInt']>;
+  duration_gte?: Maybe<Scalars['BigInt']>;
+  duration_lte?: Maybe<Scalars['BigInt']>;
+  duration_in?: Maybe<Array<Scalars['BigInt']>>;
+  duration_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  start?: Maybe<Scalars['BigInt']>;
+  start_not?: Maybe<Scalars['BigInt']>;
+  start_gt?: Maybe<Scalars['BigInt']>;
+  start_lt?: Maybe<Scalars['BigInt']>;
+  start_gte?: Maybe<Scalars['BigInt']>;
+  start_lte?: Maybe<Scalars['BigInt']>;
+  start_in?: Maybe<Array<Scalars['BigInt']>>;
+  start_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  cliff?: Maybe<Scalars['BigInt']>;
+  cliff_not?: Maybe<Scalars['BigInt']>;
+  cliff_gt?: Maybe<Scalars['BigInt']>;
+  cliff_lt?: Maybe<Scalars['BigInt']>;
+  cliff_gte?: Maybe<Scalars['BigInt']>;
+  cliff_lte?: Maybe<Scalars['BigInt']>;
+  cliff_in?: Maybe<Array<Scalars['BigInt']>>;
+  cliff_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  withdrawn?: Maybe<Scalars['BigInt']>;
+  withdrawn_not?: Maybe<Scalars['BigInt']>;
+  withdrawn_gt?: Maybe<Scalars['BigInt']>;
+  withdrawn_lt?: Maybe<Scalars['BigInt']>;
+  withdrawn_gte?: Maybe<Scalars['BigInt']>;
+  withdrawn_lte?: Maybe<Scalars['BigInt']>;
+  withdrawn_in?: Maybe<Array<Scalars['BigInt']>>;
+  withdrawn_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  staked?: Maybe<Scalars['BigInt']>;
+  staked_not?: Maybe<Scalars['BigInt']>;
+  staked_gt?: Maybe<Scalars['BigInt']>;
+  staked_lt?: Maybe<Scalars['BigInt']>;
+  staked_gte?: Maybe<Scalars['BigInt']>;
+  staked_lte?: Maybe<Scalars['BigInt']>;
+  staked_in?: Maybe<Array<Scalars['BigInt']>>;
+  staked_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakingPolicy?: Maybe<Scalars['Bytes']>;
+  stakingPolicy_not?: Maybe<Scalars['Bytes']>;
+  stakingPolicy_in?: Maybe<Array<Scalars['Bytes']>>;
+  stakingPolicy_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  stakingPolicy_contains?: Maybe<Scalars['Bytes']>;
+  stakingPolicy_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['Bytes']>;
+  transactionHash_not?: Maybe<Scalars['Bytes']>;
+  transactionHash_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_contains?: Maybe<Scalars['Bytes']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum Grant_OrderBy {
+  Id = 'id',
+  GrantManager = 'grantManager',
+  Grantee = 'grantee',
+  RevokedAt = 'revokedAt',
+  RevokedAmount = 'revokedAmount',
+  RevokedWithdrawn = 'revokedWithdrawn',
+  Revocable = 'revocable',
+  Amount = 'amount',
+  Duration = 'duration',
+  Start = 'start',
+  Cliff = 'cliff',
+  Withdrawn = 'withdrawn',
+  Staked = 'staked',
+  StakingPolicy = 'stakingPolicy',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp'
+}
+
 export type LiquidatedEvent = Event & {
   __typename?: 'LiquidatedEvent';
   id: Scalars['ID'];
@@ -2088,10 +2263,80 @@ export enum OrderDirection {
   Desc = 'desc'
 }
 
+export type PriceFeed = {
+  __typename?: 'PriceFeed';
+  id: Scalars['ID'];
+  val: Scalars['BigInt'];
+  age: Scalars['BigInt'];
+  transactionHash: Scalars['Bytes'];
+  blockNumber: Scalars['BigInt'];
+  timestamp: Scalars['BigInt'];
+};
+
+export type PriceFeed_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  val?: Maybe<Scalars['BigInt']>;
+  val_not?: Maybe<Scalars['BigInt']>;
+  val_gt?: Maybe<Scalars['BigInt']>;
+  val_lt?: Maybe<Scalars['BigInt']>;
+  val_gte?: Maybe<Scalars['BigInt']>;
+  val_lte?: Maybe<Scalars['BigInt']>;
+  val_in?: Maybe<Array<Scalars['BigInt']>>;
+  val_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  age?: Maybe<Scalars['BigInt']>;
+  age_not?: Maybe<Scalars['BigInt']>;
+  age_gt?: Maybe<Scalars['BigInt']>;
+  age_lt?: Maybe<Scalars['BigInt']>;
+  age_gte?: Maybe<Scalars['BigInt']>;
+  age_lte?: Maybe<Scalars['BigInt']>;
+  age_in?: Maybe<Array<Scalars['BigInt']>>;
+  age_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  transactionHash?: Maybe<Scalars['Bytes']>;
+  transactionHash_not?: Maybe<Scalars['Bytes']>;
+  transactionHash_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  transactionHash_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash_not_contains?: Maybe<Scalars['Bytes']>;
+  blockNumber?: Maybe<Scalars['BigInt']>;
+  blockNumber_not?: Maybe<Scalars['BigInt']>;
+  blockNumber_gt?: Maybe<Scalars['BigInt']>;
+  blockNumber_lt?: Maybe<Scalars['BigInt']>;
+  blockNumber_gte?: Maybe<Scalars['BigInt']>;
+  blockNumber_lte?: Maybe<Scalars['BigInt']>;
+  blockNumber_in?: Maybe<Array<Scalars['BigInt']>>;
+  blockNumber_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum PriceFeed_OrderBy {
+  Id = 'id',
+  Val = 'val',
+  Age = 'age',
+  TransactionHash = 'transactionHash',
+  BlockNumber = 'blockNumber',
+  Timestamp = 'timestamp'
+}
+
 export type Query = {
   __typename?: 'Query';
   tbtcdepositToken?: Maybe<TbtcDepositToken>;
   tbtcdepositTokens: Array<TbtcDepositToken>;
+  stakedropInterval?: Maybe<StakedropInterval>;
+  stakedropIntervals: Array<StakedropInterval>;
   createdEvent?: Maybe<CreatedEvent>;
   createdEvents: Array<CreatedEvent>;
   fundedEvent?: Maybe<FundedEvent>;
@@ -2146,6 +2391,20 @@ export type Query = {
   relayEntries: Array<RelayEntry>;
   randomBeaconGroupMembership?: Maybe<RandomBeaconGroupMembership>;
   randomBeaconGroupMemberships: Array<RandomBeaconGroupMembership>;
+  priceFeed?: Maybe<PriceFeed>;
+  priceFeeds: Array<PriceFeed>;
+  grant?: Maybe<Grant>;
+  grants: Array<Grant>;
+  stakingContractAuthorizedEvent?: Maybe<StakingContractAuthorizedEvent>;
+  stakingContractAuthorizedEvents: Array<StakingContractAuthorizedEvent>;
+  tokenGrantCreatedEvent?: Maybe<TokenGrantCreatedEvent>;
+  tokenGrantCreatedEvents: Array<TokenGrantCreatedEvent>;
+  tokenGrantWithdrawnEvent?: Maybe<TokenGrantWithdrawnEvent>;
+  tokenGrantWithdrawnEvents: Array<TokenGrantWithdrawnEvent>;
+  tokenGrantStakedEvent?: Maybe<TokenGrantStakedEvent>;
+  tokenGrantStakedEvents: Array<TokenGrantStakedEvent>;
+  tokenGrantRevokedEvent?: Maybe<TokenGrantRevokedEvent>;
+  tokenGrantRevokedEvents: Array<TokenGrantRevokedEvent>;
   event?: Maybe<Event>;
   events: Array<Event>;
 };
@@ -2163,6 +2422,22 @@ export type QueryTbtcdepositTokensArgs = {
   orderBy?: Maybe<TbtcDepositToken_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<TbtcDepositToken_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakedropIntervalArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakedropIntervalsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakedropInterval_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakedropInterval_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -2599,6 +2874,118 @@ export type QueryRandomBeaconGroupMembershipsArgs = {
 };
 
 
+export type QueryPriceFeedArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryPriceFeedsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<PriceFeed_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<PriceFeed_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryGrantArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryGrantsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Grant_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<Grant_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakingContractAuthorizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakingContractAuthorizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakingContractAuthorizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakingContractAuthorizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantCreatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantCreatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantCreatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantCreatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantWithdrawnEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantWithdrawnEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantWithdrawnEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantWithdrawnEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantStakedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantStakedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantStakedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantStakedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantRevokedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokenGrantRevokedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantRevokedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantRevokedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type QueryEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -2657,6 +3044,7 @@ export type RandomBeaconGroupMembership = {
   count: Scalars['Int'];
   /** ETH reward amount (in wei) earned by this operator through membership in this group. */
   reward: Scalars['BigInt'];
+  groupCreatedAt: Scalars['BigInt'];
 };
 
 export type RandomBeaconGroupMembership_Filter = {
@@ -2712,6 +3100,14 @@ export type RandomBeaconGroupMembership_Filter = {
   reward_lte?: Maybe<Scalars['BigInt']>;
   reward_in?: Maybe<Array<Scalars['BigInt']>>;
   reward_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  groupCreatedAt?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_not?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_gt?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_lt?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_gte?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_lte?: Maybe<Scalars['BigInt']>;
+  groupCreatedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  groupCreatedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum RandomBeaconGroupMembership_OrderBy {
@@ -2719,7 +3115,8 @@ export enum RandomBeaconGroupMembership_OrderBy {
   Group = 'group',
   Operator = 'operator',
   Count = 'count',
-  Reward = 'reward'
+  Reward = 'reward',
+  GroupCreatedAt = 'groupCreatedAt'
 }
 
 export type RandomBeaconGroup_Filter = {
@@ -3248,6 +3645,212 @@ export enum SetupFailedReason {
   FundingEcdsaFraud = 'FUNDING_ECDSA_FRAUD'
 }
 
+/**
+ * A one-month interval in the stakedrop reward program.
+ * 
+ * The intervals of the Beacon and ECDSA reward programs are not the same (there is about a 14 day difference).
+ * However, the number of intervals are the same, and the programs are otherwise aligned conceptually, so there
+ * is only one entity representing the intervals for both reward programs.
+ */
+export type StakedropInterval = {
+  __typename?: 'StakedropInterval';
+  id: Scalars['ID'];
+  /** Nunber of the interval, with the first interval being 1. */
+  number: Scalars['Int'];
+  ecdsaIntervalStart: Scalars['BigInt'];
+  ecdsaIntervalEnd: Scalars['BigInt'];
+  beaconIntervalStart: Scalars['BigInt'];
+  beaconIntervalEnd: Scalars['BigInt'];
+  keepCount: Scalars['Int'];
+  beaconGroupCount: Scalars['Int'];
+  /**
+   * Keeps that fall into this interval, and are counted towards the allocated rewards. This includes terminated
+   * keeps which are non-the-less not eligable for an reward.
+   */
+  keeps?: Maybe<Array<BondedEcdsaKeep>>;
+};
+
+
+/**
+ * A one-month interval in the stakedrop reward program.
+ * 
+ * The intervals of the Beacon and ECDSA reward programs are not the same (there is about a 14 day difference).
+ * However, the number of intervals are the same, and the programs are otherwise aligned conceptually, so there
+ * is only one entity representing the intervals for both reward programs.
+ */
+export type StakedropIntervalKeepsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<BondedEcdsaKeep_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<BondedEcdsaKeep_Filter>;
+};
+
+export type StakedropInterval_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  number?: Maybe<Scalars['Int']>;
+  number_not?: Maybe<Scalars['Int']>;
+  number_gt?: Maybe<Scalars['Int']>;
+  number_lt?: Maybe<Scalars['Int']>;
+  number_gte?: Maybe<Scalars['Int']>;
+  number_lte?: Maybe<Scalars['Int']>;
+  number_in?: Maybe<Array<Scalars['Int']>>;
+  number_not_in?: Maybe<Array<Scalars['Int']>>;
+  ecdsaIntervalStart?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_not?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_gt?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_lt?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_gte?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_lte?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalStart_in?: Maybe<Array<Scalars['BigInt']>>;
+  ecdsaIntervalStart_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  ecdsaIntervalEnd?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_not?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_gt?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_lt?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_gte?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_lte?: Maybe<Scalars['BigInt']>;
+  ecdsaIntervalEnd_in?: Maybe<Array<Scalars['BigInt']>>;
+  ecdsaIntervalEnd_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  beaconIntervalStart?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_not?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_gt?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_lt?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_gte?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_lte?: Maybe<Scalars['BigInt']>;
+  beaconIntervalStart_in?: Maybe<Array<Scalars['BigInt']>>;
+  beaconIntervalStart_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  beaconIntervalEnd?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_not?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_gt?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_lt?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_gte?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_lte?: Maybe<Scalars['BigInt']>;
+  beaconIntervalEnd_in?: Maybe<Array<Scalars['BigInt']>>;
+  beaconIntervalEnd_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  keepCount?: Maybe<Scalars['Int']>;
+  keepCount_not?: Maybe<Scalars['Int']>;
+  keepCount_gt?: Maybe<Scalars['Int']>;
+  keepCount_lt?: Maybe<Scalars['Int']>;
+  keepCount_gte?: Maybe<Scalars['Int']>;
+  keepCount_lte?: Maybe<Scalars['Int']>;
+  keepCount_in?: Maybe<Array<Scalars['Int']>>;
+  keepCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  beaconGroupCount?: Maybe<Scalars['Int']>;
+  beaconGroupCount_not?: Maybe<Scalars['Int']>;
+  beaconGroupCount_gt?: Maybe<Scalars['Int']>;
+  beaconGroupCount_lt?: Maybe<Scalars['Int']>;
+  beaconGroupCount_gte?: Maybe<Scalars['Int']>;
+  beaconGroupCount_lte?: Maybe<Scalars['Int']>;
+  beaconGroupCount_in?: Maybe<Array<Scalars['Int']>>;
+  beaconGroupCount_not_in?: Maybe<Array<Scalars['Int']>>;
+};
+
+export enum StakedropInterval_OrderBy {
+  Id = 'id',
+  Number = 'number',
+  EcdsaIntervalStart = 'ecdsaIntervalStart',
+  EcdsaIntervalEnd = 'ecdsaIntervalEnd',
+  BeaconIntervalStart = 'beaconIntervalStart',
+  BeaconIntervalEnd = 'beaconIntervalEnd',
+  KeepCount = 'keepCount',
+  BeaconGroupCount = 'beaconGroupCount',
+  Keeps = 'keeps'
+}
+
+export type StakingContractAuthorizedEvent = Event & {
+  __typename?: 'StakingContractAuthorizedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  grantManager: Scalars['Bytes'];
+  stakingContract: Scalars['Bytes'];
+};
+
+export type StakingContractAuthorizedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  grantManager?: Maybe<Scalars['Bytes']>;
+  grantManager_not?: Maybe<Scalars['Bytes']>;
+  grantManager_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantManager_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  grantManager_contains?: Maybe<Scalars['Bytes']>;
+  grantManager_not_contains?: Maybe<Scalars['Bytes']>;
+  stakingContract?: Maybe<Scalars['Bytes']>;
+  stakingContract_not?: Maybe<Scalars['Bytes']>;
+  stakingContract_in?: Maybe<Array<Scalars['Bytes']>>;
+  stakingContract_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  stakingContract_contains?: Maybe<Scalars['Bytes']>;
+  stakingContract_not_contains?: Maybe<Scalars['Bytes']>;
+};
+
+export enum StakingContractAuthorizedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  GrantManager = 'grantManager',
+  StakingContract = 'stakingContract'
+}
+
 export type StartedLiquidationEvent = Event & {
   __typename?: 'StartedLiquidationEvent';
   id: Scalars['ID'];
@@ -3336,6 +3939,10 @@ export type StatsRecord = {
   btcUnderDeposit: Scalars['BigInt'];
   /** The total amount of BTC currently deposited, measured from funding proof received to redemption requested */
   btcInActiveDeposits: Scalars['BigInt'];
+  /** Total number of grants ever created, regardless of their current state. */
+  totalGrantCount: Scalars['Int'];
+  /** Total amount of grants issued. */
+  totalGrantIssued: Scalars['BigInt'];
 };
 
 export type StatsRecord_Filter = {
@@ -3395,6 +4002,22 @@ export type StatsRecord_Filter = {
   btcInActiveDeposits_lte?: Maybe<Scalars['BigInt']>;
   btcInActiveDeposits_in?: Maybe<Array<Scalars['BigInt']>>;
   btcInActiveDeposits_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  totalGrantCount?: Maybe<Scalars['Int']>;
+  totalGrantCount_not?: Maybe<Scalars['Int']>;
+  totalGrantCount_gt?: Maybe<Scalars['Int']>;
+  totalGrantCount_lt?: Maybe<Scalars['Int']>;
+  totalGrantCount_gte?: Maybe<Scalars['Int']>;
+  totalGrantCount_lte?: Maybe<Scalars['Int']>;
+  totalGrantCount_in?: Maybe<Array<Scalars['Int']>>;
+  totalGrantCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  totalGrantIssued?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_not?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_gt?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_lt?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_gte?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_lte?: Maybe<Scalars['BigInt']>;
+  totalGrantIssued_in?: Maybe<Array<Scalars['BigInt']>>;
+  totalGrantIssued_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum StatsRecord_OrderBy {
@@ -3404,7 +4027,9 @@ export enum StatsRecord_OrderBy {
   TotalBonded = 'totalBonded',
   TotalBondsSeized = 'totalBondsSeized',
   BtcUnderDeposit = 'btcUnderDeposit',
-  BtcInActiveDeposits = 'btcInActiveDeposits'
+  BtcInActiveDeposits = 'btcInActiveDeposits',
+  TotalGrantCount = 'totalGrantCount',
+  TotalGrantIssued = 'totalGrantIssued'
 }
 
 /** Exposes some global system status data. Only a single record with the id "current" is available. */
@@ -3449,6 +4074,8 @@ export type Subscription = {
   __typename?: 'Subscription';
   tbtcdepositToken?: Maybe<TbtcDepositToken>;
   tbtcdepositTokens: Array<TbtcDepositToken>;
+  stakedropInterval?: Maybe<StakedropInterval>;
+  stakedropIntervals: Array<StakedropInterval>;
   createdEvent?: Maybe<CreatedEvent>;
   createdEvents: Array<CreatedEvent>;
   fundedEvent?: Maybe<FundedEvent>;
@@ -3503,6 +4130,20 @@ export type Subscription = {
   relayEntries: Array<RelayEntry>;
   randomBeaconGroupMembership?: Maybe<RandomBeaconGroupMembership>;
   randomBeaconGroupMemberships: Array<RandomBeaconGroupMembership>;
+  priceFeed?: Maybe<PriceFeed>;
+  priceFeeds: Array<PriceFeed>;
+  grant?: Maybe<Grant>;
+  grants: Array<Grant>;
+  stakingContractAuthorizedEvent?: Maybe<StakingContractAuthorizedEvent>;
+  stakingContractAuthorizedEvents: Array<StakingContractAuthorizedEvent>;
+  tokenGrantCreatedEvent?: Maybe<TokenGrantCreatedEvent>;
+  tokenGrantCreatedEvents: Array<TokenGrantCreatedEvent>;
+  tokenGrantWithdrawnEvent?: Maybe<TokenGrantWithdrawnEvent>;
+  tokenGrantWithdrawnEvents: Array<TokenGrantWithdrawnEvent>;
+  tokenGrantStakedEvent?: Maybe<TokenGrantStakedEvent>;
+  tokenGrantStakedEvents: Array<TokenGrantStakedEvent>;
+  tokenGrantRevokedEvent?: Maybe<TokenGrantRevokedEvent>;
+  tokenGrantRevokedEvents: Array<TokenGrantRevokedEvent>;
   event?: Maybe<Event>;
   events: Array<Event>;
 };
@@ -3520,6 +4161,22 @@ export type SubscriptionTbtcdepositTokensArgs = {
   orderBy?: Maybe<TbtcDepositToken_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<TbtcDepositToken_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakedropIntervalArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakedropIntervalsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakedropInterval_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakedropInterval_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -3956,6 +4613,118 @@ export type SubscriptionRandomBeaconGroupMembershipsArgs = {
 };
 
 
+export type SubscriptionPriceFeedArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionPriceFeedsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<PriceFeed_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<PriceFeed_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionGrantArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionGrantsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<Grant_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<Grant_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakingContractAuthorizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakingContractAuthorizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakingContractAuthorizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakingContractAuthorizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantCreatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantCreatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantCreatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantCreatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantWithdrawnEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantWithdrawnEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantWithdrawnEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantWithdrawnEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantStakedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantStakedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantStakedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantStakedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantRevokedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokenGrantRevokedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokenGrantRevokedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokenGrantRevokedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type SubscriptionEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -4043,6 +4812,354 @@ export enum TbtcDepositToken_OrderBy {
   Minter = 'minter'
 }
 
+export type TokenGrantCreatedEvent = Event & {
+  __typename?: 'TokenGrantCreatedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  grantID: Scalars['BigInt'];
+};
+
+export type TokenGrantCreatedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  grantID?: Maybe<Scalars['BigInt']>;
+  grantID_not?: Maybe<Scalars['BigInt']>;
+  grantID_gt?: Maybe<Scalars['BigInt']>;
+  grantID_lt?: Maybe<Scalars['BigInt']>;
+  grantID_gte?: Maybe<Scalars['BigInt']>;
+  grantID_lte?: Maybe<Scalars['BigInt']>;
+  grantID_in?: Maybe<Array<Scalars['BigInt']>>;
+  grantID_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum TokenGrantCreatedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  GrantId = 'grantID'
+}
+
+export type TokenGrantRevokedEvent = Event & {
+  __typename?: 'TokenGrantRevokedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  grantID: Scalars['BigInt'];
+};
+
+export type TokenGrantRevokedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  grantID?: Maybe<Scalars['BigInt']>;
+  grantID_not?: Maybe<Scalars['BigInt']>;
+  grantID_gt?: Maybe<Scalars['BigInt']>;
+  grantID_lt?: Maybe<Scalars['BigInt']>;
+  grantID_gte?: Maybe<Scalars['BigInt']>;
+  grantID_lte?: Maybe<Scalars['BigInt']>;
+  grantID_in?: Maybe<Array<Scalars['BigInt']>>;
+  grantID_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum TokenGrantRevokedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  GrantId = 'grantID'
+}
+
+export type TokenGrantStakedEvent = Event & {
+  __typename?: 'TokenGrantStakedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  grantID: Scalars['BigInt'];
+  amount: Scalars['BigInt'];
+  operator: Scalars['Bytes'];
+};
+
+export type TokenGrantStakedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  grantID?: Maybe<Scalars['BigInt']>;
+  grantID_not?: Maybe<Scalars['BigInt']>;
+  grantID_gt?: Maybe<Scalars['BigInt']>;
+  grantID_lt?: Maybe<Scalars['BigInt']>;
+  grantID_gte?: Maybe<Scalars['BigInt']>;
+  grantID_lte?: Maybe<Scalars['BigInt']>;
+  grantID_in?: Maybe<Array<Scalars['BigInt']>>;
+  grantID_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount?: Maybe<Scalars['BigInt']>;
+  amount_not?: Maybe<Scalars['BigInt']>;
+  amount_gt?: Maybe<Scalars['BigInt']>;
+  amount_lt?: Maybe<Scalars['BigInt']>;
+  amount_gte?: Maybe<Scalars['BigInt']>;
+  amount_lte?: Maybe<Scalars['BigInt']>;
+  amount_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  operator?: Maybe<Scalars['Bytes']>;
+  operator_not?: Maybe<Scalars['Bytes']>;
+  operator_in?: Maybe<Array<Scalars['Bytes']>>;
+  operator_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  operator_contains?: Maybe<Scalars['Bytes']>;
+  operator_not_contains?: Maybe<Scalars['Bytes']>;
+};
+
+export enum TokenGrantStakedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  GrantId = 'grantID',
+  Amount = 'amount',
+  Operator = 'operator'
+}
+
+export type TokenGrantWithdrawnEvent = Event & {
+  __typename?: 'TokenGrantWithdrawnEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  grantID: Scalars['BigInt'];
+  amount: Scalars['BigInt'];
+};
+
+export type TokenGrantWithdrawnEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  grantID?: Maybe<Scalars['BigInt']>;
+  grantID_not?: Maybe<Scalars['BigInt']>;
+  grantID_gt?: Maybe<Scalars['BigInt']>;
+  grantID_lt?: Maybe<Scalars['BigInt']>;
+  grantID_gte?: Maybe<Scalars['BigInt']>;
+  grantID_lte?: Maybe<Scalars['BigInt']>;
+  grantID_in?: Maybe<Array<Scalars['BigInt']>>;
+  grantID_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount?: Maybe<Scalars['BigInt']>;
+  amount_not?: Maybe<Scalars['BigInt']>;
+  amount_gt?: Maybe<Scalars['BigInt']>;
+  amount_lt?: Maybe<Scalars['BigInt']>;
+  amount_gte?: Maybe<Scalars['BigInt']>;
+  amount_lte?: Maybe<Scalars['BigInt']>;
+  amount_in?: Maybe<Array<Scalars['BigInt']>>;
+  amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
+};
+
+export enum TokenGrantWithdrawnEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  GrantId = 'grantID',
+  Amount = 'amount'
+}
+
 /** An actor using the minting and redeeming facilities. */
 export type User = {
   __typename?: 'User';
@@ -4116,7 +5233,33 @@ export enum User_OrderBy {
   NumOwnDepositsRedeemed = 'numOwnDepositsRedeemed'
 }
 
-export type GetRelayEntriesQueryVariables = Exact<{ [key: string]: never; }>;
+export type WatchPriceSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type WatchPriceSubscription = (
+  { __typename?: 'Subscription' }
+  & { priceFeed?: Maybe<(
+    { __typename?: 'PriceFeed' }
+    & Pick<PriceFeed, 'val' | 'timestamp' | 'blockNumber' | 'transactionHash'>
+  )> }
+);
+
+export type GetBlockPriceQueryVariables = Exact<{
+  block?: Maybe<Block_Height>;
+}>;
+
+
+export type GetBlockPriceQuery = (
+  { __typename?: 'Query' }
+  & { priceFeed?: Maybe<(
+    { __typename?: 'PriceFeed' }
+    & Pick<PriceFeed, 'val' | 'timestamp' | 'blockNumber' | 'transactionHash'>
+  )> }
+);
+
+export type GetRelayEntriesQueryVariables = Exact<{
+  block?: Maybe<Block_Height>;
+}>;
 
 
 export type GetRelayEntriesQuery = (
@@ -4136,6 +5279,7 @@ export type GetRelayEntriesQuery = (
 
 export type GetDepositQueryVariables = Exact<{
   id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4177,6 +5321,7 @@ export type WatchDepositSubscription = (
 
 export type GetDepositLogsQueryVariables = Exact<{
   depositId: Scalars['String'];
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4223,14 +5368,31 @@ export type GetDepositLogsQuery = (
       )> }
     )> }
   ) | (
+    { __typename: 'StakingContractAuthorizedEvent' }
+    & Pick<StakingContractAuthorizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'StartedLiquidationEvent' }
     & Pick<StartedLiquidationEvent, 'cause' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantCreatedEvent' }
+    & Pick<TokenGrantCreatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantRevokedEvent' }
+    & Pick<TokenGrantRevokedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantStakedEvent' }
+    & Pick<TokenGrantStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantWithdrawnEvent' }
+    & Pick<TokenGrantWithdrawnEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   )> }
 );
 
 export type GetDepositsQueryVariables = Exact<{
   where?: Maybe<Deposit_Filter>;
   orderBy?: Maybe<Deposit_OrderBy>;
+  skip?: Maybe<Scalars['Int']>;
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4247,15 +5409,15 @@ export type GetDepositsQuery = (
       & Pick<BondedEcdsaKeep, 'id' | 'totalBondAmount' | 'publicKey'>
     )> }
     & NiceStateLabelFragment
+  )>, stats?: Maybe<(
+    { __typename?: 'StatsRecord' }
+    & Pick<StatsRecord, 'depositCount'>
   )> }
 );
 
-export type ChangeFragment = (
-  { __typename?: 'GovernanceChange' }
-  & Pick<GovernanceChange, 'type' | 'requestedAt' | 'takesEffectAfter' | 'newLotSizes' | 'newFactorySelector' | 'newFullyBackedFactory' | 'newKeepStakedFactory'>
-);
-
-export type GetGovernanceQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetGovernanceQueryVariables = Exact<{
+  block?: Maybe<Block_Height>;
+}>;
 
 
 export type GetGovernanceQuery = (
@@ -4283,8 +5445,14 @@ export type GetGovernanceQuery = (
   )> }
 );
 
+export type ChangeFragment = (
+  { __typename?: 'GovernanceChange' }
+  & Pick<GovernanceChange, 'type' | 'requestedAt' | 'takesEffectAfter' | 'newLotSizes' | 'newFactorySelector' | 'newFullyBackedFactory' | 'newKeepStakedFactory'>
+);
+
 export type GetRandomBeaconGroupQueryVariables = Exact<{
   id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4295,10 +5463,17 @@ export type GetRandomBeaconGroupQuery = (
     & Pick<RandomBeaconGroup, 'id' | 'createdAt' | 'rewardPerMember'>
     & { memberships: Array<(
       { __typename?: 'RandomBeaconGroupMembership' }
-      & Pick<RandomBeaconGroupMembership, 'id' | 'count'>
+      & Pick<RandomBeaconGroupMembership, 'id' | 'count' | 'reward'>
       & { operator: (
         { __typename?: 'Operator' }
         & Pick<Operator, 'address'>
+      ) }
+    )>, relayEntries: Array<(
+      { __typename?: 'RelayEntry' }
+      & Pick<RelayEntry, 'id' | 'requestId' | 'value' | 'requestedAt' | 'generatedAt' | 'rewardPerMember'>
+      & { group: (
+        { __typename?: 'RandomBeaconGroup' }
+        & Pick<RandomBeaconGroup, 'id' | 'pubKey'>
       ) }
     )> }
   )> }
@@ -4308,6 +5483,7 @@ export type GetOperatorKeepsQueryVariables = Exact<{
   id: Scalars['ID'];
   orderBy?: Maybe<BondedEcdsaKeep_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4334,8 +5510,30 @@ export type GetOperatorKeepsQuery = (
   )> }
 );
 
+export type GetOperatorPropertiesQueryVariables = Exact<{
+  id: Scalars['ID'];
+  address: Scalars['Bytes'];
+}>;
+
+
+export type GetOperatorPropertiesQuery = (
+  { __typename?: 'Query' }
+  & { operator?: Maybe<(
+    { __typename?: 'Operator' }
+    & { locks: Array<(
+      { __typename?: 'Lock' }
+      & Pick<Lock, 'id' | 'until' | 'creator'>
+      & { operator: (
+        { __typename?: 'Operator' }
+        & Pick<Operator, 'id'>
+      ) }
+    )> }
+  )> }
+);
+
 export type GetOperatorQueryVariables = Exact<{
   id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4358,23 +5556,38 @@ export type GetOperatorQuery = (
 export type GetOperatorsQueryVariables = Exact<{
   orderBy?: Maybe<Operator_OrderBy>;
   direction?: Maybe<OrderDirection>;
+  block?: Maybe<Block_Height>;
 }>;
 
 
 export type GetOperatorsQuery = (
   { __typename?: 'Query' }
-  & { stats?: Maybe<(
-    { __typename?: 'StatsRecord' }
-    & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
-  )>, operators: Array<(
+  & { operators: Array<(
     { __typename?: 'Operator' }
     & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards'>
+  )>, stats?: Maybe<(
+    { __typename?: 'StatsRecord' }
+    & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
+  )> }
+);
+
+export type GetStakedropDataQueryVariables = Exact<{
+  block?: Maybe<Block_Height>;
+}>;
+
+
+export type GetStakedropDataQuery = (
+  { __typename?: 'Query' }
+  & { stakedropIntervals: Array<(
+    { __typename?: 'StakedropInterval' }
+    & Pick<StakedropInterval, 'id' | 'number' | 'beaconIntervalStart' | 'beaconIntervalEnd' | 'ecdsaIntervalStart' | 'ecdsaIntervalEnd' | 'keepCount' | 'beaconGroupCount'>
   )> }
 );
 
 export type GetUsersQueryVariables = Exact<{
   orderBy?: Maybe<User_OrderBy>;
   direction?: Maybe<OrderDirection>;
+  block?: Maybe<Block_Height>;
 }>;
 
 
@@ -4422,16 +5635,83 @@ export const NiceStateLabelFragmentDoc = gql`
   updatedAt
 }
     `;
+export const WatchPriceDocument = gql`
+    subscription WatchPrice {
+  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed") {
+    val
+    timestamp
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+
+/**
+ * __useWatchPriceSubscription__
+ *
+ * To run a query within a React component, call `useWatchPriceSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useWatchPriceSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWatchPriceSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useWatchPriceSubscription(baseOptions?: Apollo.SubscriptionHookOptions<WatchPriceSubscription, WatchPriceSubscriptionVariables>) {
+        return Apollo.useSubscription<WatchPriceSubscription, WatchPriceSubscriptionVariables>(WatchPriceDocument, baseOptions);
+      }
+export type WatchPriceSubscriptionHookResult = ReturnType<typeof useWatchPriceSubscription>;
+export type WatchPriceSubscriptionResult = Apollo.SubscriptionResult<WatchPriceSubscription>;
+export const GetBlockPriceDocument = gql`
+    query GetBlockPrice($block: Block_height) {
+  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed", block: $block) {
+    val
+    timestamp
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+
+/**
+ * __useGetBlockPriceQuery__
+ *
+ * To run a query within a React component, call `useGetBlockPriceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBlockPriceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBlockPriceQuery({
+ *   variables: {
+ *      block: // value for 'block'
+ *   },
+ * });
+ */
+export function useGetBlockPriceQuery(baseOptions?: Apollo.QueryHookOptions<GetBlockPriceQuery, GetBlockPriceQueryVariables>) {
+        return Apollo.useQuery<GetBlockPriceQuery, GetBlockPriceQueryVariables>(GetBlockPriceDocument, baseOptions);
+      }
+export function useGetBlockPriceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBlockPriceQuery, GetBlockPriceQueryVariables>) {
+          return Apollo.useLazyQuery<GetBlockPriceQuery, GetBlockPriceQueryVariables>(GetBlockPriceDocument, baseOptions);
+        }
+export type GetBlockPriceQueryHookResult = ReturnType<typeof useGetBlockPriceQuery>;
+export type GetBlockPriceLazyQueryHookResult = ReturnType<typeof useGetBlockPriceLazyQuery>;
+export type GetBlockPriceQueryResult = Apollo.QueryResult<GetBlockPriceQuery, GetBlockPriceQueryVariables>;
 export const GetRelayEntriesDocument = gql`
-    query GetRelayEntries {
-  randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc) {
+    query GetRelayEntries($block: Block_height) {
+  randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc, block: $block) {
     id
     pubKey
     createdAt
     uniqueMemberCount
     rewardPerMember
   }
-  relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
+  relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc, block: $block) {
     id
     requestId
     value
@@ -4458,6 +5738,7 @@ export const GetRelayEntriesDocument = gql`
  * @example
  * const { data, loading, error } = useGetRelayEntriesQuery({
  *   variables: {
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4471,8 +5752,8 @@ export type GetRelayEntriesQueryHookResult = ReturnType<typeof useGetRelayEntrie
 export type GetRelayEntriesLazyQueryHookResult = ReturnType<typeof useGetRelayEntriesLazyQuery>;
 export type GetRelayEntriesQueryResult = Apollo.QueryResult<GetRelayEntriesQuery, GetRelayEntriesQueryVariables>;
 export const GetDepositDocument = gql`
-    query GetDeposit($id: ID!) {
-  deposit(id: $id) {
+    query GetDeposit($id: ID!, $block: Block_height) {
+  deposit(id: $id, block: $block) {
     id
     contractAddress
     currentState
@@ -4523,6 +5804,7 @@ export const GetDepositDocument = gql`
  * const { data, loading, error } = useGetDepositQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4566,8 +5848,8 @@ export function useWatchDepositSubscription(baseOptions?: Apollo.SubscriptionHoo
 export type WatchDepositSubscriptionHookResult = ReturnType<typeof useWatchDepositSubscription>;
 export type WatchDepositSubscriptionResult = Apollo.SubscriptionResult<WatchDepositSubscription>;
 export const GetDepositLogsDocument = gql`
-    query GetDepositLogs($depositId: String!) {
-  events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc) {
+    query GetDepositLogs($depositId: String!, $block: Block_height) {
+  events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc, block: $block) {
     __typename
     id
     transactionHash
@@ -4610,6 +5892,7 @@ export const GetDepositLogsDocument = gql`
  * const { data, loading, error } = useGetDepositLogsQuery({
  *   variables: {
  *      depositId: // value for 'depositId'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4623,8 +5906,8 @@ export type GetDepositLogsQueryHookResult = ReturnType<typeof useGetDepositLogsQ
 export type GetDepositLogsLazyQueryHookResult = ReturnType<typeof useGetDepositLogsLazyQuery>;
 export type GetDepositLogsQueryResult = Apollo.QueryResult<GetDepositLogsQuery, GetDepositLogsQueryVariables>;
 export const GetDepositsDocument = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
-  deposits(first: 1000, orderBy: $orderBy, orderDirection: desc, where: $where) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
+  deposits(first: 500, skip: $skip, orderBy: $orderBy, orderDirection: desc, where: $where, block: $block) {
     id
     contractAddress
     lotSizeSatoshis
@@ -4646,6 +5929,9 @@ export const GetDepositsDocument = gql`
     }
     ...NiceStateLabel
   }
+  stats: statsRecord(id: "current", block: $block) {
+    depositCount
+  }
 }
     ${NiceStateLabelFragmentDoc}`;
 
@@ -4663,6 +5949,8 @@ export const GetDepositsDocument = gql`
  *   variables: {
  *      where: // value for 'where'
  *      orderBy: // value for 'orderBy'
+ *      skip: // value for 'skip'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4676,8 +5964,8 @@ export type GetDepositsQueryHookResult = ReturnType<typeof useGetDepositsQuery>;
 export type GetDepositsLazyQueryHookResult = ReturnType<typeof useGetDepositsLazyQuery>;
 export type GetDepositsQueryResult = Apollo.QueryResult<GetDepositsQuery, GetDepositsQueryVariables>;
 export const GetGovernanceDocument = gql`
-    query GetGovernance {
-  governance(id: "GOVERNANCE") {
+    query GetGovernance($block: Block_height) {
+  governance(id: "GOVERNANCE", block: $block) {
     newDepositsAllowed
     lotSizes
     pendingLotSizeChange {
@@ -4698,7 +5986,7 @@ export const GetGovernanceDocument = gql`
     undercollateralizedThresholdPercent
     priceFeeds
   }
-  governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc) {
+  governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc, block: $block) {
     id
     timestamp
     transactionHash
@@ -4723,6 +6011,7 @@ export const GetGovernanceDocument = gql`
  * @example
  * const { data, loading, error } = useGetGovernanceQuery({
  *   variables: {
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4736,16 +6025,29 @@ export type GetGovernanceQueryHookResult = ReturnType<typeof useGetGovernanceQue
 export type GetGovernanceLazyQueryHookResult = ReturnType<typeof useGetGovernanceLazyQuery>;
 export type GetGovernanceQueryResult = Apollo.QueryResult<GetGovernanceQuery, GetGovernanceQueryVariables>;
 export const GetRandomBeaconGroupDocument = gql`
-    query GetRandomBeaconGroup($id: ID!) {
-  randomBeaconGroup(id: $id) {
+    query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
+  randomBeaconGroup(id: $id, block: $block) {
     id
     createdAt
     rewardPerMember
-    memberships {
+    memberships(orderBy: count, orderDirection: desc) {
       id
       count
+      reward
       operator {
         address
+      }
+    }
+    relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
+      id
+      requestId
+      value
+      requestedAt
+      generatedAt
+      rewardPerMember
+      group {
+        id
+        pubKey
       }
     }
   }
@@ -4765,6 +6067,7 @@ export const GetRandomBeaconGroupDocument = gql`
  * const { data, loading, error } = useGetRandomBeaconGroupQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4778,8 +6081,8 @@ export type GetRandomBeaconGroupQueryHookResult = ReturnType<typeof useGetRandom
 export type GetRandomBeaconGroupLazyQueryHookResult = ReturnType<typeof useGetRandomBeaconGroupLazyQuery>;
 export type GetRandomBeaconGroupQueryResult = Apollo.QueryResult<GetRandomBeaconGroupQuery, GetRandomBeaconGroupQueryVariables>;
 export const GetOperatorKeepsDocument = gql`
-    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
-  operator(id: $id) {
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
+  operator(id: $id, block: $block) {
     keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       totalBondAmount
@@ -4821,6 +6124,7 @@ export const GetOperatorKeepsDocument = gql`
  *      id: // value for 'id'
  *      orderBy: // value for 'orderBy'
  *      orderDirection: // value for 'orderDirection'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4833,9 +6137,50 @@ export function useGetOperatorKeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetOperatorKeepsQueryHookResult = ReturnType<typeof useGetOperatorKeepsQuery>;
 export type GetOperatorKeepsLazyQueryHookResult = ReturnType<typeof useGetOperatorKeepsLazyQuery>;
 export type GetOperatorKeepsQueryResult = Apollo.QueryResult<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>;
-export const GetOperatorDocument = gql`
-    query GetOperator($id: ID!) {
+export const GetOperatorPropertiesDocument = gql`
+    query GetOperatorProperties($id: ID!, $address: Bytes!) {
   operator(id: $id) {
+    locks {
+      id
+      until
+      creator
+      operator {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetOperatorPropertiesQuery__
+ *
+ * To run a query within a React component, call `useGetOperatorPropertiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperatorPropertiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperatorPropertiesQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useGetOperatorPropertiesQuery(baseOptions?: Apollo.QueryHookOptions<GetOperatorPropertiesQuery, GetOperatorPropertiesQueryVariables>) {
+        return Apollo.useQuery<GetOperatorPropertiesQuery, GetOperatorPropertiesQueryVariables>(GetOperatorPropertiesDocument, baseOptions);
+      }
+export function useGetOperatorPropertiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOperatorPropertiesQuery, GetOperatorPropertiesQueryVariables>) {
+          return Apollo.useLazyQuery<GetOperatorPropertiesQuery, GetOperatorPropertiesQueryVariables>(GetOperatorPropertiesDocument, baseOptions);
+        }
+export type GetOperatorPropertiesQueryHookResult = ReturnType<typeof useGetOperatorPropertiesQuery>;
+export type GetOperatorPropertiesLazyQueryHookResult = ReturnType<typeof useGetOperatorPropertiesLazyQuery>;
+export type GetOperatorPropertiesQueryResult = Apollo.QueryResult<GetOperatorPropertiesQuery, GetOperatorPropertiesQueryVariables>;
+export const GetOperatorDocument = gql`
+    query GetOperator($id: ID!, $block: Block_height) {
+  operator(id: $id, block: $block) {
     id
     address
     bonded
@@ -4844,7 +6189,7 @@ export const GetOperatorDocument = gql`
     totalFaultCount
     attributableFaultCount
     totalTBTCRewards
-    beaconGroupMemberships(orderBy: reward) {
+    beaconGroupMemberships(orderBy: groupCreatedAt, orderDirection: desc) {
       count
       reward
       group {
@@ -4870,6 +6215,7 @@ export const GetOperatorDocument = gql`
  * const { data, loading, error } = useGetOperatorQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4883,12 +6229,8 @@ export type GetOperatorQueryHookResult = ReturnType<typeof useGetOperatorQuery>;
 export type GetOperatorLazyQueryHookResult = ReturnType<typeof useGetOperatorLazyQuery>;
 export type GetOperatorQueryResult = Apollo.QueryResult<GetOperatorQuery, GetOperatorQueryVariables>;
 export const GetOperatorsDocument = gql`
-    query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection) {
-  stats: statsRecord(id: "current") {
-    availableToBeBonded
-    totalBonded
-  }
-  operators(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection, $block: Block_height) {
+  operators(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
     id
     address
     bonded
@@ -4900,6 +6242,10 @@ export const GetOperatorsDocument = gql`
     attributableFaultCount
     totalTBTCRewards
     totalETHRewards
+  }
+  stats: statsRecord(id: "current", block: $block) {
+    availableToBeBonded
+    totalBonded
   }
 }
     `;
@@ -4918,6 +6264,7 @@ export const GetOperatorsDocument = gql`
  *   variables: {
  *      orderBy: // value for 'orderBy'
  *      direction: // value for 'direction'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4930,9 +6277,49 @@ export function useGetOperatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOperatorsQueryHookResult = ReturnType<typeof useGetOperatorsQuery>;
 export type GetOperatorsLazyQueryHookResult = ReturnType<typeof useGetOperatorsLazyQuery>;
 export type GetOperatorsQueryResult = Apollo.QueryResult<GetOperatorsQuery, GetOperatorsQueryVariables>;
+export const GetStakedropDataDocument = gql`
+    query GetStakedropData($block: Block_height) {
+  stakedropIntervals {
+    id
+    number
+    beaconIntervalStart
+    beaconIntervalEnd
+    ecdsaIntervalStart
+    ecdsaIntervalEnd
+    keepCount
+    beaconGroupCount
+  }
+}
+    `;
+
+/**
+ * __useGetStakedropDataQuery__
+ *
+ * To run a query within a React component, call `useGetStakedropDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStakedropDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetStakedropDataQuery({
+ *   variables: {
+ *      block: // value for 'block'
+ *   },
+ * });
+ */
+export function useGetStakedropDataQuery(baseOptions?: Apollo.QueryHookOptions<GetStakedropDataQuery, GetStakedropDataQueryVariables>) {
+        return Apollo.useQuery<GetStakedropDataQuery, GetStakedropDataQueryVariables>(GetStakedropDataDocument, baseOptions);
+      }
+export function useGetStakedropDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStakedropDataQuery, GetStakedropDataQueryVariables>) {
+          return Apollo.useLazyQuery<GetStakedropDataQuery, GetStakedropDataQueryVariables>(GetStakedropDataDocument, baseOptions);
+        }
+export type GetStakedropDataQueryHookResult = ReturnType<typeof useGetStakedropDataQuery>;
+export type GetStakedropDataLazyQueryHookResult = ReturnType<typeof useGetStakedropDataLazyQuery>;
+export type GetStakedropDataQueryResult = Apollo.QueryResult<GetStakedropDataQuery, GetStakedropDataQueryVariables>;
 export const GetUsersDocument = gql`
-    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection) {
-  users(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection, $block: Block_height) {
+  users(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
     id
     address
     numDepositsCreated
@@ -4957,6 +6344,7 @@ export const GetUsersDocument = gql`
  *   variables: {
  *      orderBy: // value for 'orderBy'
  *      direction: // value for 'direction'
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -4993,16 +6381,36 @@ export const NiceStateLabel = gql`
   updatedAt
 }
     `;
+export const WatchPrice = gql`
+    subscription WatchPrice {
+  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed") {
+    val
+    timestamp
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+export const GetBlockPrice = gql`
+    query GetBlockPrice($block: Block_height) {
+  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed", block: $block) {
+    val
+    timestamp
+    blockNumber
+    transactionHash
+  }
+}
+    `;
 export const GetRelayEntries = gql`
-    query GetRelayEntries {
-  randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc) {
+    query GetRelayEntries($block: Block_height) {
+  randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc, block: $block) {
     id
     pubKey
     createdAt
     uniqueMemberCount
     rewardPerMember
   }
-  relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
+  relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc, block: $block) {
     id
     requestId
     value
@@ -5017,8 +6425,8 @@ export const GetRelayEntries = gql`
 }
     `;
 export const GetDeposit = gql`
-    query GetDeposit($id: ID!) {
-  deposit(id: $id) {
+    query GetDeposit($id: ID!, $block: Block_height) {
+  deposit(id: $id, block: $block) {
     id
     contractAddress
     currentState
@@ -5064,8 +6472,8 @@ export const WatchDeposit = gql`
 }
     `;
 export const GetDepositLogs = gql`
-    query GetDepositLogs($depositId: String!) {
-  events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc) {
+    query GetDepositLogs($depositId: String!, $block: Block_height) {
+  events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc, block: $block) {
     __typename
     id
     transactionHash
@@ -5095,8 +6503,8 @@ export const GetDepositLogs = gql`
 }
     `;
 export const GetDeposits = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy) {
-  deposits(first: 1000, orderBy: $orderBy, orderDirection: desc, where: $where) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
+  deposits(first: 500, skip: $skip, orderBy: $orderBy, orderDirection: desc, where: $where, block: $block) {
     id
     contractAddress
     lotSizeSatoshis
@@ -5118,11 +6526,14 @@ export const GetDeposits = gql`
     }
     ...NiceStateLabel
   }
+  stats: statsRecord(id: "current", block: $block) {
+    depositCount
+  }
 }
     ${NiceStateLabel}`;
 export const GetGovernance = gql`
-    query GetGovernance {
-  governance(id: "GOVERNANCE") {
+    query GetGovernance($block: Block_height) {
+  governance(id: "GOVERNANCE", block: $block) {
     newDepositsAllowed
     lotSizes
     pendingLotSizeChange {
@@ -5143,7 +6554,7 @@ export const GetGovernance = gql`
     undercollateralizedThresholdPercent
     priceFeeds
   }
-  governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc) {
+  governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc, block: $block) {
     id
     timestamp
     transactionHash
@@ -5156,24 +6567,37 @@ export const GetGovernance = gql`
 }
     ${Change}`;
 export const GetRandomBeaconGroup = gql`
-    query GetRandomBeaconGroup($id: ID!) {
-  randomBeaconGroup(id: $id) {
+    query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
+  randomBeaconGroup(id: $id, block: $block) {
     id
     createdAt
     rewardPerMember
-    memberships {
+    memberships(orderBy: count, orderDirection: desc) {
       id
       count
+      reward
       operator {
         address
+      }
+    }
+    relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
+      id
+      requestId
+      value
+      requestedAt
+      generatedAt
+      rewardPerMember
+      group {
+        id
+        pubKey
       }
     }
   }
 }
     `;
 export const GetOperatorKeeps = gql`
-    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection) {
-  operator(id: $id) {
+    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
+  operator(id: $id, block: $block) {
     keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       totalBondAmount
@@ -5199,9 +6623,23 @@ export const GetOperatorKeeps = gql`
   }
 }
     ${NiceStateLabel}`;
-export const GetOperator = gql`
-    query GetOperator($id: ID!) {
+export const GetOperatorProperties = gql`
+    query GetOperatorProperties($id: ID!, $address: Bytes!) {
   operator(id: $id) {
+    locks {
+      id
+      until
+      creator
+      operator {
+        id
+      }
+    }
+  }
+}
+    `;
+export const GetOperator = gql`
+    query GetOperator($id: ID!, $block: Block_height) {
+  operator(id: $id, block: $block) {
     id
     address
     bonded
@@ -5210,7 +6648,7 @@ export const GetOperator = gql`
     totalFaultCount
     attributableFaultCount
     totalTBTCRewards
-    beaconGroupMemberships(orderBy: reward) {
+    beaconGroupMemberships(orderBy: groupCreatedAt, orderDirection: desc) {
       count
       reward
       group {
@@ -5223,12 +6661,8 @@ export const GetOperator = gql`
 }
     `;
 export const GetOperators = gql`
-    query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection) {
-  stats: statsRecord(id: "current") {
-    availableToBeBonded
-    totalBonded
-  }
-  operators(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection, $block: Block_height) {
+  operators(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
     id
     address
     bonded
@@ -5241,11 +6675,29 @@ export const GetOperators = gql`
     totalTBTCRewards
     totalETHRewards
   }
+  stats: statsRecord(id: "current", block: $block) {
+    availableToBeBonded
+    totalBonded
+  }
+}
+    `;
+export const GetStakedropData = gql`
+    query GetStakedropData($block: Block_height) {
+  stakedropIntervals {
+    id
+    number
+    beaconIntervalStart
+    beaconIntervalEnd
+    ecdsaIntervalStart
+    ecdsaIntervalEnd
+    keepCount
+    beaconGroupCount
+  }
 }
     `;
 export const GetUsers = gql`
-    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection) {
-  users(first: 1000, orderBy: $orderBy, orderDirection: $direction) {
+    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection, $block: Block_height) {
+  users(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
     id
     address
     numDepositsCreated

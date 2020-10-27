@@ -1,6 +1,6 @@
 overwrite: true
-#schema: "https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps"
-schema: "https://api.thegraph.com/subgraphs/name/miracle2k/keep-network"
+schema: "https://api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps"
+#schema: "https://api.thegraph.com/subgraphs/name/miracle2k/keep-network"
 documents: "src/**/!(*.d).{ts,tsx}"
 generates:
   src/generated/graphql.ts:
