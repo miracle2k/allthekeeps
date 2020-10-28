@@ -1,8 +1,7 @@
 import Tippy, {useSingleton} from "@tippyjs/react";
 import {css} from "emotion";
 import {InfoTooltip} from "../../components/InfoTooltip";
-import {TimeToNow} from "../../components/FormattedTime";
-import {Link} from "../../components/Link";
+import {TimeBetween, TimeToNow} from "../../components/FormattedTime";
 import {ExternalLinkIcon} from "../../components/ExternalLinkIcon";
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {
@@ -130,6 +129,9 @@ const DepositRow = React.memo((props: {
     <td>
       <CollaterizationStatusWithPrice deposit={deposit} price={price} />
     </td>
+    {/*<td>*/}
+    {/*  <TimeBetween earlier={deposit.createdAt} later={deposit.redemptionStartedAt} />*/}
+    {/*</td>*/}
   </tr>
 });
 

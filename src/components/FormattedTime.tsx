@@ -37,8 +37,11 @@ export function formatSeconds(seconds: number) {
   else if (seconds < 3600 + 1800) {
     return Duration.fromObject({seconds }).toFormat("m'm' s's'")
   }
+  else if (seconds < (3600 * 24 * 1.5)) {
+    return Duration.fromObject({seconds }).toFormat("h'h' m'm'")
+  }
   else {
-    return Duration.fromObject({seconds }).toFormat("h'h 'm'm'")
+    return Duration.fromObject({seconds }).toFormat("d'd 'h'h'")
   }
 }
 
@@ -64,8 +67,9 @@ export function TimeBetween(props: {
   // const diff = dateTime.diffNow(['days', 'hours', 'minutes', 'months', 'years'])
   const diff = later.diff(earlier, ['seconds'])
 
+  // <Gray>s</Gray>
   return <span title={later.toLocaleString(DateTime.DATETIME_FULL)}>
-    {diff.seconds}<Gray>s</Gray>
+    {formatSeconds(diff.seconds)}
   </span>
 }
 
