@@ -39,6 +39,7 @@ const DEPOSIT_QUERY = gql`
             keepAddress,
             lotSizeSatoshis,
             endOfTerm,
+            index,
 
             currentStateTimesOutAt,
             
@@ -219,6 +220,12 @@ export function Content() {
                     key: 'tokenId',
                     label: "Token ID",
                     value: <Address address={data.deposit.tdtToken.tokenID} to={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
+                  },
+                  {
+                    key: 'index',
+                    label: "Index",
+                    tooltip: "The number of the deposit, counting up since inception of the system.",
+                    value: data.deposit.index,
                   },
                   data.deposit.endOfTerm ? {
                     key: 'endOfTerm',
