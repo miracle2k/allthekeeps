@@ -22,6 +22,7 @@ import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey
 import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
 import {BTCTag} from "../../components/CurrencyTags";
 import {UseDepositQuery, useDepositQuery} from "./Views";
+import {Address} from "../../components/Address";
 
 
 export function DepositsTable(props: {
@@ -93,9 +94,7 @@ const DepositRow = React.memo((props: {
       <TimeToNow time={deposit[dateColumn]} />
     </td>
     <td>
-      <Link to={`/deposit/${deposit.contractAddress}`}>
-        {deposit.contractAddress}
-      </Link>
+      <Address address={deposit.contractAddress} long to={`/deposit/${deposit.contractAddress}`} />
       <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;

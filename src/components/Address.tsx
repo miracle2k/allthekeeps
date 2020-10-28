@@ -75,10 +75,26 @@ export function Hash(props: {
     }
   }
 
-  let shortAddress = props.hash.slice(0,5) + "..." + props.hash.slice(props.hash.length-5);
+  let longAddress = props.hash;
+  let hasHexPrefix = longAddress.indexOf('0x') ==- 0;
+  if (hasHexPrefix) {
+    longAddress = longAddress.slice(2)
+  }
+  let shortAddress = longAddress.slice(0,4) + "…" + longAddress.slice(longAddress.length-4);
+
+  let children;
+  if (props.children)  {
+    children = props.children;
+  } else {
+    children = <>
+      {hasHexPrefix ? <span className={css`color: #bda8e9`}>0x</span> : null}
+      {props.long ? longAddress : shortAddress}
+    </>;
+  }
 
   const el = React.createElement(C, linkProps, <span>
-    {props.children || (props.long ? props.hash : shortAddress)}
+    {children}
+
     {props.includeExternalIcon ? <span className={css`
         font-size: 0.8em;
         padding-left: 0.2em;
