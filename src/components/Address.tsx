@@ -15,7 +15,7 @@ export function Address(props: {
   const etherscan = useEtherscanDomain();
   let knownAddress: string|undefined;
   if (isVendingMachine(props.address)) {
-    knownAddress = 'the Vending Machine'
+    knownAddress = 'Vending Machine'
   }
 
   return <Hash
