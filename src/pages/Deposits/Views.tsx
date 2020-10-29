@@ -2,6 +2,8 @@ import {DateTime} from "luxon";
 import {gql, useQuery} from "@apollo/client";
 import {NiceStateLabel} from "../../utils/depositStates";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
+import {SortState, useSort} from "../../components/Table";
+import {useEffect, useLayoutEffect, useState} from "react";
 
 export type DepositViewID =
     ''
@@ -69,12 +71,16 @@ export const Views: {
 
 
 const DEPOSITS_QUERY = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
+    query GetDeposits(
+        $where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, 
+        $block: Block_height, $orderDirection: OrderDirection,
+        $perPage: Int
+    ) {
         deposits(
-            first: 500,
+            first: $perPage,
             skip: $skip,
             orderBy: $orderBy,
-            orderDirection: desc
+            orderDirection: $orderDirection
             where: $where,
             block: $block
         ) {
@@ -132,17 +138,33 @@ export function useDepositQuery(view: DepositViewID, pageNumber?: number) {
     redemptions: "redemptionStartedAt",
   } as {[key in DepositViewID]: string})[view || ''] || "updatedAt";
 
-  const perPage = 500;
+  const sortState = useSort(dateColumn);
+
+  // TODO: This would cause two requests!
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    sortState.setColumn(dateColumn)
+    sortState.setDirection("desc")
+    setReady(true);
+  }, [view, sortState.setColumn, sortState.setDirection])
+
+  // We would like to load more, but then loading is much slower!
+  const perPage = 200;
 
   const {loading, error, data} = useQueryWithTimeTravel(DEPOSITS_QUERY, {
     variables: {
       where: where,
-      orderBy: dateColumn,
-      skip: perPage * ((pageNumber ?? 1) - 1)
-    }
+      skip: perPage * ((pageNumber ?? 1) - 1),
+      orderBy: sortState.column,
+      orderDirection: sortState.direction,
+      perPage
+    },
+    skip: !ready
   });
 
-  return {loading, error, data, dateColumn, view};
+  return {
+    loading: loading || !ready,
+    error, data, dateColumn, view, sortState, perPage};
 }
 
 export type UseDepositQuery = ReturnType<typeof useDepositQuery>;

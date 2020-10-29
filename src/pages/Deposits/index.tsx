@@ -126,7 +126,7 @@ export function Deposits() {
     pageNumber,
     setPageNumber,
     numResults: depositQuery.data?.deposits.length,
-    perPage: 500,
+    perPage: depositQuery.perPage,
   })
 
   return  <div style={{padding: '20px'}}>

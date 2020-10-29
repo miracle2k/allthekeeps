@@ -14,7 +14,7 @@ import {TBTCIcon} from "../../design-system/tbtcIcon";
 import React from "react";
 import {CollaterizationStatusWithPrice} from "../../components/CollateralizationStatus";
 import {usePriceFeed} from "../../components/PriceFeed";
-import { Table } from "../../components/Table";
+import {SortableHeader, Table, useSort} from "../../components/Table";
 import {useEtherscanDomain} from "../../NetworkContext";
 import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
@@ -27,13 +27,22 @@ import {Address} from "../../components/Address";
 export function DepositsTable(props: {
   query: UseDepositQuery
 }) {
-  const {loading, error, dateColumn, view, data} = props.query;
+  const {loading, error, dateColumn, sortState, data} = props.query;
   const [source, target] = useSingleton();
   const price = usePriceFeed();
   const etherscan = useEtherscanDomain();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
+
+  const dateColumnTitle = (dateColumn == "updatedAt") ? "Updated"
+      : (dateColumn == "redemptionStartedAt") ? "Started"
+          : "Created";
+  const dateColumnTooltip = (dateColumn == "updatedAt") ?
+      "When this deposit last changed state, during the funding, redemption or liquidation processes."
+      : (dateColumn == "redemptionStartedAt") ? "When the redemption process, or liquidation, started."
+          : "When this deposit was created.";
+
 
   return <>
     <Tippy singleton={source} delay={500} />
@@ -42,26 +51,27 @@ export function DepositsTable(props: {
     >
       <thead>
       <tr>
-        {
-          (dateColumn == "updatedAt") ? <th>Updated <InfoTooltip>
-            When this deposit last changed state, during the funding, redemption or liquidation processes.
-          </InfoTooltip></th>
-              :
-              (dateColumn == "redemptionStartedAt") ? <th>Started <InfoTooltip>
-                When the redemption process, or liquidation, started.
-              </InfoTooltip></th>
-                  : <th>Created <InfoTooltip>
-                    When this deposit was created.
-                  </InfoTooltip></th>
-        }
-
+        <th>
+          <SortableHeader fieldId={dateColumn} state={sortState}>
+            {dateColumnTitle} <InfoTooltip>
+              {dateColumnTooltip}
+            </InfoTooltip>
+          </SortableHeader>
+        </th>
         <th>
           Contract <InfoTooltip>
           Every deposit is represented on-chain by a contract.
         </InfoTooltip>
         </th>
-        <th>Lot Size</th>
-        <th>State</th>
+        <th>
+          <SortableHeader fieldId={"lotSizeSatoshis"} state={sortState}>Lot Size</SortableHeader>
+        </th>
+        <th>
+          State
+        </th>
+        <th>
+          C-Ratio
+        </th>
       </tr>
       </thead>
       <tbody>
