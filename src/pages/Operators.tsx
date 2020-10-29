@@ -14,6 +14,7 @@ import {useEtherscanDomain} from "../NetworkContext";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
 import {useQueryWithTimeTravel} from "../TimeTravel";
+import {FormattedTime, TimeToNow} from "../components/FormattedTime";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -25,6 +26,7 @@ const OPERATOR_QUERY = gql`
             id,
             address,
             bonded,
+            stakedAt,
             unboundAvailable,
             totalKeepCount,
             activeKeepCount,
@@ -152,6 +154,11 @@ export function OperatorsTable(props: {
           Faults <InfoTooltip>How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault.</InfoTooltip>
         </SortableHeader>
       </th>
+      <th>
+        <SortableHeader fieldId={"stakedAt"} state={props.sortState}>
+          Staked At <InfoTooltip>The date this operator joined based on having stake delegated to it.</InfoTooltip>
+        </SortableHeader>
+      </th>
     </tr>
     </thead>
     <tbody>
@@ -199,6 +206,9 @@ export function OperatorsTable(props: {
           {member.attributableFaultCount > 0 ? <>
             {member.attributableFaultCount} / </> : null}
           {member.totalFaultCount || ""}
+        </td>
+        <td>
+          <TimeToNow time={member.stakedAt} />
         </td>
       </tr>
     })}
