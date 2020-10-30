@@ -70,7 +70,7 @@ export function DepositsTable(props: {
           State
         </th>
         <th>
-          C-Ratio
+          <SortableHeader fieldId={"etcToBtcRatio"} state={sortState}>C-Ratio</SortableHeader>
         </th>
       </tr>
       </thead>
