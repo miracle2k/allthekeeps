@@ -92,16 +92,13 @@ const DEPOSITS_QUERY = gql`
             updatedAt,
             createdAt,
             redemptionStartedAt,
-            currentStateTimesOutAt
+            currentStateTimesOutAt,
+            creator,
+            lastActor
 
             tdtToken {
                 owner
             }
-
-            #            endOfTerm,
-            # you can redeem it if: you are the owner, it is at term, is in courtesy call
-            # thus the status is:  
-            # canBeRedeemedByAnyone = CourtesyFlag || atTerm
 
             undercollateralizedThresholdPercent,
             severelyUndercollateralizedThresholdPercent,

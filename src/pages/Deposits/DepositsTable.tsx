@@ -20,7 +20,7 @@ import {useBitcoinTxState} from "../../utils/useBitcoinTxState";
 import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey";
 import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
 import {BTCTag} from "../../components/CurrencyTags";
-import {UseDepositQuery, useDepositQuery} from "./Views";
+import {UseDepositQuery} from "./Views";
 import {Address} from "../../components/Address";
 
 
@@ -72,6 +72,11 @@ export function DepositsTable(props: {
         <th>
           <SortableHeader fieldId={"etcToBtcRatio"} state={sortState}>C-Ratio</SortableHeader>
         </th>
+        <th>
+          Actor <InfoTooltip>
+            Either the creator of the redeemer, depending on the current process of the deposit.
+          </InfoTooltip>
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -103,7 +108,7 @@ const DepositRow = React.memo((props: {
       <TimeToNow time={deposit[dateColumn]} />
     </td>
     <td>
-      <Address address={deposit.contractAddress} long to={`/deposit/${deposit.contractAddress}`} />
+      <Address address={deposit.contractAddress} to={`/deposit/${deposit.contractAddress}`} />
       <a title={"Open on Etherscan"} href={`https://${etherscan}/address/${deposit.contractAddress}`} className={css`
                 font-size: 0.8em;
                 padding-left: 0.2em;
@@ -138,6 +143,9 @@ const DepositRow = React.memo((props: {
     </td>
     <td>
       <CollaterizationStatusWithPrice deposit={deposit} price={price} />
+    </td>
+    <td>
+      <Address address={deposit.lastActor} />
     </td>
     {/*<td>*/}
     {/*  <TimeBetween earlier={deposit.createdAt} later={deposit.redemptionStartedAt} />*/}
