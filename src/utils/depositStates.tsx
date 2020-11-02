@@ -47,7 +47,7 @@ export function useTimeRemaining(deposit: NiceStateLabelFragment, interval?: num
   const [value, setValue] = useState(isTimeTravel ? null : getTimeRemaining(deposit));
   useInterval(() => {
     setValue(getTimeRemaining(deposit));
-  }, (isTimeTravel ? null : interval ?? 0.8 * 1000));
+  }, (isTimeTravel ? null : (interval ?? 0.8) * 1000));
   return value;
 }
 
