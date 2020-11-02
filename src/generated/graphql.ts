@@ -1,5 +1,5 @@
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -21,6 +21,7 @@ export type Block_Height = {
   number?: Maybe<Scalars['Int']>;
 };
 
+/** Represents a lock on an operators bond, usually held by a keep the operator is collaterializing. */
 export type Bond = {
   __typename?: 'Bond';
   id: Scalars['ID'];
@@ -122,6 +123,8 @@ export type BondedEcdsaKeep = {
   status?: Maybe<BondedEcdsaKeepStatus>;
   honestThreshold?: Maybe<Scalars['Int']>;
   members: Array<Maybe<Operator>>;
+  /** The ratio of backing ETH to lot size. This allows you to sort by collateralization-ratio. */
+  etcToBtcRatio: Scalars['BigInt'];
   /** Which stakedrop interval this keep belongs to, if any. */
   stakedropInterval?: Maybe<StakedropInterval>;
   /** The nodes which have submitted their pubkey. */
@@ -217,6 +220,14 @@ export type BondedEcdsaKeep_Filter = {
   members_not?: Maybe<Array<Scalars['String']>>;
   members_contains?: Maybe<Array<Scalars['String']>>;
   members_not_contains?: Maybe<Array<Scalars['String']>>;
+  etcToBtcRatio?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_not?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_gt?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_lt?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_gte?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_lte?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_in?: Maybe<Array<Scalars['BigInt']>>;
+  etcToBtcRatio_not_in?: Maybe<Array<Scalars['BigInt']>>;
   stakedropInterval?: Maybe<Scalars['String']>;
   stakedropInterval_not?: Maybe<Scalars['String']>;
   stakedropInterval_gt?: Maybe<Scalars['String']>;
@@ -247,6 +258,7 @@ export enum BondedEcdsaKeep_OrderBy {
   Status = 'status',
   HonestThreshold = 'honestThreshold',
   Members = 'members',
+  EtcToBtcRatio = 'etcToBtcRatio',
   StakedropInterval = 'stakedropInterval',
   PubkeySubmissions = 'pubkeySubmissions'
 }
@@ -403,18 +415,24 @@ export type Deposit = {
   currentState?: Maybe<DepositState>;
   /** Timestamp of when this deposit was created. */
   createdAt: Scalars['BigInt'];
+  /** Timestamp of when this deposit was closed, either due to redemption, liquidation, or setup failure. */
+  closedAt?: Maybe<Scalars['BigInt']>;
   /** Timestamp of the last state change of this deposit. Initialized to the same value as createdAt. */
   updatedAt: Scalars['BigInt'];
-  /** Timestamp of when the deposit redemption was requested, if any. This includes the start of liquidation due to undercollateralization. */
+  /** Timestamp of when the deposit redemption was requested, if any. This includes the start of liquidation due to undercollateralization. It is not reset if liquidation starts due to withdrawal failure. It does not reset in case of a fee increase. */
   redemptionStartedAt?: Maybe<Scalars['BigInt']>;
+  /** Start point of the internal timer which begins with a redemption request. It is initially the same as `redemptionStartedAt` in case of manual redemption, but is reset if there is a fee increase. It is not set or reset when we enter liquidation. */
+  withdrawalRequestTimerStart?: Maybe<Scalars['BigInt']>;
   /** The timeout after which the current state can be notified, if any. This does not include non-timeout actions that are time-locked, such as courtesy calls or liquidation auctions. */
   currentStateTimesOutAt?: Maybe<Scalars['BigInt']>;
   owner: Scalars['Bytes'];
   failureReason?: Maybe<SetupFailedReason>;
   /** The address which created the deposit initially. In contrast to the owner, this cannot change. */
   creator: Scalars['Bytes'];
+  /** The address which initiated the last action - initially the creator, then the redeemer. */
+  lastActor: Scalars['Bytes'];
   keepAddress?: Maybe<Scalars['Bytes']>;
-  lotSizeSatoshis?: Maybe<Scalars['BigInt']>;
+  lotSizeSatoshis: Scalars['BigInt'];
   initialCollateralizedPercent?: Maybe<Scalars['Int']>;
   undercollateralizedThresholdPercent?: Maybe<Scalars['Int']>;
   severelyUndercollateralizedThresholdPercent?: Maybe<Scalars['Int']>;
@@ -422,6 +440,8 @@ export type Deposit = {
   utxoSize?: Maybe<Scalars['BigInt']>;
   endOfTerm?: Maybe<Scalars['BigInt']>;
   bondedECDSAKeep?: Maybe<BondedEcdsaKeep>;
+  /** The ratio of backing ETH to lot size. This allows you to sort by collateralization-ratio. */
+  etcToBtcRatio: Scalars['BigInt'];
   depositLiquidation?: Maybe<DepositLiquidation>;
   depositRedemption?: Maybe<DepositRedemption>;
   depositSetup?: Maybe<DepositSetup>;
@@ -770,6 +790,14 @@ export type Deposit_Filter = {
   createdAt_lte?: Maybe<Scalars['BigInt']>;
   createdAt_in?: Maybe<Array<Scalars['BigInt']>>;
   createdAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  closedAt?: Maybe<Scalars['BigInt']>;
+  closedAt_not?: Maybe<Scalars['BigInt']>;
+  closedAt_gt?: Maybe<Scalars['BigInt']>;
+  closedAt_lt?: Maybe<Scalars['BigInt']>;
+  closedAt_gte?: Maybe<Scalars['BigInt']>;
+  closedAt_lte?: Maybe<Scalars['BigInt']>;
+  closedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  closedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
   updatedAt?: Maybe<Scalars['BigInt']>;
   updatedAt_not?: Maybe<Scalars['BigInt']>;
   updatedAt_gt?: Maybe<Scalars['BigInt']>;
@@ -786,6 +814,14 @@ export type Deposit_Filter = {
   redemptionStartedAt_lte?: Maybe<Scalars['BigInt']>;
   redemptionStartedAt_in?: Maybe<Array<Scalars['BigInt']>>;
   redemptionStartedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  withdrawalRequestTimerStart?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_not?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_gt?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_lt?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_gte?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_lte?: Maybe<Scalars['BigInt']>;
+  withdrawalRequestTimerStart_in?: Maybe<Array<Scalars['BigInt']>>;
+  withdrawalRequestTimerStart_not_in?: Maybe<Array<Scalars['BigInt']>>;
   currentStateTimesOutAt?: Maybe<Scalars['BigInt']>;
   currentStateTimesOutAt_not?: Maybe<Scalars['BigInt']>;
   currentStateTimesOutAt_gt?: Maybe<Scalars['BigInt']>;
@@ -808,6 +844,12 @@ export type Deposit_Filter = {
   creator_not_in?: Maybe<Array<Scalars['Bytes']>>;
   creator_contains?: Maybe<Scalars['Bytes']>;
   creator_not_contains?: Maybe<Scalars['Bytes']>;
+  lastActor?: Maybe<Scalars['Bytes']>;
+  lastActor_not?: Maybe<Scalars['Bytes']>;
+  lastActor_in?: Maybe<Array<Scalars['Bytes']>>;
+  lastActor_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  lastActor_contains?: Maybe<Scalars['Bytes']>;
+  lastActor_not_contains?: Maybe<Scalars['Bytes']>;
   keepAddress?: Maybe<Scalars['Bytes']>;
   keepAddress_not?: Maybe<Scalars['Bytes']>;
   keepAddress_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -884,6 +926,14 @@ export type Deposit_Filter = {
   bondedECDSAKeep_not_starts_with?: Maybe<Scalars['String']>;
   bondedECDSAKeep_ends_with?: Maybe<Scalars['String']>;
   bondedECDSAKeep_not_ends_with?: Maybe<Scalars['String']>;
+  etcToBtcRatio?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_not?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_gt?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_lt?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_gte?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_lte?: Maybe<Scalars['BigInt']>;
+  etcToBtcRatio_in?: Maybe<Array<Scalars['BigInt']>>;
+  etcToBtcRatio_not_in?: Maybe<Array<Scalars['BigInt']>>;
   depositLiquidation?: Maybe<Scalars['String']>;
   depositLiquidation_not?: Maybe<Scalars['String']>;
   depositLiquidation_gt?: Maybe<Scalars['String']>;
@@ -946,12 +996,15 @@ export enum Deposit_OrderBy {
   TdtToken = 'tdtToken',
   CurrentState = 'currentState',
   CreatedAt = 'createdAt',
+  ClosedAt = 'closedAt',
   UpdatedAt = 'updatedAt',
   RedemptionStartedAt = 'redemptionStartedAt',
+  WithdrawalRequestTimerStart = 'withdrawalRequestTimerStart',
   CurrentStateTimesOutAt = 'currentStateTimesOutAt',
   Owner = 'owner',
   FailureReason = 'failureReason',
   Creator = 'creator',
+  LastActor = 'lastActor',
   KeepAddress = 'keepAddress',
   LotSizeSatoshis = 'lotSizeSatoshis',
   InitialCollateralizedPercent = 'initialCollateralizedPercent',
@@ -961,6 +1014,7 @@ export enum Deposit_OrderBy {
   UtxoSize = 'utxoSize',
   EndOfTerm = 'endOfTerm',
   BondedEcdsaKeep = 'bondedECDSAKeep',
+  EtcToBtcRatio = 'etcToBtcRatio',
   DepositLiquidation = 'depositLiquidation',
   DepositRedemption = 'depositRedemption',
   DepositSetup = 'depositSetup',
@@ -2010,12 +2064,13 @@ export type Operator = {
   __typename?: 'Operator';
   id: Scalars['ID'];
   address: Scalars['Bytes'];
+  /** When this operator had a stake delegated to them. This is like a createdAt, and the operation also assigns the beneficiary/authorizer roles. */
+  stakedAt: Scalars['BigInt'];
   keeps?: Maybe<Array<BondedEcdsaKeep>>;
   bonds: Array<Bond>;
   locks: Array<Lock>;
   beaconGroupMemberships: Array<RandomBeaconGroupMembership>;
   owner?: Maybe<Scalars['Bytes']>;
-  operator?: Maybe<Scalars['Bytes']>;
   beneficiary?: Maybe<Scalars['Bytes']>;
   authorizer?: Maybe<Scalars['Bytes']>;
   bonded: Scalars['BigDecimal'];
@@ -2120,18 +2175,20 @@ export type Operator_Filter = {
   address_not_in?: Maybe<Array<Scalars['Bytes']>>;
   address_contains?: Maybe<Scalars['Bytes']>;
   address_not_contains?: Maybe<Scalars['Bytes']>;
+  stakedAt?: Maybe<Scalars['BigInt']>;
+  stakedAt_not?: Maybe<Scalars['BigInt']>;
+  stakedAt_gt?: Maybe<Scalars['BigInt']>;
+  stakedAt_lt?: Maybe<Scalars['BigInt']>;
+  stakedAt_gte?: Maybe<Scalars['BigInt']>;
+  stakedAt_lte?: Maybe<Scalars['BigInt']>;
+  stakedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
   owner?: Maybe<Scalars['Bytes']>;
   owner_not?: Maybe<Scalars['Bytes']>;
   owner_in?: Maybe<Array<Scalars['Bytes']>>;
   owner_not_in?: Maybe<Array<Scalars['Bytes']>>;
   owner_contains?: Maybe<Scalars['Bytes']>;
   owner_not_contains?: Maybe<Scalars['Bytes']>;
-  operator?: Maybe<Scalars['Bytes']>;
-  operator_not?: Maybe<Scalars['Bytes']>;
-  operator_in?: Maybe<Array<Scalars['Bytes']>>;
-  operator_not_in?: Maybe<Array<Scalars['Bytes']>>;
-  operator_contains?: Maybe<Scalars['Bytes']>;
-  operator_not_contains?: Maybe<Scalars['Bytes']>;
   beneficiary?: Maybe<Scalars['Bytes']>;
   beneficiary_not?: Maybe<Scalars['Bytes']>;
   beneficiary_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -2237,12 +2294,12 @@ export type Operator_Filter = {
 export enum Operator_OrderBy {
   Id = 'id',
   Address = 'address',
+  StakedAt = 'stakedAt',
   Keeps = 'keeps',
   Bonds = 'bonds',
   Locks = 'locks',
   BeaconGroupMemberships = 'beaconGroupMemberships',
   Owner = 'owner',
-  Operator = 'operator',
   Beneficiary = 'beneficiary',
   Authorizer = 'authorizer',
   Bonded = 'bonded',
@@ -2349,6 +2406,8 @@ export type Query = {
   gotRedemptionSignatureEvents: Array<GotRedemptionSignatureEvent>;
   redemptionRequestedEvent?: Maybe<RedemptionRequestedEvent>;
   redemptionRequestedEvents: Array<RedemptionRequestedEvent>;
+  redemptionFeeIncreasedEvent?: Maybe<RedemptionFeeIncreasedEvent>;
+  redemptionFeeIncreasedEvents: Array<RedemptionFeeIncreasedEvent>;
   setupFailedEvent?: Maybe<SetupFailedEvent>;
   setupFailedEvents: Array<SetupFailedEvent>;
   liquidatedEvent?: Maybe<LiquidatedEvent>;
@@ -2534,6 +2593,22 @@ export type QueryRedemptionRequestedEventsArgs = {
   orderBy?: Maybe<RedemptionRequestedEvent_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<RedemptionRequestedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryRedemptionFeeIncreasedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryRedemptionFeeIncreasedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<RedemptionFeeIncreasedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<RedemptionFeeIncreasedEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -3261,6 +3336,129 @@ export enum RedeemedEvent_OrderBy {
   Tx = 'tx'
 }
 
+/** If a Bitcoin fee increase is requested during the withdrawal process. */
+export type RedemptionFeeIncreasedEvent = Event & {
+  __typename?: 'RedemptionFeeIncreasedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  redeemerOutputScript: Scalars['Bytes'];
+  requestedFee: Scalars['BigInt'];
+  utxoValue: Scalars['BigInt'];
+  utxoOutpoint: Scalars['Bytes'];
+  redeemer: Scalars['Bytes'];
+  sigHashDigest: Scalars['Bytes'];
+};
+
+export type RedemptionFeeIncreasedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  redeemerOutputScript?: Maybe<Scalars['Bytes']>;
+  redeemerOutputScript_not?: Maybe<Scalars['Bytes']>;
+  redeemerOutputScript_in?: Maybe<Array<Scalars['Bytes']>>;
+  redeemerOutputScript_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  redeemerOutputScript_contains?: Maybe<Scalars['Bytes']>;
+  redeemerOutputScript_not_contains?: Maybe<Scalars['Bytes']>;
+  requestedFee?: Maybe<Scalars['BigInt']>;
+  requestedFee_not?: Maybe<Scalars['BigInt']>;
+  requestedFee_gt?: Maybe<Scalars['BigInt']>;
+  requestedFee_lt?: Maybe<Scalars['BigInt']>;
+  requestedFee_gte?: Maybe<Scalars['BigInt']>;
+  requestedFee_lte?: Maybe<Scalars['BigInt']>;
+  requestedFee_in?: Maybe<Array<Scalars['BigInt']>>;
+  requestedFee_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  utxoValue?: Maybe<Scalars['BigInt']>;
+  utxoValue_not?: Maybe<Scalars['BigInt']>;
+  utxoValue_gt?: Maybe<Scalars['BigInt']>;
+  utxoValue_lt?: Maybe<Scalars['BigInt']>;
+  utxoValue_gte?: Maybe<Scalars['BigInt']>;
+  utxoValue_lte?: Maybe<Scalars['BigInt']>;
+  utxoValue_in?: Maybe<Array<Scalars['BigInt']>>;
+  utxoValue_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  utxoOutpoint?: Maybe<Scalars['Bytes']>;
+  utxoOutpoint_not?: Maybe<Scalars['Bytes']>;
+  utxoOutpoint_in?: Maybe<Array<Scalars['Bytes']>>;
+  utxoOutpoint_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  utxoOutpoint_contains?: Maybe<Scalars['Bytes']>;
+  utxoOutpoint_not_contains?: Maybe<Scalars['Bytes']>;
+  redeemer?: Maybe<Scalars['Bytes']>;
+  redeemer_not?: Maybe<Scalars['Bytes']>;
+  redeemer_in?: Maybe<Array<Scalars['Bytes']>>;
+  redeemer_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  redeemer_contains?: Maybe<Scalars['Bytes']>;
+  redeemer_not_contains?: Maybe<Scalars['Bytes']>;
+  sigHashDigest?: Maybe<Scalars['Bytes']>;
+  sigHashDigest_not?: Maybe<Scalars['Bytes']>;
+  sigHashDigest_in?: Maybe<Array<Scalars['Bytes']>>;
+  sigHashDigest_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  sigHashDigest_contains?: Maybe<Scalars['Bytes']>;
+  sigHashDigest_not_contains?: Maybe<Scalars['Bytes']>;
+};
+
+export enum RedemptionFeeIncreasedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  RedeemerOutputScript = 'redeemerOutputScript',
+  RequestedFee = 'requestedFee',
+  UtxoValue = 'utxoValue',
+  UtxoOutpoint = 'utxoOutpoint',
+  Redeemer = 'redeemer',
+  SigHashDigest = 'sigHashDigest'
+}
+
 export type RedemptionRequestedEvent = Event & {
   __typename?: 'RedemptionRequestedEvent';
   id: Scalars['ID'];
@@ -3663,6 +3861,8 @@ export type StakedropInterval = {
   beaconIntervalEnd: Scalars['BigInt'];
   keepCount: Scalars['Int'];
   beaconGroupCount: Scalars['Int'];
+  allocationBeacon?: Maybe<Scalars['BigInt']>;
+  allocationECDSA?: Maybe<Scalars['BigInt']>;
   /**
    * Keeps that fall into this interval, and are counted towards the allocated rewards. This includes terminated
    * keeps which are non-the-less not eligable for an reward.
@@ -3751,6 +3951,22 @@ export type StakedropInterval_Filter = {
   beaconGroupCount_lte?: Maybe<Scalars['Int']>;
   beaconGroupCount_in?: Maybe<Array<Scalars['Int']>>;
   beaconGroupCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  allocationBeacon?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_not?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_gt?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_lt?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_gte?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_lte?: Maybe<Scalars['BigInt']>;
+  allocationBeacon_in?: Maybe<Array<Scalars['BigInt']>>;
+  allocationBeacon_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  allocationECDSA?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_not?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_gt?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_lt?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_gte?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_lte?: Maybe<Scalars['BigInt']>;
+  allocationECDSA_in?: Maybe<Array<Scalars['BigInt']>>;
+  allocationECDSA_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum StakedropInterval_OrderBy {
@@ -3762,6 +3978,8 @@ export enum StakedropInterval_OrderBy {
   BeaconIntervalEnd = 'beaconIntervalEnd',
   KeepCount = 'keepCount',
   BeaconGroupCount = 'beaconGroupCount',
+  AllocationBeacon = 'allocationBeacon',
+  AllocationEcdsa = 'allocationECDSA',
   Keeps = 'keeps'
 }
 
@@ -4038,6 +4256,8 @@ export type StatusRecord = {
   id: Scalars['ID'];
   /** The currently requested RandomBeacon relay entry, if any. Only a single request can exist at a time. */
   currentRequestedRelayEntry?: Maybe<RelayEntry>;
+  remainingStakedropBeaconAllocation: Scalars['BigInt'];
+  remainingStakedropECDSAAllocation: Scalars['BigInt'];
 };
 
 export type StatusRecord_Filter = {
@@ -4063,11 +4283,29 @@ export type StatusRecord_Filter = {
   currentRequestedRelayEntry_not_starts_with?: Maybe<Scalars['String']>;
   currentRequestedRelayEntry_ends_with?: Maybe<Scalars['String']>;
   currentRequestedRelayEntry_not_ends_with?: Maybe<Scalars['String']>;
+  remainingStakedropBeaconAllocation?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_not?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_gt?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_lt?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_gte?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_lte?: Maybe<Scalars['BigInt']>;
+  remainingStakedropBeaconAllocation_in?: Maybe<Array<Scalars['BigInt']>>;
+  remainingStakedropBeaconAllocation_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  remainingStakedropECDSAAllocation?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_not?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_gt?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_lt?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_gte?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_lte?: Maybe<Scalars['BigInt']>;
+  remainingStakedropECDSAAllocation_in?: Maybe<Array<Scalars['BigInt']>>;
+  remainingStakedropECDSAAllocation_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum StatusRecord_OrderBy {
   Id = 'id',
-  CurrentRequestedRelayEntry = 'currentRequestedRelayEntry'
+  CurrentRequestedRelayEntry = 'currentRequestedRelayEntry',
+  RemainingStakedropBeaconAllocation = 'remainingStakedropBeaconAllocation',
+  RemainingStakedropEcdsaAllocation = 'remainingStakedropECDSAAllocation'
 }
 
 export type Subscription = {
@@ -4088,6 +4326,8 @@ export type Subscription = {
   gotRedemptionSignatureEvents: Array<GotRedemptionSignatureEvent>;
   redemptionRequestedEvent?: Maybe<RedemptionRequestedEvent>;
   redemptionRequestedEvents: Array<RedemptionRequestedEvent>;
+  redemptionFeeIncreasedEvent?: Maybe<RedemptionFeeIncreasedEvent>;
+  redemptionFeeIncreasedEvents: Array<RedemptionFeeIncreasedEvent>;
   setupFailedEvent?: Maybe<SetupFailedEvent>;
   setupFailedEvents: Array<SetupFailedEvent>;
   liquidatedEvent?: Maybe<LiquidatedEvent>;
@@ -4273,6 +4513,22 @@ export type SubscriptionRedemptionRequestedEventsArgs = {
   orderBy?: Maybe<RedemptionRequestedEvent_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<RedemptionRequestedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionRedemptionFeeIncreasedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionRedemptionFeeIncreasedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<RedemptionFeeIncreasedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<RedemptionFeeIncreasedEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -5287,7 +5543,7 @@ export type GetDepositQuery = (
   { __typename?: 'Query' }
   & { deposit?: Maybe<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'currentStateTimesOutAt' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'currentState' | 'createdAt' | 'keepAddress' | 'lotSizeSatoshis' | 'endOfTerm' | 'index' | 'currentStateTimesOutAt' | 'initialCollateralizedPercent' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'id' | 'tokenID' | 'owner' | 'minter'>
@@ -5346,6 +5602,9 @@ export type GetDepositLogsQuery = (
     { __typename: 'RedeemedEvent' }
     & Pick<RedeemedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
+    { __typename: 'RedemptionFeeIncreasedEvent' }
+    & Pick<RedemptionFeeIncreasedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'RedemptionRequestedEvent' }
     & Pick<RedemptionRequestedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
@@ -5393,6 +5652,8 @@ export type GetDepositsQueryVariables = Exact<{
   orderBy?: Maybe<Deposit_OrderBy>;
   skip?: Maybe<Scalars['Int']>;
   block?: Maybe<Block_Height>;
+  orderDirection?: Maybe<OrderDirection>;
+  perPage?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -5400,7 +5661,7 @@ export type GetDepositsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'currentStateTimesOutAt' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'currentStateTimesOutAt' | 'creator' | 'lastActor' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'owner'>
@@ -5466,7 +5727,7 @@ export type GetRandomBeaconGroupQuery = (
       & Pick<RandomBeaconGroupMembership, 'id' | 'count' | 'reward'>
       & { operator: (
         { __typename?: 'Operator' }
-        & Pick<Operator, 'address'>
+        & Pick<Operator, 'address' | 'stakedAmount'>
       ) }
     )>, relayEntries: Array<(
       { __typename?: 'RelayEntry' }
@@ -5564,7 +5825,7 @@ export type GetOperatorsQuery = (
   { __typename?: 'Query' }
   & { operators: Array<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards'>
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'stakedAt' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards'>
   )>, stats?: Maybe<(
     { __typename?: 'StatsRecord' }
     & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
@@ -5580,7 +5841,7 @@ export type GetStakedropDataQuery = (
   { __typename?: 'Query' }
   & { stakedropIntervals: Array<(
     { __typename?: 'StakedropInterval' }
-    & Pick<StakedropInterval, 'id' | 'number' | 'beaconIntervalStart' | 'beaconIntervalEnd' | 'ecdsaIntervalStart' | 'ecdsaIntervalEnd' | 'keepCount' | 'beaconGroupCount'>
+    & Pick<StakedropInterval, 'id' | 'number' | 'beaconIntervalStart' | 'beaconIntervalEnd' | 'ecdsaIntervalStart' | 'ecdsaIntervalEnd' | 'keepCount' | 'beaconGroupCount' | 'allocationECDSA' | 'allocationBeacon'>
   )> }
 );
 
@@ -5761,6 +6022,7 @@ export const GetDepositDocument = gql`
     keepAddress
     lotSizeSatoshis
     endOfTerm
+    index
     currentStateTimesOutAt
     tdtToken {
       id
@@ -5906,8 +6168,8 @@ export type GetDepositLogsQueryHookResult = ReturnType<typeof useGetDepositLogsQ
 export type GetDepositLogsLazyQueryHookResult = ReturnType<typeof useGetDepositLogsLazyQuery>;
 export type GetDepositLogsQueryResult = Apollo.QueryResult<GetDepositLogsQuery, GetDepositLogsQueryVariables>;
 export const GetDepositsDocument = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
-  deposits(first: 500, skip: $skip, orderBy: $orderBy, orderDirection: desc, where: $where, block: $block) {
+    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height, $orderDirection: OrderDirection, $perPage: Int) {
+  deposits(first: $perPage, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, block: $block) {
     id
     contractAddress
     lotSizeSatoshis
@@ -5917,6 +6179,8 @@ export const GetDepositsDocument = gql`
     createdAt
     redemptionStartedAt
     currentStateTimesOutAt
+    creator
+    lastActor
     tdtToken {
       owner
     }
@@ -5951,6 +6215,8 @@ export const GetDepositsDocument = gql`
  *      orderBy: // value for 'orderBy'
  *      skip: // value for 'skip'
  *      block: // value for 'block'
+ *      orderDirection: // value for 'orderDirection'
+ *      perPage: // value for 'perPage'
  *   },
  * });
  */
@@ -6036,6 +6302,7 @@ export const GetRandomBeaconGroupDocument = gql`
       reward
       operator {
         address
+        stakedAmount
       }
     }
     relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
@@ -6234,6 +6501,7 @@ export const GetOperatorsDocument = gql`
     id
     address
     bonded
+    stakedAt
     unboundAvailable
     totalKeepCount
     activeKeepCount
@@ -6288,6 +6556,8 @@ export const GetStakedropDataDocument = gql`
     ecdsaIntervalEnd
     keepCount
     beaconGroupCount
+    allocationECDSA
+    allocationBeacon
   }
 }
     `;
@@ -6357,353 +6627,3 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export const Change = gql`
-    fragment Change on GovernanceChange {
-  type
-  requestedAt
-  takesEffectAfter
-  newLotSizes
-  newFactorySelector
-  newFullyBackedFactory
-  newKeepStakedFactory
-}
-    `;
-export const NiceStateLabel = gql`
-    fragment NiceStateLabel on Deposit {
-  currentState
-  bondedECDSAKeep {
-    publicKey
-  }
-  depositSetup {
-    failureReason
-  }
-  currentStateTimesOutAt
-  updatedAt
-}
-    `;
-export const WatchPrice = gql`
-    subscription WatchPrice {
-  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed") {
-    val
-    timestamp
-    blockNumber
-    transactionHash
-  }
-}
-    `;
-export const GetBlockPrice = gql`
-    query GetBlockPrice($block: Block_height) {
-  priceFeed(id: "0x81a679f98b63b3ddf2f17cb5619f4d6775b3c5ed", block: $block) {
-    val
-    timestamp
-    blockNumber
-    transactionHash
-  }
-}
-    `;
-export const GetRelayEntries = gql`
-    query GetRelayEntries($block: Block_height) {
-  randomBeaconGroups(first: 1000, orderBy: createdAt, orderDirection: desc, block: $block) {
-    id
-    pubKey
-    createdAt
-    uniqueMemberCount
-    rewardPerMember
-  }
-  relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc, block: $block) {
-    id
-    requestId
-    value
-    requestedAt
-    generatedAt
-    rewardPerMember
-    group {
-      id
-      pubKey
-    }
-  }
-}
-    `;
-export const GetDeposit = gql`
-    query GetDeposit($id: ID!, $block: Block_height) {
-  deposit(id: $id, block: $block) {
-    id
-    contractAddress
-    currentState
-    createdAt
-    keepAddress
-    lotSizeSatoshis
-    endOfTerm
-    currentStateTimesOutAt
-    tdtToken {
-      id
-      tokenID
-      owner
-      minter
-    }
-    initialCollateralizedPercent
-    undercollateralizedThresholdPercent
-    severelyUndercollateralizedThresholdPercent
-    bondedECDSAKeep {
-      id
-      keepAddress
-      totalBondAmount
-      publicKey
-      status
-      honestThreshold
-      members {
-        id
-        address
-      }
-    }
-    depositLiquidation {
-      cause
-    }
-    ...NiceStateLabel
-  }
-}
-    ${NiceStateLabel}`;
-export const WatchDeposit = gql`
-    subscription WatchDeposit($id: ID!) {
-  deposit(id: $id) {
-    id
-    currentState
-  }
-}
-    `;
-export const GetDepositLogs = gql`
-    query GetDepositLogs($depositId: String!, $block: Block_height) {
-  events(where: {deposit: $depositId}, orderBy: timestamp, orderDirection: desc, block: $block) {
-    __typename
-    id
-    transactionHash
-    submitter
-    timestamp
-    ... on RegisteredPubKeyEvent {
-      signingGroupPubkeyX
-      signingGroupPubkeyY
-    }
-    ... on StartedLiquidationEvent {
-      cause
-    }
-    ... on SetupFailedEvent {
-      reason
-      deposit {
-        bondedECDSAKeep {
-          pubkeySubmissions {
-            address
-          }
-          members {
-            address
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-export const GetDeposits = gql`
-    query GetDeposits($where: Deposit_filter, $orderBy: Deposit_orderBy, $skip: Int, $block: Block_height) {
-  deposits(first: 500, skip: $skip, orderBy: $orderBy, orderDirection: desc, where: $where, block: $block) {
-    id
-    contractAddress
-    lotSizeSatoshis
-    currentState
-    keepAddress
-    updatedAt
-    createdAt
-    redemptionStartedAt
-    currentStateTimesOutAt
-    tdtToken {
-      owner
-    }
-    undercollateralizedThresholdPercent
-    severelyUndercollateralizedThresholdPercent
-    bondedECDSAKeep {
-      id
-      totalBondAmount
-      publicKey
-    }
-    ...NiceStateLabel
-  }
-  stats: statsRecord(id: "current", block: $block) {
-    depositCount
-  }
-}
-    ${NiceStateLabel}`;
-export const GetGovernance = gql`
-    query GetGovernance($block: Block_height) {
-  governance(id: "GOVERNANCE", block: $block) {
-    newDepositsAllowed
-    lotSizes
-    pendingLotSizeChange {
-      ...Change
-    }
-    factorySelector
-    fullyBackedFactory
-    keepStakedFactory
-    pendingFactoriesChange {
-      ...Change
-    }
-    signerFeeDivisor
-    pendingSignerFeeDivisorChange {
-      ...Change
-    }
-    initialCollateralizedPercent
-    severelyUndercollateralizedThresholdPercent
-    undercollateralizedThresholdPercent
-    priceFeeds
-  }
-  governanceLogEntries(first: 300, orderBy: timestamp, orderDirection: desc, block: $block) {
-    id
-    timestamp
-    transactionHash
-    submitter
-    isRequest
-    change {
-      ...Change
-    }
-  }
-}
-    ${Change}`;
-export const GetRandomBeaconGroup = gql`
-    query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
-  randomBeaconGroup(id: $id, block: $block) {
-    id
-    createdAt
-    rewardPerMember
-    memberships(orderBy: count, orderDirection: desc) {
-      id
-      count
-      reward
-      operator {
-        address
-      }
-    }
-    relayEntries(first: 1000, orderBy: requestedAt, orderDirection: desc) {
-      id
-      requestId
-      value
-      requestedAt
-      generatedAt
-      rewardPerMember
-      group {
-        id
-        pubKey
-      }
-    }
-  }
-}
-    `;
-export const GetOperatorKeeps = gql`
-    query GetOperatorKeeps($id: ID!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
-  operator(id: $id, block: $block) {
-    keeps(first: 1000, orderBy: $orderBy, orderDirection: $orderDirection) {
-      id
-      totalBondAmount
-      deposit {
-        id
-        contractAddress
-        lotSizeSatoshis
-        currentState
-        keepAddress
-        createdAt
-        tdtToken {
-          owner
-        }
-        undercollateralizedThresholdPercent
-        severelyUndercollateralizedThresholdPercent
-        bondedECDSAKeep {
-          id
-          totalBondAmount
-        }
-        ...NiceStateLabel
-      }
-    }
-  }
-}
-    ${NiceStateLabel}`;
-export const GetOperatorProperties = gql`
-    query GetOperatorProperties($id: ID!, $address: Bytes!) {
-  operator(id: $id) {
-    locks {
-      id
-      until
-      creator
-      operator {
-        id
-      }
-    }
-  }
-}
-    `;
-export const GetOperator = gql`
-    query GetOperator($id: ID!, $block: Block_height) {
-  operator(id: $id, block: $block) {
-    id
-    address
-    bonded
-    unboundAvailable
-    stakedAmount
-    totalFaultCount
-    attributableFaultCount
-    totalTBTCRewards
-    beaconGroupMemberships(orderBy: groupCreatedAt, orderDirection: desc) {
-      count
-      reward
-      group {
-        id
-        pubKey
-        createdAt
-      }
-    }
-  }
-}
-    `;
-export const GetOperators = gql`
-    query GetOperators($orderBy: Operator_orderBy, $direction: OrderDirection, $block: Block_height) {
-  operators(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
-    id
-    address
-    bonded
-    unboundAvailable
-    totalKeepCount
-    activeKeepCount
-    stakedAmount
-    totalFaultCount
-    attributableFaultCount
-    totalTBTCRewards
-    totalETHRewards
-  }
-  stats: statsRecord(id: "current", block: $block) {
-    availableToBeBonded
-    totalBonded
-  }
-}
-    `;
-export const GetStakedropData = gql`
-    query GetStakedropData($block: Block_height) {
-  stakedropIntervals {
-    id
-    number
-    beaconIntervalStart
-    beaconIntervalEnd
-    ecdsaIntervalStart
-    ecdsaIntervalEnd
-    keepCount
-    beaconGroupCount
-  }
-}
-    `;
-export const GetUsers = gql`
-    query GetUsers($orderBy: User_orderBy, $direction: OrderDirection, $block: Block_height) {
-  users(first: 1000, orderBy: $orderBy, orderDirection: $direction, block: $block) {
-    id
-    address
-    numDepositsCreated
-    numDepositsUnfunded
-    numDepositsRedeemed
-    numOwnDepositsRedeemed
-  }
-}
-    `;

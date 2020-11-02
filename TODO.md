@@ -1,11 +1,3 @@
-Show Stakedrop rewards
-----------------------
-
-See the contract:
-
-https://github.com/keep-network/keep-ecdsa/commit/97bd500c00e531873cc74d121e0a11b7e1dbb320
-
-
 Search function
 ---------------
 
@@ -31,6 +23,7 @@ Improved Staking Stats
 
 We do not handle all the events correctly in the graph, and global stats would be nice to have (pulling in the
 remaining code from https://github.com/suntzu93/keepnetwork-subgraph)
+
 
 Global / Operator Event Log
 ---------------------------

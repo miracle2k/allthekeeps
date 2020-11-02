@@ -1,3 +1,3 @@
 export const keepFormatter = new Intl.NumberFormat("en-US", {
-  maximumFractionDigits: 2
+  maximumFractionDigits: 0
 });

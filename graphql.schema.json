@@ -72,7 +72,7 @@
       {
         "kind": "OBJECT",
         "name": "Bond",
-        "description": null,
+        "description": "Represents a lock on an operators bond, usually held by a keep the operator is collaterializing.",
         "fields": [
           {
             "name": "id",
@@ -1190,6 +1190,22 @@
             "deprecationReason": null
           },
           {
+            "name": "etcToBtcRatio",
+            "description": "The ratio of backing ETH to lot size. This allows you to sort by collateralization-ratio.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "stakedropInterval",
             "description": "Which stakedrop interval this keep belongs to, if any.",
             "args": [],
@@ -2098,6 +2114,102 @@
             "defaultValue": null
           },
           {
+            "name": "etcToBtcRatio",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "stakedropInterval",
             "description": null,
             "type": {
@@ -2388,6 +2500,12 @@
           },
           {
             "name": "members",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "etcToBtcRatio",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3981,6 +4099,18 @@
             "deprecationReason": null
           },
           {
+            "name": "closedAt",
+            "description": "Timestamp of when this deposit was closed, either due to redemption, liquidation, or setup failure.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "updatedAt",
             "description": "Timestamp of the last state change of this deposit. Initialized to the same value as createdAt.",
             "args": [],
@@ -3998,7 +4128,19 @@
           },
           {
             "name": "redemptionStartedAt",
-            "description": "Timestamp of when the deposit redemption was requested, if any. This includes the start of liquidation due to undercollateralization.",
+            "description": "Timestamp of when the deposit redemption was requested, if any. This includes the start of liquidation due to undercollateralization. It is not reset if liquidation starts due to withdrawal failure. It does not reset in case of a fee increase.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart",
+            "description": "Start point of the internal timer which begins with a redemption request. It is initially the same as `redemptionStartedAt` in case of manual redemption, but is reset if there is a fee increase. It is not set or reset when we enter liquidation.",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -4065,6 +4207,22 @@
             "deprecationReason": null
           },
           {
+            "name": "lastActor",
+            "description": "The address which initiated the last action - initially the creator, then the redeemer.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "keepAddress",
             "description": null,
             "args": [],
@@ -4081,9 +4239,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "BigInt",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4168,6 +4330,22 @@
               "kind": "OBJECT",
               "name": "BondedECDSAKeep",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "etcToBtcRatio",
+            "description": "The ratio of backing ETH to lot size. This allows you to sort by collateralization-ratio.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7835,6 +8013,102 @@
             "defaultValue": null
           },
           {
+            "name": "closedAt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "closedAt_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "updatedAt",
             "description": null,
             "type": {
@@ -8010,6 +8284,102 @@
           },
           {
             "name": "redemptionStartedAt_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart_not_in",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -8286,6 +8656,82 @@
           },
           {
             "name": "creator_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "lastActor_not_contains",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -9199,6 +9645,102 @@
             "defaultValue": null
           },
           {
+            "name": "etcToBtcRatio",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "etcToBtcRatio_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "depositLiquidation",
             "description": null,
             "type": {
@@ -9886,6 +10428,12 @@
             "deprecationReason": null
           },
           {
+            "name": "closedAt",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "updatedAt",
             "description": null,
             "isDeprecated": false,
@@ -9893,6 +10441,12 @@
           },
           {
             "name": "redemptionStartedAt",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "withdrawalRequestTimerStart",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -9917,6 +10471,12 @@
           },
           {
             "name": "creator",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastActor",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -9971,6 +10531,12 @@
           },
           {
             "name": "bondedECDSAKeep",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "etcToBtcRatio",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -10140,6 +10706,11 @@
           {
             "kind": "OBJECT",
             "name": "RedeemedEvent",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "RedemptionFeeIncreasedEvent",
             "ofType": null
           },
           {
@@ -21313,6 +21884,22 @@
             "deprecationReason": null
           },
           {
+            "name": "stakedAt",
+            "description": "When this operator had a stake delegated to them. This is like a createdAt, and the operation also assigns the beneficiary/authorizer roles.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "keeps",
             "description": null,
             "args": [
@@ -21610,18 +22197,6 @@
           },
           {
             "name": "owner",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operator",
             "description": null,
             "args": [],
             "type": {
@@ -22017,6 +22592,102 @@
             "defaultValue": null
           },
           {
+            "name": "stakedAt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "stakedAt_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "owner",
             "description": null,
             "type": {
@@ -22084,82 +22755,6 @@
           },
           {
             "name": "owner_not_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator_not",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Bytes",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator_not_in",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Bytes",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator_contains",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Bytes",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "operator_not_contains",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -23402,6 +23997,12 @@
             "deprecationReason": null
           },
           {
+            "name": "stakedAt",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "keeps",
             "description": null,
             "isDeprecated": false,
@@ -23427,12 +24028,6 @@
           },
           {
             "name": "owner",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operator",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -25235,6 +25830,128 @@
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "RedemptionRequestedEvent",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redemptionFeeIncreasedEvent",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "block",
+                "description": "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "RedemptionFeeIncreasedEvent",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redemptionFeeIncreasedEvents",
+            "description": null,
+            "args": [
+              {
+                "name": "skip",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": "0"
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": "100"
+              },
+              {
+                "name": "orderBy",
+                "description": null,
+                "type": {
+                  "kind": "ENUM",
+                  "name": "RedemptionFeeIncreasedEvent_orderBy",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "orderDirection",
+                "description": null,
+                "type": {
+                  "kind": "ENUM",
+                  "name": "OrderDirection",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "where",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "RedemptionFeeIncreasedEvent_filter",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "block",
+                "description": "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "RedemptionFeeIncreasedEvent",
                     "ofType": null
                   }
                 }
@@ -31428,6 +32145,1359 @@
       },
       {
         "kind": "OBJECT",
+        "name": "RedemptionFeeIncreasedEvent",
+        "description": "If a Bitcoin fee increase is requested during the withdrawal process.",
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "submitter",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "transactionHash",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "timestamp",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deposit",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Deposit",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redeemerOutputScript",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "requestedFee",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "utxoValue",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "utxoOutpoint",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redeemer",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sigHashDigest",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Bytes",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Event",
+            "ofType": null
+          }
+        ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "RedemptionFeeIncreasedEvent_filter",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "id_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "submitter_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_not_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "transactionHash_not_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "timestamp_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_not_starts_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "deposit_not_ends_with",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemerOutputScript_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "requestedFee_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoValue_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "utxoOutpoint_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "redeemer_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Bytes",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "sigHashDigest_not_contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "RedemptionFeeIncreasedEvent_orderBy",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "id",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "submitter",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "transactionHash",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "timestamp",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deposit",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redeemerOutputScript",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "requestedFee",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "utxoValue",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "utxoOutpoint",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redeemer",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sigHashDigest",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "RedemptionRequestedEvent",
         "description": null,
         "fields": [
@@ -35633,6 +37703,30 @@
             "deprecationReason": null
           },
           {
+            "name": "allocationBeacon",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "allocationECDSA",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "keeps",
             "description": "Keeps that fall into this interval, and are counted towards the allocated rewards. This includes terminated\nkeeps which are non-the-less not eligable for an reward.",
             "args": [
@@ -36482,6 +38576,198 @@
               }
             },
             "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationBeacon_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "allocationECDSA_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -36540,6 +38826,18 @@
           },
           {
             "name": "beaconGroupCount",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "allocationBeacon",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "allocationECDSA",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -39364,6 +41662,38 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -39628,6 +41958,198 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_not",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_gt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_lt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_gte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_lte",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "BigInt",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation_not_in",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -39650,6 +42172,18 @@
           },
           {
             "name": "currentRequestedRelayEntry",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "remainingStakedropBeaconAllocation",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "remainingStakedropECDSAAllocation",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -40630,6 +43164,128 @@
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "RedemptionRequestedEvent",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redemptionFeeIncreasedEvent",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "block",
+                "description": "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "RedemptionFeeIncreasedEvent",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redemptionFeeIncreasedEvents",
+            "description": null,
+            "args": [
+              {
+                "name": "skip",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": "0"
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": "100"
+              },
+              {
+                "name": "orderBy",
+                "description": null,
+                "type": {
+                  "kind": "ENUM",
+                  "name": "RedemptionFeeIncreasedEvent_orderBy",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "orderDirection",
+                "description": null,
+                "type": {
+                  "kind": "ENUM",
+                  "name": "OrderDirection",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "where",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "RedemptionFeeIncreasedEvent_filter",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "block",
+                "description": "The block at which the query should be executed. Can either be an `{ number: Int }` containing the block number or a `{ hash: Bytes }` value containing a block hash. Defaults to the latest block when omitted.",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "RedemptionFeeIncreasedEvent",
                     "ofType": null
                   }
                 }

@@ -1,10 +1,9 @@
-import {gql, useQuery} from "@apollo/client";
+import {gql} from "@apollo/client";
 import React from "react";
 import {Paper} from "../design-system/Paper";
 import {Helmet} from "react-helmet";
 import type {GetRandomBeaconGroupQuery} from "../generated/graphql";
 import {useParams} from "react-router";
-import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {getGroupName} from "./Beacon/GroupName";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Hash} from "../components/Address";
