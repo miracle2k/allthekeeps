@@ -8,7 +8,7 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {getGroupName} from "./Beacon/GroupName";
 import {InfoTooltip} from "../components/InfoTooltip";
 import {Hash} from "../components/Address";
-import {ETHTag, GweiTag} from "../components/CurrencyTags";
+import {ETHTag, GweiTag, KeepTag} from "../components/CurrencyTags";
 import {ETHValue} from "../components/ETHValue";
 import {Table} from "../components/Table";
 import {css} from "emotion";
@@ -16,6 +16,7 @@ import {Box} from "../components/Box";
 import {TimeBetween, TimeToNow} from "../components/FormattedTime";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {useQueryWithTimeTravel} from "../TimeTravel";
+import {keepFormatter} from "../components/KeepValue";
 
 const BEACONGROUP_QUERY = gql`
     query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
@@ -28,7 +29,8 @@ const BEACONGROUP_QUERY = gql`
                 count,
                 reward,
                 operator {
-                    address   
+                    address,
+                    stakedAmount
                 }
             },
             relayEntries(first: 1000, orderBy: requestedAt, orderDirection:desc) {
@@ -112,6 +114,9 @@ export function BeaconGroup() {
               <th>
                 ETH Earned <InfoTooltip>ETH earned by the operator through membership in the group.</InfoTooltip>
               </th>
+              <th>
+                Amount Staked <InfoTooltip>The amount of KEEP staked affects how often an operator is chosen for a beacon group, and at what weight.</InfoTooltip>
+              </th>
             </tr>
             </thead>
             <tbody>
@@ -126,6 +131,9 @@ export function BeaconGroup() {
                 </td>
                 <td>
                   <ETHTag/> <ETHValue unit={"eth"} wei={membership.reward}/>
+                </td>
+                <td>
+                  <KeepTag/> {keepFormatter.format(membership.operator.stakedAmount)}
                 </td>
               </tr>
             })}
