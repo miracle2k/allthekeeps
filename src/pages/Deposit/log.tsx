@@ -67,6 +67,8 @@ function LogEntry(props: {
     'RedeemedEvent': RedeemedEvent,
     'SetupFailedEvent': SetupFailedEvent,
     'LiquidatedEvent': LiquidatedEvent,
+    'CourtesyCalledEvent': CourtesyCalledEvent,
+    'ExitedCourtesyCallEvent': ExitedCourtesyCallEvent,
   } as any)[event.__typename] || UnknownEvent;
 
 
@@ -174,6 +176,37 @@ function LiquidatedEvent(props: {
 }) {
   return <div>
     <LogTitle>Liquidated</LogTitle>
+  </div>
+}
+
+
+function CourtesyCalledEvent(props: {
+  event: any
+}) {
+  return <div>
+    <LogTitle>Courtesy Call</LogTitle>
+    {/*submitted by XXX */}
+    <div>
+      This deposit has been notified that is undercollateralized. Anyone is now able to start
+      the redemption process. If the deposit is not redeemed within 6 hours, or regains the
+      required collaterialization ratio, liquidation proceedings will be started.
+    </div>
+    {/*<div>*/}
+    {/*  The value of the backing collateral has fallen, and now covers less than the required 125% of*/}
+    {/*  the Bitcoin deposited.*/}
+    {/*</div>*/}
+  </div>
+}
+
+function ExitedCourtesyCallEvent(props: {
+  event: any
+}) {
+  return <div>
+    <LogTitle>Courtesy Call Exited</LogTitle>
+    <div>
+      The deposit regained the required collaterialization ratio and is no longer in danger
+      of being liquidated.
+    </div>
   </div>
 }
 
