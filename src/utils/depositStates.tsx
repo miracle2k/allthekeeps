@@ -75,6 +75,7 @@ export function getNiceStateLabel(deposit: NiceStateLabelFragment) {
     'AWAITING_WITHDRAWAL_PROOF': 'Awaiting Withdrawal Proof',
     'REDEEMED': 'Redeemed',
     'ACTIVE': "Active",
+    'COURTESY_CALL': "Courtesy Called",
     'FAILED_SETUP': "Setup Failed",
     "LIQUIDATED": "Liquidated",
     "LIQUIDATION_IN_PROGRESS": "Liquidation In Progress"
@@ -94,6 +95,7 @@ export function getStateBoxStyle(state: string) {
     'AWAITING_WITHDRAWAL_PROOF': inProgress,
     'REDEEMED': redeemed,
     'ACTIVE': active,
+    'COURTESY_CALL': '#ff9730', // #dfc51df7
     'FAILED_SETUP': 'transparent',
     "LIQUIDATED": failed,
     "LIQUIDATION_IN_PROGRESS": '#ffcdd2'
