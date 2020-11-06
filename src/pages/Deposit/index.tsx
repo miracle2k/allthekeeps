@@ -237,59 +237,18 @@ export function Content() {
           : null }
         </Paper>
 
-        <div style={{marginTop: '20px'}}>
-          <Paper>
-            <PropertyTable
-                data={[
-                  {
-                    key: 'tokenOwner',
-                    label: "Current Owner",
-                    tooltip: "Deposit owner as represented by ownership over the TDT token.",
-                    value: <Address address={data.deposit.tdtToken.owner} />
-                  },
-                  {
-                    key: 'tokenMinter',
-                    label: "Creator",
-                    tooltip: "Original creator of this deposit.",
-                    value: <Address address={data.deposit.tdtToken.minter}  />
-                  },
-                  {
-                    key: 'tokenId',
-                    label: "Token ID",
-                    value: <Address address={data.deposit.tdtToken.tokenID} to={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
-                  },
-                  {
-                    key: 'index',
-                    label: "Index",
-                    tooltip: "The number of the deposit, counting up since inception of the system.",
-                    value: data.deposit.index,
-                  },
-                  data.deposit.endOfTerm ? {
-                    key: 'endOfTerm',
-                    label: "End Of Term",
-                    tooltip: "Within the term, only the owner can redeem the deposit or mint TBTC.",
-                    value: <TimeToNow time={data.deposit.endOfTerm} />
-                  } : undefined,
-                  {
-                    key: 'depositContract',
-                    label: "Deposit Contract",
-                    value: <Address address={data.deposit.contractAddress}  />
-                  },
-                  {
-                    key: 'keepContract',
-                    label: "Keep Contract",
-                    tooltip: "The Keep holds the original BTC in custody, and signers stake ETH as a security bond.",
-                    value: <Address address={data.deposit.keepAddress}  />
-                  },
-                  {
-                    key: 'status',
-                    label: "Keep Status",
-                    value: data.deposit.bondedECDSAKeep.status
-                  },
-                ]}
-            />
-          </Paper>
-        </div>
+        <Paper style={{marginTop: '20px'}}>
+          <div className={css`           
+            padding: 20px;
+          `}>
+            <h3 style={{marginTop: 0}}>Log</h3>
+            {/*<div style={{marginBottom: '20px'}}>*/}
+            {/*  <div><strong>Next Step</strong></div>*/}
+            {/*  The depositor must submit proof of having sent to Bitcoin to the deposit address, once at least 6 confirmations have been reached. <TimeToNow time={data.deposit.currentStateTimesOutAt} /> left to do so.*/}
+            {/*</div>*/}
+            <Log depositId={data.deposit.id} />
+          </div>
+        </Paper>
       </div>
 
       <div style={{flex: 1}}>
@@ -358,21 +317,59 @@ export function Content() {
             },
           ]} />
         </Paper>
+        <Paper style={{marginTop: '20px'}}>
+          <PropertyTable
+              data={[
+                {
+                  key: 'tokenOwner',
+                  label: "Current Owner",
+                  tooltip: "Deposit owner as represented by ownership over the TDT token.",
+                  value: <Address address={data.deposit.tdtToken.owner} />
+                },
+                {
+                  key: 'tokenMinter',
+                  label: "Creator",
+                  tooltip: "Original creator of this deposit.",
+                  value: <Address address={data.deposit.tdtToken.minter}  />
+                },
+                {
+                  key: 'tokenId',
+                  label: "Token ID",
+                  value: <Address address={data.deposit.tdtToken.tokenID} to={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}  />
+                },
+                {
+                  key: 'index',
+                  label: "Index",
+                  tooltip: "The number of the deposit, counting up since inception of the system.",
+                  value: data.deposit.index,
+                },
+                data.deposit.endOfTerm ? {
+                  key: 'endOfTerm',
+                  label: "End Of Term",
+                  tooltip: "Within the term, only the owner can redeem the deposit or mint TBTC.",
+                  value: <TimeToNow time={data.deposit.endOfTerm} />
+                } : undefined,
+                {
+                  key: 'depositContract',
+                  label: "Deposit Contract",
+                  value: <Address address={data.deposit.contractAddress}  />
+                },
+                {
+                  key: 'keepContract',
+                  label: "Keep Contract",
+                  tooltip: "The Keep holds the original BTC in custody, and signers stake ETH as a security bond.",
+                  value: <Address address={data.deposit.keepAddress}  />
+                },
+                {
+                  key: 'status',
+                  label: "Keep Status",
+                  value: data.deposit.bondedECDSAKeep.status
+                },
+              ]}
+          />
+        </Paper>
       </div>
     </div>
-
-    <Paper style={{marginTop: '20px'}}>
-      <div className={css`           
-        padding: 20px;
-      `}>
-        <h3 style={{marginTop: 0}}>Log</h3>
-        {/*<div style={{marginBottom: '20px'}}>*/}
-        {/*  <div><strong>Next Step</strong></div>*/}
-        {/*  The depositor must submit proof of having sent to Bitcoin to the deposit address, once at least 6 confirmations have been reached. <TimeToNow time={data.deposit.currentStateTimesOutAt} /> left to do so.*/}
-        {/*</div>*/}
-        <Log depositId={data.deposit.id} />
-      </div>
-    </Paper>
   </div>
 }
 
