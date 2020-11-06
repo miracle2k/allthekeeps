@@ -27,6 +27,7 @@ import {useBtcAddressFromPublicKey} from "../../utils/useBtcAddressFromPublicKey
 import {StatusBox} from "./StatusBox";
 import {usePriceFeed} from "../../components/PriceFeed";
 import {useQueryWithTimeTravel, useTimeTravelSafeSubscription} from "../../TimeTravel";
+import {PageHeader} from "../../components/PageHeader";
 
 
 const DEPOSIT_QUERY = gql`
@@ -131,23 +132,28 @@ export function Content() {
   const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm || isVendingMachine(data.deposit.tdtToken.owner));
 
   return <div>
-    <div className={css`
-      display: flex;
-      flex-direction: row;
-      & > * {
-        margin-right: 20px;
-      }
-  `}>
-      <Box label={"lot size"}>
-        {getSatoshisAsBitcoin(data.deposit.lotSizeSatoshis)} BTC
-      </Box>
+    <PageHeader label={"Deposit"}>
+      <div className={css`
+        display: flex;
+        flex-direction: row;
+        & > * {
+          margin-right: 40px;
+        }
+        & > :last-child {
+          margin-right: 0px;
+        }
+      `}>
+        <Box label={"lot size"} noPadding>
+          {getSatoshisAsBitcoin(data.deposit.lotSizeSatoshis)} BTC
+        </Box>
 
-      <StatusBox deposit={data.deposit} />
+        <StatusBox deposit={data.deposit} noPadding />
 
-      <Box label={"creation date"}>
-        <TimeToNow time={data.deposit.createdAt} />
-      </Box>
-    </div>
+        <Box label={"creation date"} noPadding>
+          <TimeToNow time={data.deposit.createdAt} />
+        </Box>
+      </div>
+    </PageHeader>
 
     <div style={{
       display: "flex",

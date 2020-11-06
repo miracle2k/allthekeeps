@@ -20,7 +20,8 @@ import {useIsTimeTravel} from "../../TimeTravel";
  * Displays the deposit status in a <Box />.
  */
 export function StatusBox(props: {
-  deposit: any
+  deposit: any,
+  noPadding?: boolean
 }) {
   const {deposit} = props;
   const blockChainBaseUrl = useBlockchainBaseUrl();
@@ -88,7 +89,7 @@ export function StatusBox(props: {
     }
   }
 
-  return <Box label={"state"}>
+  return <Box label={"state"} noPadding={props.noPadding}>
     <LabelWithBackgroundProgress
         progress={timing?.percentage}
     >

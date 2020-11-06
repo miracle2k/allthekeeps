@@ -5,12 +5,13 @@ import {InfoTooltip} from "./InfoTooltip";
 export function Box(props: {
   label: string,
   tooltip?: string,
-  children: any
+  children: any,
+  noPadding?: boolean
 }) {
   return (
       <div className={css`
       font-size: 35px;           
-      padding: 20px;
+      padding: ${props.noPadding ? 0 : '20px'}
       color: #0A0806;
       
       font-feature-settings: 'zero' on;
