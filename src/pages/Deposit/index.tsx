@@ -4,7 +4,7 @@ import {useParams} from 'react-router';
 import {getSatoshisAsBitcoin} from "../../utils/getSatoshisAsBitcoin";
 import {TimeToNow} from "../../components/FormattedTime";
 import {css} from "emotion";
-import {Address, BitcoinAddress} from "../../components/Address";
+import {Address, BitcoinAddress, Hash} from "../../components/Address";
 import {Paper} from "../../design-system/Paper";
 import {NiceStateLabel} from "../../utils/depositStates";
 import {
@@ -28,6 +28,7 @@ import {StatusBox} from "./StatusBox";
 import {usePriceFeed} from "../../components/PriceFeed";
 import {useQueryWithTimeTravel, useTimeTravelSafeSubscription} from "../../TimeTravel";
 import {PageHeader} from "../../components/PageHeader";
+import Tippy from "@tippyjs/react";
 
 
 const DEPOSIT_QUERY = gql`
@@ -132,7 +133,37 @@ export function Content() {
   const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm || isVendingMachine(data.deposit.tdtToken.owner));
 
   return <div>
-    <PageHeader label={"Deposit"}>
+    <PageHeader
+      label={"Deposit"}
+      subtitle={data.deposit.contractAddress}
+      buttons={
+        <>
+          <Tippy
+            trigger="click"
+            hideOnClick={true}
+            arrow={false}
+            interactive={true}
+            maxWidth={600}
+            className={css`
+              background-color: transparent;
+              padding: 0;
+              color: inherit;
+            `}
+            placement={"bottom"}
+            content={
+              <Paper style={{padding: '10px'}}>
+                <div><a href={"https://keepscan.com/deposits/0xf602ec2bf5874ac2e1cd2a1068a866d36f53f134"}>Open in KeepScan</a></div>
+                <div><a href={`https://tbtcdeposit.auction/#/liquidations/${data.deposit.contractAddress}`}>Open in Auction Tool</a></div>
+                <div><a href={`https://tbtcexplorer.com/detail/${data.deposit.contractAddress}`}>Open in tBTCExplorer</a></div>
+              </Paper>
+            }
+          >
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAW0lEQVRIie2Ruw2AMAwFTykyu5mD2RKmQFCQ6imiSALVO8mSP+fGBmPML2RgAypQgGi9ZU4Al0TI8pRTO4NDloed1BLllHrYScDeGWhvysk8tyq8P3CFY4z5ghvPEDu0rDRS9gAAAABJRU5ErkJggg=="
+                 width={14} height={14} style={{cursor: 'pointer'}} />
+          </Tippy>
+        </>
+      }
+    >
       <div className={css`
         display: flex;
         flex-direction: row;

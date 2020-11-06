@@ -64,7 +64,10 @@ export function Hash(props: {
   let linkProps: any = {};
 
   let C: any;
-  if (!(props.to ?? "").startsWith('http')) {
+  if (!props.to) {
+    C = 'span';
+  }
+  else if (!(props.to).startsWith('http')) {
     C = Link;
     linkProps.to = props.to;
   } else {
