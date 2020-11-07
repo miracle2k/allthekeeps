@@ -146,7 +146,8 @@ export function getLiquidationCauseAsString(cause: string) {
     'FRAUD': 'Signer Fraud',
     'PROOF_TIMEOUT': 'Signer Timeout',
     'SIGNATURE_TIMEOUT': 'Signer Timeout',
-    'UNDERCOLLATERIZED': 'Undercollaterialized'
+    'UNDERCOLLATERIZED': 'Undercollaterialized',
+    'COURTESY_CALL_EXPIRED': 'Undercollaterialized'
   } as any)[cause] || cause;
 }
 
@@ -160,13 +161,17 @@ function StartedLiquidationEvent(props: {
     'FRAUD': 'One of the signers submitted a fraudulent signature.',
     'PROOF_TIMEOUT': 'The signing group failed to submit proof that their transaction, releasing the deposited Bitcoin, was included in the blockchain.',
     'SIGNATURE_TIMEOUT': 'The signing group failed to provide a signature for a transaction releasing the Bitcoin.',
-    'UNDERCOLLATERIZED': 'The deposit became undercollateralized due to the value of the backing ETH bond falling.'
+    'UNDERCOLLATERIZED': 'The deposit became undercollateralized due to the value of the backing ETH bond falling.',
+    'COURTESY_CALL_EXPIRED': 'The deposit became undercollateralized due to the value of the backing ETH bond falling. It was courtesy called earlier, but the courtesy call expired.'
   } as any)[cause];
 
   return <div>
     <LogTitle>Liquidation Started: {title}</LogTitle>
     <div>
       {description}
+    </div>
+    <div style={{color: 'gray', fontSize: '0.9em', marginTop: '7px'}}>
+      The system now runs a falling-price auction, selling the ETH collateral backing the deposit.
     </div>
   </div>
 }
