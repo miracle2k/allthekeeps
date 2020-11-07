@@ -3,6 +3,8 @@ import {dateTimeFrom, formatSeconds} from "../components/FormattedTime";
 import {getSatoshisAsBitcoin} from "./getSatoshisAsBitcoin";
 import {getWeiAsEth} from "./getWeiAsEth";
 import {CoinPrices} from "./useCoinPrices";
+import {gql} from "@apollo/client";
+import {AuctionDetailsFragment as AuctionDetailsF} from "../generated/graphql";
 
 /**
  * Note: The real `auctionValue` function uses address(this), which could be different than the registered bond value?
@@ -46,15 +48,28 @@ export function getAuctionDetails(opts: {
 export type AuctionDetails = ReturnType<typeof getAuctionDetails>;
 
 
+export const AuctionDetailsFragment = gql`
+    fragment AuctionDetails on Deposit {
+        initialCollateralizedPercent,
+        depositLiquidation {
+            liquidationInitiated,
+            liquidatedAt
+        },
+        bondedECDSAKeep {
+            totalBondAmount
+        }
+    }
+`;
+
 /**
  * Return the details of the auction based on a standard deposit query object.
  */
-export function getAuctionDetailsFromDeposit(deposit: any, coinPrices: any) {
+export function getAuctionDetailsFromDeposit(deposit: AuctionDetailsF) {
   return getAuctionDetails({
-    initialCollateralizedPercent: deposit.initialCollateralizedPercent,
-    liquidationInitiated: deposit.depositLiquidation.initiatedAt,
-    bondValue: deposit.bondedECDSAKeep.totalBondAmount,
-    endDate: deposit.depositLiquidation.liquidatedAt
+    initialCollateralizedPercent: deposit.initialCollateralizedPercent!,
+    liquidationInitiated: deposit.depositLiquidation!.liquidationInitiated!,
+    bondValue: deposit.bondedECDSAKeep?.totalBondAmount,
+    endDate: deposit.depositLiquidation?.liquidatedAt
   });
 }
 

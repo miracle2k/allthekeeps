@@ -33,6 +33,178 @@ export type Bond = {
   keep: BondedEcdsaKeep;
 };
 
+export type BondReassignedEvent = Event & {
+  __typename?: 'BondReassignedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type BondReassignedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum BondReassignedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type BondSeizedEvent = Event & {
+  __typename?: 'BondSeizedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type BondSeizedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum BondSeizedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
 export enum BondStatus {
   Active = 'ACTIVE',
   Released = 'RELEASED',
@@ -271,6 +443,7 @@ export type CourtesyCalledEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
 };
 
 export type CourtesyCalledEvent_Filter = {
@@ -324,6 +497,20 @@ export type CourtesyCalledEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum CourtesyCalledEvent_OrderBy {
@@ -331,7 +518,8 @@ export enum CourtesyCalledEvent_OrderBy {
   Submitter = 'submitter',
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
-  Deposit = 'deposit'
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 export type CreatedEvent = Event & {
@@ -341,6 +529,7 @@ export type CreatedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
 };
 
 export type CreatedEvent_Filter = {
@@ -394,6 +583,20 @@ export type CreatedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum CreatedEvent_OrderBy {
@@ -401,7 +604,8 @@ export enum CreatedEvent_OrderBy {
   Submitter = 'submitter',
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
-  Deposit = 'deposit'
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 export type Deposit = {
@@ -460,8 +664,10 @@ export type DepositLiquidation = {
   deposit: Deposit;
   initiateTxhash?: Maybe<Scalars['Bytes']>;
   courtesyCallTxhash?: Maybe<Scalars['Bytes']>;
+  /** The time the deposited entered LIQUIDATION_IN_PROGRESS state. */
   liquidationInitiated?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated?: Maybe<Scalars['BigInt']>;
+  /** The last time a courtesy call was initiated, even if courtesy call state has been exited. */
+  courtesyCallInitiatedAt?: Maybe<Scalars['BigInt']>;
   isLiquidated: Scalars['Boolean'];
   liquidatedAt?: Maybe<Scalars['BigInt']>;
   liquidationInitiator?: Maybe<Scalars['Bytes']>;
@@ -511,14 +717,14 @@ export type DepositLiquidation_Filter = {
   liquidationInitiated_lte?: Maybe<Scalars['BigInt']>;
   liquidationInitiated_in?: Maybe<Array<Scalars['BigInt']>>;
   liquidationInitiated_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  courtesyCallInitiated?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_not?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_gt?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_lt?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_gte?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_lte?: Maybe<Scalars['BigInt']>;
-  courtesyCallInitiated_in?: Maybe<Array<Scalars['BigInt']>>;
-  courtesyCallInitiated_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  courtesyCallInitiatedAt?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_not?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_gt?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_lt?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_gte?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_lte?: Maybe<Scalars['BigInt']>;
+  courtesyCallInitiatedAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  courtesyCallInitiatedAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
   isLiquidated?: Maybe<Scalars['Boolean']>;
   isLiquidated_not?: Maybe<Scalars['Boolean']>;
   isLiquidated_in?: Maybe<Array<Scalars['Boolean']>>;
@@ -547,7 +753,7 @@ export enum DepositLiquidation_OrderBy {
   InitiateTxhash = 'initiateTxhash',
   CourtesyCallTxhash = 'courtesyCallTxhash',
   LiquidationInitiated = 'liquidationInitiated',
-  CourtesyCallInitiated = 'courtesyCallInitiated',
+  CourtesyCallInitiatedAt = 'courtesyCallInitiatedAt',
   IsLiquidated = 'isLiquidated',
   LiquidatedAt = 'liquidatedAt',
   LiquidationInitiator = 'liquidationInitiator',
@@ -1031,6 +1237,7 @@ export type Event = {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
 };
 
 export type Event_Filter = {
@@ -1084,6 +1291,20 @@ export type Event_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum Event_OrderBy {
@@ -1091,7 +1312,94 @@ export enum Event_OrderBy {
   Submitter = 'submitter',
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
-  Deposit = 'deposit'
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type ExitedCourtesyCallEvent = Event & {
+  __typename?: 'ExitedCourtesyCallEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type ExitedCourtesyCallEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum ExitedCourtesyCallEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 export type FundedEvent = Event & {
@@ -1101,6 +1409,7 @@ export type FundedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   tx: Scalars['Bytes'];
 };
 
@@ -1155,6 +1464,20 @@ export type FundedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   tx?: Maybe<Scalars['Bytes']>;
   tx_not?: Maybe<Scalars['Bytes']>;
   tx_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -1169,6 +1492,7 @@ export enum FundedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   Tx = 'tx'
 }
 
@@ -1179,6 +1503,7 @@ export type GotRedemptionSignatureEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
 };
 
 export type GotRedemptionSignatureEvent_Filter = {
@@ -1232,6 +1557,20 @@ export type GotRedemptionSignatureEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum GotRedemptionSignatureEvent_OrderBy {
@@ -1239,7 +1578,8 @@ export enum GotRedemptionSignatureEvent_OrderBy {
   Submitter = 'submitter',
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
-  Deposit = 'deposit'
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 export type Governance = {
@@ -1927,6 +2267,7 @@ export type LiquidatedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
 };
 
 export type LiquidatedEvent_Filter = {
@@ -1980,6 +2321,20 @@ export type LiquidatedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum LiquidatedEvent_OrderBy {
@@ -1987,17 +2342,20 @@ export enum LiquidatedEvent_OrderBy {
   Submitter = 'submitter',
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
-  Deposit = 'deposit'
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
+/** The reason why a deposit enter liquidation. */
 export enum LiquidationCause {
   Fraud = 'FRAUD',
   Undercollaterized = 'UNDERCOLLATERIZED',
+  CourtesyCallExpired = 'COURTESY_CALL_EXPIRED',
   SignatureTimeout = 'SIGNATURE_TIMEOUT',
   ProofTimeout = 'PROOF_TIMEOUT'
 }
 
-/** A lock on an operator stake. */
+/** A lock on an operator stake. This is usually held by a deposit/keep contract. */
 export type Lock = {
   __typename?: 'Lock';
   id: Scalars['ID'];
@@ -2077,6 +2435,7 @@ export type Operator = {
   unboundAvailable: Scalars['BigDecimal'];
   totalKeepCount: Scalars['Int'];
   activeKeepCount: Scalars['Int'];
+  beaconGroupCount: Scalars['Int'];
   stakedAmount: Scalars['BigDecimal'];
   /** Rewards generated by this operator in TBTC, for any work. */
   totalTBTCRewards: Scalars['BigInt'];
@@ -2090,6 +2449,13 @@ export type Operator = {
   involvedInFaultCount: Scalars['Int'];
   /** How often this operator was involved in a fault, either attributable or not. */
   totalFaultCount: Scalars['Int'];
+  /**
+   * A list of timestamps, each representing the expiry date for a lock held on the stake.
+   * We use this as a helper to be able to to calculate the maximum value, stakeLockExpiresAt.
+   */
+  stakeLockExpiryPoints?: Maybe<Array<Scalars['BigInt']>>;
+  /** The time when the last lock on the operator's stake expires. This can change when a lock is released early, or a new lock is added. */
+  stakeLockExpiresAt?: Maybe<Scalars['BigInt']>;
 };
 
 
@@ -2159,6 +2525,92 @@ export type OperatorBeaconGroupMembershipsArgs = {
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<RandomBeaconGroupMembership_Filter>;
 };
+
+export type OperatorStakedEvent = Event & {
+  __typename?: 'OperatorStakedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type OperatorStakedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum OperatorStakedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
 
 export type Operator_Filter = {
   id?: Maybe<Scalars['ID']>;
@@ -2233,6 +2685,14 @@ export type Operator_Filter = {
   activeKeepCount_lte?: Maybe<Scalars['Int']>;
   activeKeepCount_in?: Maybe<Array<Scalars['Int']>>;
   activeKeepCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  beaconGroupCount?: Maybe<Scalars['Int']>;
+  beaconGroupCount_not?: Maybe<Scalars['Int']>;
+  beaconGroupCount_gt?: Maybe<Scalars['Int']>;
+  beaconGroupCount_lt?: Maybe<Scalars['Int']>;
+  beaconGroupCount_gte?: Maybe<Scalars['Int']>;
+  beaconGroupCount_lte?: Maybe<Scalars['Int']>;
+  beaconGroupCount_in?: Maybe<Array<Scalars['Int']>>;
+  beaconGroupCount_not_in?: Maybe<Array<Scalars['Int']>>;
   stakedAmount?: Maybe<Scalars['BigDecimal']>;
   stakedAmount_not?: Maybe<Scalars['BigDecimal']>;
   stakedAmount_gt?: Maybe<Scalars['BigDecimal']>;
@@ -2289,6 +2749,18 @@ export type Operator_Filter = {
   totalFaultCount_lte?: Maybe<Scalars['Int']>;
   totalFaultCount_in?: Maybe<Array<Scalars['Int']>>;
   totalFaultCount_not_in?: Maybe<Array<Scalars['Int']>>;
+  stakeLockExpiryPoints?: Maybe<Array<Scalars['BigInt']>>;
+  stakeLockExpiryPoints_not?: Maybe<Array<Scalars['BigInt']>>;
+  stakeLockExpiryPoints_contains?: Maybe<Array<Scalars['BigInt']>>;
+  stakeLockExpiryPoints_not_contains?: Maybe<Array<Scalars['BigInt']>>;
+  stakeLockExpiresAt?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_not?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_gt?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_lt?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_gte?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_lte?: Maybe<Scalars['BigInt']>;
+  stakeLockExpiresAt_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakeLockExpiresAt_not_in?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Operator_OrderBy {
@@ -2306,13 +2778,16 @@ export enum Operator_OrderBy {
   UnboundAvailable = 'unboundAvailable',
   TotalKeepCount = 'totalKeepCount',
   ActiveKeepCount = 'activeKeepCount',
+  BeaconGroupCount = 'beaconGroupCount',
   StakedAmount = 'stakedAmount',
   TotalTbtcRewards = 'totalTBTCRewards',
   TotalEthRewards = 'totalETHRewards',
   TotalBeaconRewards = 'totalBeaconRewards',
   AttributableFaultCount = 'attributableFaultCount',
   InvolvedInFaultCount = 'involvedInFaultCount',
-  TotalFaultCount = 'totalFaultCount'
+  TotalFaultCount = 'totalFaultCount',
+  StakeLockExpiryPoints = 'stakeLockExpiryPoints',
+  StakeLockExpiresAt = 'stakeLockExpiresAt'
 }
 
 export enum OrderDirection {
@@ -2414,6 +2889,8 @@ export type Query = {
   liquidatedEvents: Array<LiquidatedEvent>;
   courtesyCalledEvent?: Maybe<CourtesyCalledEvent>;
   courtesyCalledEvents: Array<CourtesyCalledEvent>;
+  exitedCourtesyCallEvent?: Maybe<ExitedCourtesyCallEvent>;
+  exitedCourtesyCallEvents: Array<ExitedCourtesyCallEvent>;
   startedLiquidationEvent?: Maybe<StartedLiquidationEvent>;
   startedLiquidationEvents: Array<StartedLiquidationEvent>;
   deposit?: Maybe<Deposit>;
@@ -2428,6 +2905,28 @@ export type Query = {
   users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
+  operatorStakedEvent?: Maybe<OperatorStakedEvent>;
+  operatorStakedEvents: Array<OperatorStakedEvent>;
+  tokensSlashedEvent?: Maybe<TokensSlashedEvent>;
+  tokensSlashedEvents: Array<TokensSlashedEvent>;
+  tokensSeizedEvent?: Maybe<TokensSeizedEvent>;
+  tokensSeizedEvents: Array<TokensSeizedEvent>;
+  undelegatedEvent?: Maybe<UndelegatedEvent>;
+  undelegatedEvents: Array<UndelegatedEvent>;
+  stakeOwnershipTransferredEvent?: Maybe<StakeOwnershipTransferredEvent>;
+  stakeOwnershipTransferredEvents: Array<StakeOwnershipTransferredEvent>;
+  topUpCompletedEvent?: Maybe<TopUpCompletedEvent>;
+  topUpCompletedEvents: Array<TopUpCompletedEvent>;
+  topUpInitiatedEvent?: Maybe<TopUpInitiatedEvent>;
+  topUpInitiatedEvents: Array<TopUpInitiatedEvent>;
+  bondReassignedEvent?: Maybe<BondReassignedEvent>;
+  bondReassignedEvents: Array<BondReassignedEvent>;
+  bondSeizedEvent?: Maybe<BondSeizedEvent>;
+  bondSeizedEvents: Array<BondSeizedEvent>;
+  unbondedValueDepositedEvent?: Maybe<UnbondedValueDepositedEvent>;
+  unbondedValueDepositedEvents: Array<UnbondedValueDepositedEvent>;
+  unbondedValueWithdrawnEvent?: Maybe<UnbondedValueWithdrawnEvent>;
+  unbondedValueWithdrawnEvents: Array<UnbondedValueWithdrawnEvent>;
   lock?: Maybe<Lock>;
   locks: Array<Lock>;
   bond?: Maybe<Bond>;
@@ -2661,6 +3160,22 @@ export type QueryCourtesyCalledEventsArgs = {
 };
 
 
+export type QueryExitedCourtesyCallEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryExitedCourtesyCallEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ExitedCourtesyCallEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<ExitedCourtesyCallEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type QueryStartedLiquidationEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -2769,6 +3284,182 @@ export type QueryOperatorsArgs = {
   orderBy?: Maybe<Operator_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Operator_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryOperatorStakedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryOperatorStakedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<OperatorStakedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<OperatorStakedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokensSlashedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokensSlashedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokensSlashedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokensSlashedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokensSeizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTokensSeizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokensSeizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokensSeizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUndelegatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUndelegatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UndelegatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UndelegatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakeOwnershipTransferredEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryStakeOwnershipTransferredEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakeOwnershipTransferredEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakeOwnershipTransferredEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTopUpCompletedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTopUpCompletedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TopUpCompletedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TopUpCompletedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTopUpInitiatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryTopUpInitiatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TopUpInitiatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TopUpInitiatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryBondReassignedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryBondReassignedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<BondReassignedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<BondReassignedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryBondSeizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryBondSeizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<BondSeizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<BondSeizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUnbondedValueDepositedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUnbondedValueDepositedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UnbondedValueDepositedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UnbondedValueDepositedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUnbondedValueWithdrawnEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryUnbondedValueWithdrawnEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UnbondedValueWithdrawnEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UnbondedValueWithdrawnEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -3088,6 +3779,8 @@ export type RandomBeaconGroup = {
   /** How many unique operators are in this group - the number of membership records. */
   uniqueMemberCount: Scalars['Int'];
   rewardPerMember: Scalars['BigInt'];
+  /** Which stakedrop interval this groups belongs to, if any. */
+  stakedropInterval?: Maybe<StakedropInterval>;
   relayEntries: Array<RelayEntry>;
 };
 
@@ -3245,6 +3938,20 @@ export type RandomBeaconGroup_Filter = {
   rewardPerMember_lte?: Maybe<Scalars['BigInt']>;
   rewardPerMember_in?: Maybe<Array<Scalars['BigInt']>>;
   rewardPerMember_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakedropInterval?: Maybe<Scalars['String']>;
+  stakedropInterval_not?: Maybe<Scalars['String']>;
+  stakedropInterval_gt?: Maybe<Scalars['String']>;
+  stakedropInterval_lt?: Maybe<Scalars['String']>;
+  stakedropInterval_gte?: Maybe<Scalars['String']>;
+  stakedropInterval_lte?: Maybe<Scalars['String']>;
+  stakedropInterval_in?: Maybe<Array<Scalars['String']>>;
+  stakedropInterval_not_in?: Maybe<Array<Scalars['String']>>;
+  stakedropInterval_contains?: Maybe<Scalars['String']>;
+  stakedropInterval_not_contains?: Maybe<Scalars['String']>;
+  stakedropInterval_starts_with?: Maybe<Scalars['String']>;
+  stakedropInterval_not_starts_with?: Maybe<Scalars['String']>;
+  stakedropInterval_ends_with?: Maybe<Scalars['String']>;
+  stakedropInterval_not_ends_with?: Maybe<Scalars['String']>;
 };
 
 export enum RandomBeaconGroup_OrderBy {
@@ -3255,6 +3962,7 @@ export enum RandomBeaconGroup_OrderBy {
   Size = 'size',
   UniqueMemberCount = 'uniqueMemberCount',
   RewardPerMember = 'rewardPerMember',
+  StakedropInterval = 'stakedropInterval',
   RelayEntries = 'relayEntries'
 }
 
@@ -3265,6 +3973,7 @@ export type RedeemedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   tx: Scalars['Bytes'];
 };
 
@@ -3319,6 +4028,20 @@ export type RedeemedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   tx?: Maybe<Scalars['Bytes']>;
   tx_not?: Maybe<Scalars['Bytes']>;
   tx_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3333,6 +4056,7 @@ export enum RedeemedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   Tx = 'tx'
 }
 
@@ -3344,6 +4068,7 @@ export type RedemptionFeeIncreasedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   redeemerOutputScript: Scalars['Bytes'];
   requestedFee: Scalars['BigInt'];
   utxoValue: Scalars['BigInt'];
@@ -3403,6 +4128,20 @@ export type RedemptionFeeIncreasedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   redeemerOutputScript?: Maybe<Scalars['Bytes']>;
   redeemerOutputScript_not?: Maybe<Scalars['Bytes']>;
   redeemerOutputScript_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3451,6 +4190,7 @@ export enum RedemptionFeeIncreasedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   RedeemerOutputScript = 'redeemerOutputScript',
   RequestedFee = 'requestedFee',
   UtxoValue = 'utxoValue',
@@ -3466,6 +4206,7 @@ export type RedemptionRequestedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   redeemerOutputScript: Scalars['Bytes'];
   requestedFee: Scalars['BigInt'];
   utxoValue: Scalars['BigInt'];
@@ -3525,6 +4266,20 @@ export type RedemptionRequestedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   redeemerOutputScript?: Maybe<Scalars['Bytes']>;
   redeemerOutputScript_not?: Maybe<Scalars['Bytes']>;
   redeemerOutputScript_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3573,6 +4328,7 @@ export enum RedemptionRequestedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   RedeemerOutputScript = 'redeemerOutputScript',
   RequestedFee = 'requestedFee',
   UtxoValue = 'utxoValue',
@@ -3588,6 +4344,7 @@ export type RegisteredPubKeyEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   signingGroupPubkeyX: Scalars['Bytes'];
   signingGroupPubkeyY: Scalars['Bytes'];
 };
@@ -3643,6 +4400,20 @@ export type RegisteredPubKeyEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   signingGroupPubkeyX?: Maybe<Scalars['Bytes']>;
   signingGroupPubkeyX_not?: Maybe<Scalars['Bytes']>;
   signingGroupPubkeyX_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -3663,6 +4434,7 @@ export enum RegisteredPubKeyEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   SigningGroupPubkeyX = 'signingGroupPubkeyX',
   SigningGroupPubkeyY = 'signingGroupPubkeyY'
 }
@@ -3768,6 +4540,7 @@ export type SetupFailedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   /** The reason for the failure, based on which contract call caused the failure state to be entered. */
   reason?: Maybe<SetupFailedReason>;
 };
@@ -3823,6 +4596,20 @@ export type SetupFailedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   reason?: Maybe<SetupFailedReason>;
   reason_not?: Maybe<SetupFailedReason>;
 };
@@ -3833,6 +4620,7 @@ export enum SetupFailedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   Reason = 'reason'
 }
 
@@ -3841,6 +4629,92 @@ export enum SetupFailedReason {
   SignerSetupFailedDepositor = 'SIGNER_SETUP_FAILED_DEPOSITOR',
   FundingTimeout = 'FUNDING_TIMEOUT',
   FundingEcdsaFraud = 'FUNDING_ECDSA_FRAUD'
+}
+
+export type StakeOwnershipTransferredEvent = Event & {
+  __typename?: 'StakeOwnershipTransferredEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type StakeOwnershipTransferredEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum StakeOwnershipTransferredEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 /**
@@ -3990,6 +4864,7 @@ export type StakingContractAuthorizedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   grantManager: Scalars['Bytes'];
   stakingContract: Scalars['Bytes'];
 };
@@ -4045,6 +4920,20 @@ export type StakingContractAuthorizedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   grantManager?: Maybe<Scalars['Bytes']>;
   grantManager_not?: Maybe<Scalars['Bytes']>;
   grantManager_in?: Maybe<Array<Scalars['Bytes']>>;
@@ -4065,6 +4954,7 @@ export enum StakingContractAuthorizedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   GrantManager = 'grantManager',
   StakingContract = 'stakingContract'
 }
@@ -4076,6 +4966,7 @@ export type StartedLiquidationEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   /** The cause of this deposit going into liquidation */
   cause?: Maybe<LiquidationCause>;
 };
@@ -4131,6 +5022,20 @@ export type StartedLiquidationEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   cause?: Maybe<LiquidationCause>;
   cause_not?: Maybe<LiquidationCause>;
 };
@@ -4141,6 +5046,7 @@ export enum StartedLiquidationEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   Cause = 'cause'
 }
 
@@ -4334,6 +5240,8 @@ export type Subscription = {
   liquidatedEvents: Array<LiquidatedEvent>;
   courtesyCalledEvent?: Maybe<CourtesyCalledEvent>;
   courtesyCalledEvents: Array<CourtesyCalledEvent>;
+  exitedCourtesyCallEvent?: Maybe<ExitedCourtesyCallEvent>;
+  exitedCourtesyCallEvents: Array<ExitedCourtesyCallEvent>;
   startedLiquidationEvent?: Maybe<StartedLiquidationEvent>;
   startedLiquidationEvents: Array<StartedLiquidationEvent>;
   deposit?: Maybe<Deposit>;
@@ -4348,6 +5256,28 @@ export type Subscription = {
   users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
+  operatorStakedEvent?: Maybe<OperatorStakedEvent>;
+  operatorStakedEvents: Array<OperatorStakedEvent>;
+  tokensSlashedEvent?: Maybe<TokensSlashedEvent>;
+  tokensSlashedEvents: Array<TokensSlashedEvent>;
+  tokensSeizedEvent?: Maybe<TokensSeizedEvent>;
+  tokensSeizedEvents: Array<TokensSeizedEvent>;
+  undelegatedEvent?: Maybe<UndelegatedEvent>;
+  undelegatedEvents: Array<UndelegatedEvent>;
+  stakeOwnershipTransferredEvent?: Maybe<StakeOwnershipTransferredEvent>;
+  stakeOwnershipTransferredEvents: Array<StakeOwnershipTransferredEvent>;
+  topUpCompletedEvent?: Maybe<TopUpCompletedEvent>;
+  topUpCompletedEvents: Array<TopUpCompletedEvent>;
+  topUpInitiatedEvent?: Maybe<TopUpInitiatedEvent>;
+  topUpInitiatedEvents: Array<TopUpInitiatedEvent>;
+  bondReassignedEvent?: Maybe<BondReassignedEvent>;
+  bondReassignedEvents: Array<BondReassignedEvent>;
+  bondSeizedEvent?: Maybe<BondSeizedEvent>;
+  bondSeizedEvents: Array<BondSeizedEvent>;
+  unbondedValueDepositedEvent?: Maybe<UnbondedValueDepositedEvent>;
+  unbondedValueDepositedEvents: Array<UnbondedValueDepositedEvent>;
+  unbondedValueWithdrawnEvent?: Maybe<UnbondedValueWithdrawnEvent>;
+  unbondedValueWithdrawnEvents: Array<UnbondedValueWithdrawnEvent>;
   lock?: Maybe<Lock>;
   locks: Array<Lock>;
   bond?: Maybe<Bond>;
@@ -4581,6 +5511,22 @@ export type SubscriptionCourtesyCalledEventsArgs = {
 };
 
 
+export type SubscriptionExitedCourtesyCallEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionExitedCourtesyCallEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ExitedCourtesyCallEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<ExitedCourtesyCallEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
 export type SubscriptionStartedLiquidationEventArgs = {
   id: Scalars['ID'];
   block?: Maybe<Block_Height>;
@@ -4689,6 +5635,182 @@ export type SubscriptionOperatorsArgs = {
   orderBy?: Maybe<Operator_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Operator_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionOperatorStakedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionOperatorStakedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<OperatorStakedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<OperatorStakedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokensSlashedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokensSlashedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokensSlashedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokensSlashedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokensSeizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTokensSeizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TokensSeizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TokensSeizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUndelegatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUndelegatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UndelegatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UndelegatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakeOwnershipTransferredEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionStakeOwnershipTransferredEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<StakeOwnershipTransferredEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<StakeOwnershipTransferredEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTopUpCompletedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTopUpCompletedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TopUpCompletedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TopUpCompletedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTopUpInitiatedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionTopUpInitiatedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<TopUpInitiatedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<TopUpInitiatedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionBondReassignedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionBondReassignedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<BondReassignedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<BondReassignedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionBondSeizedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionBondSeizedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<BondSeizedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<BondSeizedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUnbondedValueDepositedEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUnbondedValueDepositedEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UnbondedValueDepositedEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UnbondedValueDepositedEvent_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUnbondedValueWithdrawnEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionUnbondedValueWithdrawnEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<UnbondedValueWithdrawnEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<UnbondedValueWithdrawnEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -5075,6 +6197,7 @@ export type TokenGrantCreatedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   grantID: Scalars['BigInt'];
 };
 
@@ -5129,6 +6252,20 @@ export type TokenGrantCreatedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   grantID?: Maybe<Scalars['BigInt']>;
   grantID_not?: Maybe<Scalars['BigInt']>;
   grantID_gt?: Maybe<Scalars['BigInt']>;
@@ -5145,6 +6282,7 @@ export enum TokenGrantCreatedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   GrantId = 'grantID'
 }
 
@@ -5155,6 +6293,7 @@ export type TokenGrantRevokedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   grantID: Scalars['BigInt'];
 };
 
@@ -5209,6 +6348,20 @@ export type TokenGrantRevokedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   grantID?: Maybe<Scalars['BigInt']>;
   grantID_not?: Maybe<Scalars['BigInt']>;
   grantID_gt?: Maybe<Scalars['BigInt']>;
@@ -5225,6 +6378,7 @@ export enum TokenGrantRevokedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   GrantId = 'grantID'
 }
 
@@ -5235,9 +6389,9 @@ export type TokenGrantStakedEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   grantID: Scalars['BigInt'];
   amount: Scalars['BigInt'];
-  operator: Scalars['Bytes'];
 };
 
 export type TokenGrantStakedEvent_Filter = {
@@ -5291,6 +6445,20 @@ export type TokenGrantStakedEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   grantID?: Maybe<Scalars['BigInt']>;
   grantID_not?: Maybe<Scalars['BigInt']>;
   grantID_gt?: Maybe<Scalars['BigInt']>;
@@ -5307,12 +6475,6 @@ export type TokenGrantStakedEvent_Filter = {
   amount_lte?: Maybe<Scalars['BigInt']>;
   amount_in?: Maybe<Array<Scalars['BigInt']>>;
   amount_not_in?: Maybe<Array<Scalars['BigInt']>>;
-  operator?: Maybe<Scalars['Bytes']>;
-  operator_not?: Maybe<Scalars['Bytes']>;
-  operator_in?: Maybe<Array<Scalars['Bytes']>>;
-  operator_not_in?: Maybe<Array<Scalars['Bytes']>>;
-  operator_contains?: Maybe<Scalars['Bytes']>;
-  operator_not_contains?: Maybe<Scalars['Bytes']>;
 };
 
 export enum TokenGrantStakedEvent_OrderBy {
@@ -5321,9 +6483,9 @@ export enum TokenGrantStakedEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   GrantId = 'grantID',
-  Amount = 'amount',
-  Operator = 'operator'
+  Amount = 'amount'
 }
 
 export type TokenGrantWithdrawnEvent = Event & {
@@ -5333,6 +6495,7 @@ export type TokenGrantWithdrawnEvent = Event & {
   transactionHash: Scalars['String'];
   timestamp: Scalars['BigInt'];
   deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
   grantID: Scalars['BigInt'];
   amount: Scalars['BigInt'];
 };
@@ -5388,6 +6551,20 @@ export type TokenGrantWithdrawnEvent_Filter = {
   deposit_not_starts_with?: Maybe<Scalars['String']>;
   deposit_ends_with?: Maybe<Scalars['String']>;
   deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
   grantID?: Maybe<Scalars['BigInt']>;
   grantID_not?: Maybe<Scalars['BigInt']>;
   grantID_gt?: Maybe<Scalars['BigInt']>;
@@ -5412,8 +6589,611 @@ export enum TokenGrantWithdrawnEvent_OrderBy {
   TransactionHash = 'transactionHash',
   Timestamp = 'timestamp',
   Deposit = 'deposit',
+  Operator = 'operator',
   GrantId = 'grantID',
   Amount = 'amount'
+}
+
+export type TokensSeizedEvent = Event & {
+  __typename?: 'TokensSeizedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type TokensSeizedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum TokensSeizedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type TokensSlashedEvent = Event & {
+  __typename?: 'TokensSlashedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type TokensSlashedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum TokensSlashedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type TopUpCompletedEvent = Event & {
+  __typename?: 'TopUpCompletedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type TopUpCompletedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum TopUpCompletedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type TopUpInitiatedEvent = Event & {
+  __typename?: 'TopUpInitiatedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type TopUpInitiatedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum TopUpInitiatedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type UnbondedValueDepositedEvent = Event & {
+  __typename?: 'UnbondedValueDepositedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type UnbondedValueDepositedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum UnbondedValueDepositedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type UnbondedValueWithdrawnEvent = Event & {
+  __typename?: 'UnbondedValueWithdrawnEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type UnbondedValueWithdrawnEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum UnbondedValueWithdrawnEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
+}
+
+export type UndelegatedEvent = Event & {
+  __typename?: 'UndelegatedEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+};
+
+export type UndelegatedEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+};
+
+export enum UndelegatedEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator'
 }
 
 /** An actor using the minting and redeeming facilities. */
@@ -5584,11 +7364,20 @@ export type GetDepositLogsQueryVariables = Exact<{
 export type GetDepositLogsQuery = (
   { __typename?: 'Query' }
   & { events: Array<(
+    { __typename: 'BondReassignedEvent' }
+    & Pick<BondReassignedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'BondSeizedEvent' }
+    & Pick<BondSeizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'CourtesyCalledEvent' }
     & Pick<CourtesyCalledEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
     { __typename: 'CreatedEvent' }
     & Pick<CreatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'ExitedCourtesyCallEvent' }
+    & Pick<ExitedCourtesyCallEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
     { __typename: 'FundedEvent' }
     & Pick<FundedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
@@ -5598,6 +7387,13 @@ export type GetDepositLogsQuery = (
   ) | (
     { __typename: 'LiquidatedEvent' }
     & Pick<LiquidatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+    & { deposit?: Maybe<(
+      { __typename?: 'Deposit' }
+      & AuctionDetailsFragment
+    )> }
+  ) | (
+    { __typename: 'OperatorStakedEvent' }
+    & Pick<OperatorStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
     { __typename: 'RedeemedEvent' }
     & Pick<RedeemedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
@@ -5627,6 +7423,9 @@ export type GetDepositLogsQuery = (
       )> }
     )> }
   ) | (
+    { __typename: 'StakeOwnershipTransferredEvent' }
+    & Pick<StakeOwnershipTransferredEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'StakingContractAuthorizedEvent' }
     & Pick<StakingContractAuthorizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
@@ -5644,6 +7443,27 @@ export type GetDepositLogsQuery = (
   ) | (
     { __typename: 'TokenGrantWithdrawnEvent' }
     & Pick<TokenGrantWithdrawnEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokensSeizedEvent' }
+    & Pick<TokensSeizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokensSlashedEvent' }
+    & Pick<TokensSlashedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TopUpCompletedEvent' }
+    & Pick<TopUpCompletedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TopUpInitiatedEvent' }
+    & Pick<TopUpInitiatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UnbondedValueDepositedEvent' }
+    & Pick<UnbondedValueDepositedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UnbondedValueWithdrawnEvent' }
+    & Pick<UnbondedValueWithdrawnEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UndelegatedEvent' }
+    & Pick<UndelegatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   )> }
 );
 
@@ -5872,6 +7692,18 @@ export type NiceStateLabelFragment = (
   )> }
 );
 
+export type AuctionDetailsFragment = (
+  { __typename?: 'Deposit' }
+  & Pick<Deposit, 'initialCollateralizedPercent'>
+  & { depositLiquidation?: Maybe<(
+    { __typename?: 'DepositLiquidation' }
+    & Pick<DepositLiquidation, 'liquidationInitiated' | 'liquidatedAt'>
+  )>, bondedECDSAKeep?: Maybe<(
+    { __typename?: 'BondedECDSAKeep' }
+    & Pick<BondedEcdsaKeep, 'totalBondAmount'>
+  )> }
+);
+
 export const ChangeFragmentDoc = gql`
     fragment Change on GovernanceChange {
   type
@@ -5894,6 +7726,18 @@ export const NiceStateLabelFragmentDoc = gql`
   }
   currentStateTimesOutAt
   updatedAt
+}
+    `;
+export const AuctionDetailsFragmentDoc = gql`
+    fragment AuctionDetails on Deposit {
+  initialCollateralizedPercent
+  depositLiquidation {
+    liquidationInitiated
+    liquidatedAt
+  }
+  bondedECDSAKeep {
+    totalBondAmount
+  }
 }
     `;
 export const WatchPriceDocument = gql`
@@ -6124,6 +7968,11 @@ export const GetDepositLogsDocument = gql`
     ... on StartedLiquidationEvent {
       cause
     }
+    ... on LiquidatedEvent {
+      deposit {
+        ...AuctionDetails
+      }
+    }
     ... on SetupFailedEvent {
       reason
       deposit {
@@ -6139,7 +7988,7 @@ export const GetDepositLogsDocument = gql`
     }
   }
 }
-    `;
+    ${AuctionDetailsFragmentDoc}`;
 
 /**
  * __useGetDepositLogsQuery__

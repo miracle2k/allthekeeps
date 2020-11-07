@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {NiceStateLabelFragment} from "../generated/graphql";
 import {dateTimeFrom} from "../components/FormattedTime";
 import {useInterval} from "./useInterval";
-import {useIsTimeTravel, useTimeTravelBlock} from "../TimeTravel";
+import {useIsTimeTravel} from "../TimeTravel";
 
 export const NiceStateLabel = gql`
     fragment NiceStateLabel on Deposit {

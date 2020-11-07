@@ -6,6 +6,8 @@ import BitcoinHelpers from "../../utils/BitcoinHelpers";
 import { gql } from '@apollo/client';
 import {GetDepositLogsQuery} from "../../generated/graphql";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
+import {AuctionDetailsFragment, getAuctionDetails, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
+import {ETHValue} from "../../components/ETHValue";
 
 export function Log(props: {
   depositId: string
@@ -29,6 +31,12 @@ export function Log(props: {
                   cause
               },
 
+              ...on LiquidatedEvent {
+                  deposit {
+                      ...AuctionDetails
+                  }
+              },
+
               ...on SetupFailedEvent {
                   reason,
                   deposit {
@@ -40,6 +48,8 @@ export function Log(props: {
               }
           }
       }
+      
+      ${AuctionDetailsFragment}
   `, {variables: {depositId: props.depositId}});
 
   if (loading) return <p>Loading...</p>;
@@ -201,8 +211,12 @@ function StartedLiquidationEvent(props: {
 function LiquidatedEvent(props: {
   event: any
 }) {
+  const details = getAuctionDetailsFromDeposit(props.event.deposit);
   return <div>
     <LogTitle>Liquidated</LogTitle>
+    <div>
+      <Address address={props.event.submitter}/> bought {details.percentage}% (<ETHValue wei={details.value} /> ETH) of the collateral.
+    </div>
   </div>
 }
 
