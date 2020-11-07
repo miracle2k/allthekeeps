@@ -72,7 +72,14 @@ function LogEntry(props: {
   } as any)[event.__typename] || UnknownEvent;
 
 
-  return <div style={{marginBottom: '20px'}}>
+  return <div className={css`
+    &:not(:last-child) {
+    
+       margin-bottom: 20px;
+       border-bottom: 1px dotted silver;
+       padding-bottom: 20px;
+    }     
+   `}>
     <div className={css`    
       font-size: 0.85em;
       margin-bottom: 0.4em;
@@ -103,6 +110,13 @@ function CreatedEvent(props: {
 }) {
   return <div>
     <LogTitle>Deposit created</LogTitle>
+    <div>
+      <Address address={props.event.submitter}/> created a new deposit.
+    </div>
+    <div style={{color: 'gray', fontSize: '0.9em', marginTop: '7px'}}>
+      A random group of nodes (called the signers) will now be selected to collateralize and hold the
+      Bitcoin.
+    </div>
   </div>
 }
 
@@ -117,7 +131,12 @@ function RegisteredPubKeyEvent(props: {
 
   return <div>
     <LogTitle>Bitcoin address provided</LogTitle>
-    <div>Signers have provided a Bitcoin address to receive the funds: <BitcoinAddress address={address}/></div>
+    <div>
+      Signers have provided a Bitcoin address to receive the funds: <BitcoinAddress address={address}/>
+    </div>
+    <div style={{color: 'gray', fontSize: '0.9em', marginTop: '7px'}}>
+      The depositor must now send the chosen amount of Bitcoin to this address, then provide proof that they did so.
+    </div>
   </div>
 }
 
@@ -126,6 +145,9 @@ function FundedEvent(props: {
 }) {
   return <div>
     <LogTitle>Funded</LogTitle>
+    <div>
+      Proof has been submitted that the Bitcoin have been sent to the address provided, and the deposit is now active.
+    </div>
   </div>
 }
 
@@ -192,14 +214,13 @@ function CourtesyCalledEvent(props: {
     <LogTitle>Courtesy Call</LogTitle>
     {/*submitted by XXX */}
     <div>
-      This deposit has been notified that is undercollateralized. Anyone is now able to start
-      the redemption process. If the deposit is not redeemed within 6 hours, or regains the
-      required collaterialization ratio, liquidation proceedings will be started.
+      The deposit has been notified that is undercollateralized.
     </div>
-    {/*<div>*/}
-    {/*  The value of the backing collateral has fallen, and now covers less than the required 125% of*/}
-    {/*  the Bitcoin deposited.*/}
-    {/*</div>*/}
+    <div style={{color: 'gray', fontSize: '0.9em', marginTop: '7px'}}>
+      The value of the backing collateral has fallen, and now covers less than the required 125% of
+      the Bitcoin deposited. Anyone is now able to start the redemption process. If the deposit is not redeemed
+      within 6 hours, or regains the required collaterialization ratio, liquidation proceedings will be started.
+    </div>
   </div>
 }
 
