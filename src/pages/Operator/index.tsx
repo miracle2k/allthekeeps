@@ -12,6 +12,7 @@ import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
 import {Properties} from "./Properties";
+import {OperatorLog} from "./Log";
 
 
 const OPERATOR_QUERY = gql`
@@ -135,6 +136,9 @@ export function Content() {
         <Tab>
           Beacon Groups
         </Tab>
+        <Tab>
+          Log
+        </Tab>
       </TabList>
 
       <TabPanel>
@@ -147,6 +151,12 @@ export function Content() {
         <Paper padding>
           <h3 style={{marginTop: 0}}>Random Beacon Groups</h3>
           <BeaconGroupsTable memberships={operator.beaconGroupMemberships} />
+        </Paper>
+      </TabPanel>
+      <TabPanel>
+        <Paper padding>
+          <h3 style={{marginTop: 0}}>Log</h3>
+          <OperatorLog operatorId={operatorId} />
         </Paper>
       </TabPanel>
     </Tabs>

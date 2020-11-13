@@ -35997,6 +35997,29 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "_meta",
+            "description": "Access to subgraph metadata",
+            "args": [
+              {
+                "name": "block",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "_Meta_",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -57086,6 +57109,29 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "_meta",
+            "description": "Access to subgraph metadata",
+            "args": [
+              {
+                "name": "block",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "Block_height",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "_Meta_",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -69166,6 +69212,88 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "_Block_",
+        "description": null,
+        "fields": [
+          {
+            "name": "hash",
+            "description": "The hash of the block",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Bytes",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "number",
+            "description": "The block number",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "_Meta_",
+        "description": "The type for the top-level _meta field",
+        "fields": [
+          {
+            "name": "block",
+            "description": "Information about a specific subgraph block. The hash of the block\nwill be null if the _meta field has a block constraint that asks for\na block number. It will be filled if the _meta field has no block constraint\nand therefore asks for the latest  block",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "_Block_",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deployment",
+            "description": "The deployment ID",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
         "possibleTypes": null
       },
       {

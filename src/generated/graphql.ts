@@ -2965,6 +2965,8 @@ export type Query = {
   tokenGrantRevokedEvents: Array<TokenGrantRevokedEvent>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  /** Access to subgraph metadata */
+  _meta?: Maybe<_Meta_>;
 };
 
 
@@ -3764,6 +3766,11 @@ export type QueryEventsArgs = {
   orderBy?: Maybe<Event_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Event_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type Query_MetaArgs = {
   block?: Maybe<Block_Height>;
 };
 
@@ -5316,6 +5323,8 @@ export type Subscription = {
   tokenGrantRevokedEvents: Array<TokenGrantRevokedEvent>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  /** Access to subgraph metadata */
+  _meta?: Maybe<_Meta_>;
 };
 
 
@@ -6115,6 +6124,11 @@ export type SubscriptionEventsArgs = {
   orderBy?: Maybe<Event_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Event_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type Subscription_MetaArgs = {
   block?: Maybe<Block_Height>;
 };
 
@@ -7269,6 +7283,28 @@ export enum User_OrderBy {
   NumOwnDepositsRedeemed = 'numOwnDepositsRedeemed'
 }
 
+export type _Block_ = {
+  __typename?: '_Block_';
+  /** The hash of the block */
+  hash?: Maybe<Scalars['Bytes']>;
+  /** The block number */
+  number: Scalars['Int'];
+};
+
+/** The type for the top-level _meta field */
+export type _Meta_ = {
+  __typename?: '_Meta_';
+  /**
+   * Information about a specific subgraph block. The hash of the block
+   * will be null if the _meta field has a block constraint that asks for
+   * a block number. It will be filled if the _meta field has no block constraint
+   * and therefore asks for the latest  block
+   */
+  block: _Block_;
+  /** The deployment ID */
+  deployment: Scalars['String'];
+};
+
 export type WatchPriceSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -7481,7 +7517,7 @@ export type GetDepositsQuery = (
   { __typename?: 'Query' }
   & { deposits: Array<(
     { __typename?: 'Deposit' }
-    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'currentStateTimesOutAt' | 'creator' | 'lastActor' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
+    & Pick<Deposit, 'id' | 'contractAddress' | 'lotSizeSatoshis' | 'currentState' | 'keepAddress' | 'updatedAt' | 'createdAt' | 'redemptionStartedAt' | 'currentStateTimesOutAt' | 'creator' | 'lastActor' | 'filter_redeemableAsOf' | 'undercollateralizedThresholdPercent' | 'severelyUndercollateralizedThresholdPercent'>
     & { tdtToken: (
       { __typename?: 'TBTCDepositToken' }
       & Pick<TbtcDepositToken, 'owner'>
@@ -7588,6 +7624,103 @@ export type GetOperatorKeepsQuery = (
         & NiceStateLabelFragment
       ) }
     )>> }
+  )> }
+);
+
+export type GetOperatorLogQueryVariables = Exact<{
+  id: Scalars['String'];
+  orderBy?: Maybe<BondedEcdsaKeep_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  block?: Maybe<Block_Height>;
+}>;
+
+
+export type GetOperatorLogQuery = (
+  { __typename?: 'Query' }
+  & { events: Array<(
+    { __typename: 'BondReassignedEvent' }
+    & Pick<BondReassignedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'BondSeizedEvent' }
+    & Pick<BondSeizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'CourtesyCalledEvent' }
+    & Pick<CourtesyCalledEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'CreatedEvent' }
+    & Pick<CreatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'ExitedCourtesyCallEvent' }
+    & Pick<ExitedCourtesyCallEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'FundedEvent' }
+    & Pick<FundedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'GotRedemptionSignatureEvent' }
+    & Pick<GotRedemptionSignatureEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'LiquidatedEvent' }
+    & Pick<LiquidatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'OperatorStakedEvent' }
+    & Pick<OperatorStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'RedeemedEvent' }
+    & Pick<RedeemedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'RedemptionFeeIncreasedEvent' }
+    & Pick<RedemptionFeeIncreasedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'RedemptionRequestedEvent' }
+    & Pick<RedemptionRequestedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'RegisteredPubKeyEvent' }
+    & Pick<RegisteredPubKeyEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'SetupFailedEvent' }
+    & Pick<SetupFailedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'StakeOwnershipTransferredEvent' }
+    & Pick<StakeOwnershipTransferredEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'StakingContractAuthorizedEvent' }
+    & Pick<StakingContractAuthorizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'StartedLiquidationEvent' }
+    & Pick<StartedLiquidationEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantCreatedEvent' }
+    & Pick<TokenGrantCreatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantRevokedEvent' }
+    & Pick<TokenGrantRevokedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantStakedEvent' }
+    & Pick<TokenGrantStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokenGrantWithdrawnEvent' }
+    & Pick<TokenGrantWithdrawnEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokensSeizedEvent' }
+    & Pick<TokensSeizedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TokensSlashedEvent' }
+    & Pick<TokensSlashedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TopUpCompletedEvent' }
+    & Pick<TopUpCompletedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'TopUpInitiatedEvent' }
+    & Pick<TopUpInitiatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UnbondedValueDepositedEvent' }
+    & Pick<UnbondedValueDepositedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UnbondedValueWithdrawnEvent' }
+    & Pick<UnbondedValueWithdrawnEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
+    { __typename: 'UndelegatedEvent' }
+    & Pick<UndelegatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   )> }
 );
 
@@ -8033,6 +8166,7 @@ export const GetDepositsDocument = gql`
     tdtToken {
       owner
     }
+    filter_redeemableAsOf
     undercollateralizedThresholdPercent
     severelyUndercollateralizedThresholdPercent
     bondedECDSAKeep {
@@ -8253,6 +8387,46 @@ export function useGetOperatorKeepsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetOperatorKeepsQueryHookResult = ReturnType<typeof useGetOperatorKeepsQuery>;
 export type GetOperatorKeepsLazyQueryHookResult = ReturnType<typeof useGetOperatorKeepsLazyQuery>;
 export type GetOperatorKeepsQueryResult = Apollo.QueryResult<GetOperatorKeepsQuery, GetOperatorKeepsQueryVariables>;
+export const GetOperatorLogDocument = gql`
+    query GetOperatorLog($id: String!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
+  events(where: {operator: $id}, orderBy: timestamp, orderDirection: desc, block: $block) {
+    __typename
+    id
+    transactionHash
+    submitter
+    timestamp
+  }
+}
+    `;
+
+/**
+ * __useGetOperatorLogQuery__
+ *
+ * To run a query within a React component, call `useGetOperatorLogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperatorLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperatorLogQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      orderBy: // value for 'orderBy'
+ *      orderDirection: // value for 'orderDirection'
+ *      block: // value for 'block'
+ *   },
+ * });
+ */
+export function useGetOperatorLogQuery(baseOptions?: Apollo.QueryHookOptions<GetOperatorLogQuery, GetOperatorLogQueryVariables>) {
+        return Apollo.useQuery<GetOperatorLogQuery, GetOperatorLogQueryVariables>(GetOperatorLogDocument, baseOptions);
+      }
+export function useGetOperatorLogLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOperatorLogQuery, GetOperatorLogQueryVariables>) {
+          return Apollo.useLazyQuery<GetOperatorLogQuery, GetOperatorLogQueryVariables>(GetOperatorLogDocument, baseOptions);
+        }
+export type GetOperatorLogQueryHookResult = ReturnType<typeof useGetOperatorLogQuery>;
+export type GetOperatorLogLazyQueryHookResult = ReturnType<typeof useGetOperatorLogLazyQuery>;
+export type GetOperatorLogQueryResult = Apollo.QueryResult<GetOperatorLogQuery, GetOperatorLogQueryVariables>;
 export const GetOperatorPropertiesDocument = gql`
     query GetOperatorProperties($id: ID!, $address: Bytes!) {
   operator(id: $id) {

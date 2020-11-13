@@ -1,13 +1,12 @@
-import {css} from "emotion";
-import {TimeToNow} from "../../components/FormattedTime";
-import {Address, BitcoinAddress, Transaction} from "../../components/Address";
+import {Address, BitcoinAddress} from "../../components/Address";
 import React from "react";
 import BitcoinHelpers from "../../utils/BitcoinHelpers";
 import { gql } from '@apollo/client';
 import {GetDepositLogsQuery} from "../../generated/graphql";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
-import {AuctionDetailsFragment, getAuctionDetails, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
+import {AuctionDetailsFragment, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
 import {ETHValue} from "../../components/ETHValue";
+import {LogTitle, LogEntry} from "../../components/Log";
 
 export function Log(props: {
   depositId: string
@@ -57,63 +56,26 @@ export function Log(props: {
 
   return <>
     {data!.events.map((logEntry: any) => {
-      return <LogEntry key={logEntry.id} event={logEntry}/>
+      return <LogEntry key={logEntry.id} event={logEntry} Components={LogComponents} />
     })}
   </>
 }
 
-function LogEntry(props: {
-  event: any
-}) {
-  const {event} = props;
 
-  let Component = ({
-    'CreatedEvent': CreatedEvent,
-    'RegisteredPubKeyEvent': RegisteredPubKeyEvent,
-    'FundedEvent': FundedEvent,
-    'StartedLiquidationEvent': StartedLiquidationEvent,
-    'RedemptionRequestedEvent': RedemptionRequestedEvent,
-    'GotRedemptionSignatureEvent': GotRedemptionSignatureEvent,
-    'RedeemedEvent': RedeemedEvent,
-    'SetupFailedEvent': SetupFailedEvent,
-    'LiquidatedEvent': LiquidatedEvent,
-    'CourtesyCalledEvent': CourtesyCalledEvent,
-    'ExitedCourtesyCallEvent': ExitedCourtesyCallEvent,
-  } as any)[event.__typename] || UnknownEvent;
+const LogComponents = {
+  'CreatedEvent': CreatedEvent,
+  'RegisteredPubKeyEvent': RegisteredPubKeyEvent,
+  'FundedEvent': FundedEvent,
+  'StartedLiquidationEvent': StartedLiquidationEvent,
+  'RedemptionRequestedEvent': RedemptionRequestedEvent,
+  'GotRedemptionSignatureEvent': GotRedemptionSignatureEvent,
+  'RedeemedEvent': RedeemedEvent,
+  'SetupFailedEvent': SetupFailedEvent,
+  'LiquidatedEvent': LiquidatedEvent,
+  'CourtesyCalledEvent': CourtesyCalledEvent,
+  'ExitedCourtesyCallEvent': ExitedCourtesyCallEvent,
+};
 
-
-  return <div className={css`
-    &:not(:last-child) {
-    
-       margin-bottom: 20px;
-       border-bottom: 1px dotted silver;
-       padding-bottom: 20px;
-    }     
-   `}>
-    <div className={css`    
-      font-size: 0.85em;
-      margin-bottom: 0.4em;
-      color: gray;
-    `}>
-      <TimeToNow time={event.timestamp}/> @ <Transaction tx={event.transactionHash}/> by <Address address={event.submitter}/>
-    </div>
-    <div>
-      <Component event={event}/>
-    </div>
-  </div>
-}
-
-function LogTitle(props: {
-  children: any
-}) {
-  return <div style={{marginBottom: '0.2em'}}><strong>{props.children}</strong></div>;
-}
-
-function UnknownEvent(props: {
-  event: any
-}) {
-  return <div>Unknown Event: {props.event.__typename}</div>
-}
 
 function CreatedEvent(props: {
   event: any
