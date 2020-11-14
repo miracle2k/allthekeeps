@@ -6,6 +6,8 @@ import {useQueryWithTimeTravel} from "../../TimeTravel";
 import {GetOperatorKeepsQuery, GetOperatorLogQuery} from "../../generated/graphql";
 import {LogEntry, LogTitle} from "../../components/Log";
 import {Address} from "../../components/Address";
+import {ETHValue} from "../../components/ETHValue";
+import {keepFormatter} from "../../components/KeepValue";
 
 const OPERATOR_LOG_QUERY = gql`
     query GetOperatorLog($id: String!, $orderBy: BondedECDSAKeep_orderBy, $orderDirection: OrderDirection, $block: Block_height) {
@@ -14,7 +16,35 @@ const OPERATOR_LOG_QUERY = gql`
             id,
             transactionHash,
             submitter,
-            timestamp
+            timestamp,
+            
+            ... on UnbondedValueDepositedEvent {
+                amount,
+                beneficiary
+            },
+
+            ... on UnbondedValueWithdrawnEvent {
+                amount,
+                beneficiary
+            },
+            
+            ... on BondSeizedEvent {
+                amount,
+                destination,
+                referenceId
+            },
+            
+            ...on TokensSeizedEvent {
+                amount
+            },
+
+            ...on TopUpInitiatedEvent {
+                amount
+            }
+
+            ...on TopUpCompletedEvent {
+                newAmount
+            }
         }
     }
 
@@ -51,7 +81,8 @@ const LogComponents = {
   'TokensSeizedEvent': TokensSeizedEvent,
   'TopUpInitiatedEvent': TopUpInitiatedEvent,
   'TopUpCompletedEvent': TopUpCompletedEvent,
-  'UndelegatedEvent': UndelegatedEvent
+  'UndelegatedEvent': UndelegatedEvent,
+  'OperatorStakedEvent': OperatorStakedEvent,
 }
 
 
@@ -60,6 +91,9 @@ function UnbondedValueDepositedEvent(props: {
 }) {
   return <div>
     <LogTitle>ETH Collateral Deposited</LogTitle>
+    <p>
+      <ETHValue wei={props.event.amount} /> ETH of additional collateral was deposited.
+    </p>
   </div>
 }
 
@@ -68,6 +102,9 @@ function UnbondedValueWithdrawnEvent(props: {
 }) {
   return <div>
     <LogTitle>ETH Collateral Withdrawn</LogTitle>
+    <p>
+      <ETHValue wei={props.event.amount} /> ETH of collateral was withdrawn.
+    </p>
   </div>
 }
 
@@ -76,6 +113,9 @@ function BondSeizedEvent(props: {
 }) {
   return <div>
     <LogTitle>Bond Seized</LogTitle>
+    <p>
+      <ETHValue wei={props.event.amount} /> ETH of bonded collateral was seized by the system (and sent to <Address address={props.event.destination} />).
+    </p>
   </div>
 }
 
@@ -87,11 +127,22 @@ function TokenGrantStakedEvent(props: {
   </div>
 }
 
+function OperatorStakedEvent(props: {
+  event: any
+}) {
+  return <div>
+    <LogTitle>Staked</LogTitle>
+  </div>
+}
+
 function TopUpInitiatedEvent(props: {
   event: any
 }) {
   return <div>
     <LogTitle>Topup initiated</LogTitle>
+    <p>
+      A topup of {keepFormatter.format(props.event.amount / (10**18))} KEEP was initiated.
+    </p>
   </div>
 }
 
@@ -100,6 +151,9 @@ function TopUpCompletedEvent(props: {
 }) {
   return <div>
     <LogTitle>Topup Completed</LogTitle>
+    <p>
+      The topup completed. The total amount staked is now {keepFormatter.format(props.event.newAmount / (10**18))} KEEP.
+    </p>
   </div>
 }
 
@@ -108,6 +162,9 @@ function TokensSeizedEvent(props: {
 }) {
   return <div>
     <LogTitle>Tokens Seized</LogTitle>
+    <p>
+      {keepFormatter.format(props.event.amount / (10**18))} KEEP were seized.
+    </p>
   </div>
 }
 
