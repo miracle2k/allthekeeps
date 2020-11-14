@@ -29,6 +29,8 @@ const KEEPS_QUERY = gql`
                 id,
                 # TODO: How much is bonded in this keep for this operator?
                 totalBondAmount,
+                stakedropRewardStatus,
+                stakedropInterval { number }
                 deposit {
                     id,
                     contractAddress,
@@ -110,6 +112,9 @@ export function KeepsTable(props: {
             Bond
           </SortableHeader>
         </th>
+        <th>
+          Stakedrop
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -171,9 +176,23 @@ export function KeepsTable(props: {
               fontSize: '0.8em'
             }}>ETH</span> {formatter.format(getWeiAsEth(keep.totalBondAmount / 3))}
           </td>
+
+          <td>
+            <RewardStatus keep={keep} />
+          </td>
         </tr>
       })}
       </tbody>
     </Table>
   </>;
+}
+
+
+function RewardStatus(props: {
+  keep: any
+}) {
+  if (props.keep.stakedropRewardStatus === 'DISPENSED') {
+    return <img style={{width: 14, height: 14}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAADq0lEQVRYhb2XTU9iZxTHf+fyGotCIn2JnYgSp9hYg4WrZddv0MUkk3HRtF100k1XTRdNP0CTWbTpopum+0ndzFdoMnFhEDBkUtPUQSN0IKOYVBBE7/U+s1Cub4AgxP/uuec8z/9/zz3nOecKPSKTyYydnJzMaZr2ATB09rhuWda/IrKm63qpl/OkG6eVlZV3nU7nN8Ai8OEN7n8DSy6X6/doNLrTl4BsNvuWYRjfAj8CI92IvYAa8Jtpmj8lEolKzwJSqdQnwDNgrEfiq3illHowPz+fbGXUWj1Mp9OPgL8GQA7wvog8X11d/aKV8VoEUqnUQ2Cpla1PKOBzXdefthWQTqfjSqnnnGf3oNFQSn168XPYApaXl4e9Xu8/DCbsnfCfy+WajkajNbiQA16v9/s7IAe4ZxjGd82FgF3nLwHfHQgAqLpcrqloNLqjAZxdMgMhFxGCwSCRSITZ2VkCgUArt2HTNL+G80+wOAhyr9fL9PQ0oVAIn8+H2+1mZKT1/aWUWgSQTCYzZlnWq37JA4EAk5OTaNr51VKpVMjn8xwdHbXUYFnWmNOyrI/7JR8dHSUUCiFyWlT1ep1CocDBwUGnbeJwOOacQLidh8/nY2JiglqtRqFQwDTNaz7BYJBQKGSvd3d3KRQKKKVuFG5Z1pQT8Hd6M4/Hg8fjwefzkcvlqNfrtt3v9zM+Pm6vi8UipVJP3djfshc0sbOzg2EYALjdbiKRCH7/qd6hoSHC4bAd9lKp1Cs5cFoF++2Mh4eHrK+vU61WT501jXA4jN/vJxwO2wlXLpcpFou9k2va/xqw2cnJNE02NjbY29uzRUxNTeHxeACoVqvk8/meyc+Q04DMTV5KKba3t6lULs8VpmmytbXVVcK1OtYwjDXtbIZb70bE5ubmpZouFot2jtwCLxKJxOtmEv7ZzY6TkxNyuRyNRoP9/X3K5fJtyW1OAchkMm9blvWS3ue+26JqmuZ9OwKxWGxXRH65I3KUUk8SicRruDwP/Az03RO6QN7tdv/aXNgCZmZmDoDPgHqrXQNCQyn1sDkNXRIAoOt6BnjM6QA5aCgR+erqeH7tKtZ1/amILDLYSDSUUl/G4/Glq4a2o3cymZzXNO0ZcK9P8ryIPIjH4+lWxrbNaGFhYRWIAD/QoV90QA140mg0PmpHDl3+fGSz2XeOj48fi8gjYLaDqwJeiMiSiPwRi8V2bzq757+fZDL5nsPhmFNK3ReRYQClVFVENgzDWGvWd7d4A5n7W1opmmjJAAAAAElFTkSuQmCC" />;
+  }
+  return null;
 }

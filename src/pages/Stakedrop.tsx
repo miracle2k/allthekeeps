@@ -23,7 +23,15 @@ const STAKEDROP_QUERY = gql`
             keepCount,
             beaconGroupCount,
             allocationECDSA,
-            allocationBeacon
+            allocationBeacon,
+        },
+        stats: statsRecord(id: "current") {
+            totalStakedropECDSARewards,
+            unallocatedStakedropECDSARewards,
+            totalStakedropBeaconRewards,
+            unallocatedStakedropBeaconRewards,
+            dispensedStakedropBeaconRewards,
+            dispensedStakedropECDSARewards
         }
     }
 `;

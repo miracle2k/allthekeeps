@@ -13,6 +13,8 @@ import {BeaconGroupsTable} from "./BeaconGroupTable";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
 import {Properties} from "./Properties";
 import {OperatorLog} from "./Log";
+import {KeepTag} from "../../components/CurrencyTags";
+import {keepFormatter} from "../../components/KeepValue";
 
 
 const OPERATOR_QUERY = gql`
@@ -34,7 +36,10 @@ const OPERATOR_QUERY = gql`
                     pubKey,
                     createdAt,
                 }
-            }
+            },
+            stakedropRewardsDispensed,
+            stakedropECDSARewardsDispensed,
+            stakedropBeaconRewardsDispensed
         }
     }
 `;
@@ -121,9 +126,15 @@ export function Content() {
         </div>
       </Box>
 
-      <Box label={"rewards"}>
+      <Box label={"fees"}>
         <div>
           {formatterBTC.format(getSatoshiesAsTBTC(operator.totalTBTCRewards))} TBTC
+        </div>
+      </Box>
+
+      <Box label={"rewards withdrawn"} tooltip={"Stakedrop awards that have already been dispensed."}>
+        <div>
+          {keepFormatter.format(operator.stakedropRewardsDispensed / (10**18))} KEEP
         </div>
       </Box>
     </div>
