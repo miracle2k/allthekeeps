@@ -10,6 +10,8 @@ import {dateTimeFrom, formatSeconds, FormattedTime} from "../components/Formatte
 import {keepFormatter} from "../components/KeepValue";
 import {KeepTag} from "../components/CurrencyTags";
 import { DateTime } from "luxon";
+import {HeaderBoxes} from "../components/HeaderBoxes";
+import {Box} from "../components/Box";
 
 const STAKEDROP_QUERY = gql`
     query GetStakedropData($block: Block_height) {
@@ -39,7 +41,7 @@ const STAKEDROP_QUERY = gql`
 
 export function Stakedrop() {
   const {id} = useParams<any>();
-const { loading, error, data } = useQueryWithTimeTravel<GetStakedropDataQuery>(STAKEDROP_QUERY, {variables: {id}});
+  const { loading, error, data } = useQueryWithTimeTravel<GetStakedropDataQuery>(STAKEDROP_QUERY, {variables: {id}});
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
@@ -54,6 +56,20 @@ const { loading, error, data } = useQueryWithTimeTravel<GetStakedropDataQuery>(S
     <h1 style={{marginTop: 0}}>
       Stakedrop
     </h1>
+
+    <div style={{marginBottom: 30}}>
+      <HeaderBoxes>
+        <Box label={"total rewards"}>
+          {keepFormatter.format((parseInt(data!.stats!.totalStakedropECDSARewards) + parseInt(data!.stats!.totalStakedropBeaconRewards)) / (10**18))} KEEP
+        </Box>
+        <Box label={"dispensed rewards"}>
+          {keepFormatter.format((parseInt(data!.stats!.dispensedStakedropBeaconRewards) + parseInt(data!.stats!.dispensedStakedropECDSARewards)) / (10**18))} KEEP
+        </Box>
+        {/*<Box label={"remaining rewards"}>*/}
+        {/*  {keepFormatter.format((parseInt(data!.stats!.unallocatedStakedropECDSARewards) + parseInt(data!.stats!.unallocatedStakedropBeaconRewards)) / (10**18))} KEEP*/}
+        {/*</Box>*/}
+      </HeaderBoxes>
+    </div>
 
     <Table
         style={{width: '100%'}}>
