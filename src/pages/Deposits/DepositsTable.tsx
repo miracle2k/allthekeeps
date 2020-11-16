@@ -22,6 +22,7 @@ import {LabelWithBackgroundProgress} from "../Deposit/StatusBox";
 import {BTCTag} from "../../components/CurrencyTags";
 import {UseDepositQuery} from "./Views";
 import {Address} from "../../components/Address";
+import {SkeletonTableRow} from "../../components/SkeletonLoader";
 
 
 export function DepositsTable(props: {
@@ -32,7 +33,6 @@ export function DepositsTable(props: {
   const price = usePriceFeed();
   const etherscan = useEtherscanDomain();
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
   const dateColumnTitle = (dateColumn == "updatedAt") ? "Updated"
@@ -80,7 +80,8 @@ export function DepositsTable(props: {
       </tr>
       </thead>
       <tbody>
-      {data.deposits.map((deposit: any) => {
+      {props.query.loading ? <SkeletonTableRow columns={6} /> : null}
+      {data?.deposits.map((deposit: any) => {
         return <DepositRow
           deposit={deposit}
           key={deposit.id}

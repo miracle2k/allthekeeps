@@ -17,6 +17,7 @@ import {useQueryWithTimeTravel} from "../TimeTravel";
 import {FormattedTime, TimeToNow} from "../components/FormattedTime";
 import {HeaderBoxes} from "../components/HeaderBoxes";
 import {PageHeader} from "../components/PageHeader";
+import {SkeletonTableRow} from "../components/SkeletonLoader";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -56,17 +57,16 @@ export function Operators() {
   });
   const price: any = usePriceFeed();
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
-  const remainingCapacityBTC = price?.val ? parseFloat(data!.stats!.availableToBeBonded) / 1.5 * price.val : null;
+  const remainingCapacityBTC = price?.val ? parseFloat(data?.stats?.availableToBeBonded) / 1.5 * price.val : null;
 
   return  <div style={{padding: '20px'}}>
     <Helmet>
       <title>Operators</title>
     </Helmet>
     <PageHeader label={"Operators"}>
-      <HeaderBoxes>
+      {data?.stats ? <HeaderBoxes>
         <Box
             label={"total bonded"}
             tooltip={"The amount of collateral backing active deposits."}
@@ -82,10 +82,10 @@ export function Operators() {
             capacity ~{formatter.format(remainingCapacityBTC)} BTC
           </div> : null}
         </Box>
-      </HeaderBoxes>
+      </HeaderBoxes> : null}
     </PageHeader>
     <Paper padding>
-      <OperatorsTable data={data} sortState={sortState} />
+      <OperatorsTable data={data} sortState={sortState} loading={loading} />
     </Paper>
   </div>
 }
@@ -105,6 +105,7 @@ const formatterBTC = new Intl.NumberFormat("en-US", {
 
 export function OperatorsTable(props: {
   data: any,
+  loading?: boolean,
   sortState: SortState,
 }) {
   const {data} = props;
@@ -159,7 +160,8 @@ export function OperatorsTable(props: {
     </tr>
     </thead>
     <tbody>
-    {data.operators.map((member: any) => {
+    {props.loading ? <SkeletonTableRow columns={9} /> : null}
+    {data?.operators.map((member: any) => {
       const unbound = parseFloat(member.unboundAvailable);
       const total = (unbound + parseFloat(member.bonded));
       const bonded = parseFloat(member.bonded);

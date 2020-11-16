@@ -8,6 +8,7 @@ import {SortableHeader, SortState, Table, useSort} from "../components/Table";
 import {GetUsersQuery} from "../generated/graphql";
 import {useEtherscanDomain} from "../NetworkContext";
 import {useQueryWithTimeTravel} from "../TimeTravel";
+import {SkeletonTableRow} from "../components/SkeletonLoader";
 
 const USERS_QUERY = gql`
     query GetUsers(
@@ -36,7 +37,6 @@ export function Users() {
     }
   });
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
   return  <div style={{padding: '20px'}}>
@@ -46,7 +46,7 @@ export function Users() {
     <h1 style={{marginTop: 0, marginBottom: 25}}>Users
     </h1>
     <Paper padding>
-      <UsersTable data={data} sortState={sortState} />
+      <UsersTable data={data} sortState={sortState} loading={loading} />
     </Paper>
   </div>
 }
@@ -54,10 +54,10 @@ export function Users() {
 
 export function UsersTable(props: {
   data: any,
+  loading?: boolean,
   sortState: SortState,
 }) {
   const {data} = props;
-  const etherscan = useEtherscanDomain();
 
   return <Table
       style={{width: '100%'}}>
@@ -87,8 +87,9 @@ export function UsersTable(props: {
     </tr>
     </thead>
     <tbody>
-    {data.users.map((user: any) => {
-      return  <tr key={user.id}>
+    {props.loading ? <SkeletonTableRow columns={5} /> : null}
+    {data?.users.map((user: any) => {
+      return <tr key={user.id}>
         <td>
           <Address long address={user.address} />
         </td>

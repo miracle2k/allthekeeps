@@ -137,7 +137,7 @@ export function Deposits() {
     <div style={{marginBottom: '20px'}}>
       <div style={{display: 'flex', alignItems: 'center'}}>
         <Tippy trigger="click" hideOnClick={true} arrow={false} interactive={true} maxWidth={600} className={css`
-          background-color: transparent;
+          background-color: transparent !important;
           padding: 0;
           color: inherit;
         `} onCreate={(instance) => {
