@@ -145,11 +145,11 @@ export function Deposits() {
         }} content={
           <Paper>
             <div className={css`
-          column-count: 2;
-          column-gap: 0;
-          display: inline-block;
-          padding: 10px;
-        `}>
+              column-count: 2;
+              column-gap: 0;
+              display: inline-block;
+              padding: 10px;
+            `}>
               {Views.map(view => {
                 return <Box to={`/deposits/${view.id}`} onClick={() => {
                   tippy.current.hide();

@@ -18,6 +18,8 @@ import {keepFormatter} from "../../components/KeepValue";
 import {PageHeader} from "../../components/PageHeader";
 import {HeaderBoxes} from "../../components/HeaderBoxes";
 import {Hash} from "../../components/Address";
+import {PageHeaderMenu} from "../../components/PageHeaderMenu";
+import {useEtherscanDomain} from "../../NetworkContext";
 
 
 const OPERATOR_QUERY = gql`
@@ -70,6 +72,7 @@ const formatterBTC = new Intl.NumberFormat("en-US", {
 
 export function Content() {
   let { operatorId } = useParams<any>();
+  const etherscan = useEtherscanDomain();
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
 
   if (loading) return <p>Loading...</p>;
@@ -83,7 +86,11 @@ export function Content() {
   const bonded = parseFloat(operator.bonded);
 
   return <div>
-    <PageHeader label={<Hash hash={operator.address} />} subtitle={"Operator"}>
+    <PageHeader label={<Hash hash={operator.address} />} subtitle={"Operator"} buttons={
+      <PageHeaderMenu>
+        <div><a href={`https://${etherscan}/address/${operator.address}`}>Open in Etherscan</a></div>
+      </PageHeaderMenu>
+    }>
       <HeaderBoxes>
         <Box label={"bonded"}>
           <div>{formatter.format(operator.bonded)} ETH</div>
