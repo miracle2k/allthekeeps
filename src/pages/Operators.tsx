@@ -129,7 +129,11 @@ export function OperatorsTable(props: {
       </th>
       <th>
         <SortableHeader fieldId={"unboundAvailable"} state={props.sortState}>
-          Amount Available <InfoTooltip>Collateral available for further deposits.</InfoTooltip>
+          Amount Available
+          <InfoTooltip>
+            Collateral available for further deposits. The BTC number indicates the lot size this amount
+            of ETH is able to support.
+          </InfoTooltip>
         </SortableHeader>
       </th>
       <th>
