@@ -15,6 +15,9 @@ import {Properties} from "./Properties";
 import {OperatorLog} from "./Log";
 import {KeepTag} from "../../components/CurrencyTags";
 import {keepFormatter} from "../../components/KeepValue";
+import {PageHeader} from "../../components/PageHeader";
+import {HeaderBoxes} from "../../components/HeaderBoxes";
+import {Hash} from "../../components/Address";
 
 
 const OPERATOR_QUERY = gql`
@@ -80,64 +83,49 @@ export function Content() {
   const bonded = parseFloat(operator.bonded);
 
   return <div>
-    <div className={css`
-      display: flex;
-      flex-direction: row;
-      font-size: 30px;
-      margin-bottom: 15px;
-  `}>
-      Operator: {operator.address}
-    </div>
+    <PageHeader label={<Hash hash={operator.address} />} subtitle={"Operator"}>
+      <HeaderBoxes>
+        <Box label={"bonded"}>
+          <div>{formatter.format(operator.bonded)} ETH</div>
 
+          {total > 0 ? <div style={{fontSize: '20px', color: 'gray'}}>
+            {formatter.format((bonded / total * 100))}% of {formatter.format(total)} ETH
+          </div> : null}
+        </Box>
 
-    <div className={css`
-      display: flex;
-      flex-direction: row;
-      & > * {
-        margin-right: 20px;
-      }
-      margin-bottom: 20px;
-  `}>
-      <Box label={"bonded"}>
-        <div>{formatter.format(operator.bonded)} ETH</div>
+        <Box label={"available to bond"}>
+          <div>
+            {formatter.format(operator.unboundAvailable)} ETH
+          </div>
+        </Box>
 
-        {total > 0 ? <div style={{fontSize: '20px', color: 'gray'}}>
-          {formatter.format((bonded / total * 100))}% of {formatter.format(total)} ETH
-        </div> : null}
-      </Box>
+        <Box label={"staked"}>
+          <div>
+            {formatter.format(operator.stakedAmount)} KEEP
+          </div>
+        </Box>
 
-      <Box label={"available to bond"}>
-        <div>
-          {formatter.format(operator.unboundAvailable)} ETH
-        </div>
-      </Box>
+        <Box label={"faults"} tooltip={"How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault."}>
+          <div>
+            {operator.attributableFaultCount > 0 ? <>
+              {operator.attributableFaultCount} / </> : null}
+            {operator.totalFaultCount}
+          </div>
+        </Box>
 
-      <Box label={"staked"}>
-        <div>
-          {formatter.format(operator.stakedAmount)} KEEP
-        </div>
-      </Box>
+        <Box label={"fees"}>
+          <div>
+            {formatterBTC.format(getSatoshiesAsTBTC(operator.totalTBTCRewards))} TBTC
+          </div>
+        </Box>
 
-      <Box label={"faults"} tooltip={"How often this operator was involved in a signing group with improper behaviour. If two numbers, the first one counts how often this operator can be blamed for the fault."}>
-        <div>
-          {operator.attributableFaultCount > 0 ? <>
-            {operator.attributableFaultCount} / </> : null}
-          {operator.totalFaultCount}
-        </div>
-      </Box>
-
-      <Box label={"fees"}>
-        <div>
-          {formatterBTC.format(getSatoshiesAsTBTC(operator.totalTBTCRewards))} TBTC
-        </div>
-      </Box>
-
-      <Box label={"rewards withdrawn"} tooltip={"Stakedrop awards that have already been dispensed."}>
-        <div>
-          {keepFormatter.format(operator.stakedropRewardsDispensed / (10**18))} KEEP
-        </div>
-      </Box>
-    </div>
+        <Box label={"rewards withdrawn"} tooltip={"Stakedrop awards that have already been dispensed."}>
+          <div>
+            {keepFormatter.format(operator.stakedropRewardsDispensed / (10**18))} KEEP
+          </div>
+        </Box>
+      </HeaderBoxes>
+    </PageHeader>
 
     <Tabs>
       <TabList>

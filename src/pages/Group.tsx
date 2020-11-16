@@ -16,6 +16,8 @@ import {TimeBetween, TimeToNow} from "../components/FormattedTime";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import {useQueryWithTimeTravel} from "../TimeTravel";
 import {keepFormatter} from "../components/KeepValue";
+import {HeaderBoxes} from "../components/HeaderBoxes";
+import {PageHeader} from "../components/PageHeader";
 
 const BEACONGROUP_QUERY = gql`
     query GetRandomBeaconGroup($id: ID!, $block: Block_height) {
@@ -63,30 +65,23 @@ export function BeaconGroup() {
     <Helmet>
       <title>Random Beacon Group: {getGroupName(group.id)}</title>
     </Helmet>
-    <h1 style={{marginTop: 0, marginBottom: 0}}>
-      Random Beacon Group: {getGroupName(group.id)}
-    </h1>
 
-    <div className={css`
-      display: flex;
-      flex-direction: row;
-      & > * {
-        margin-right: 20px;
-      }
-  `}>
-      <Box
-          label={"reward per member"}
-      >
-        <ETHValue wei={group.rewardPerMember} /> ETH
-      </Box>
+    <PageHeader label={getGroupName(group.id)} subtitle={"Random Beacon Group"}>
+      <HeaderBoxes>
+        <Box
+            label={"reward per member"}
+        >
+          <ETHValue wei={group.rewardPerMember} /> ETH
+        </Box>
 
-      <Box
-          label={"created"}
-      >
-        <TimeToNow time={group.createdAt} />
-      </Box>
+        <Box
+            label={"created"}
+        >
+          <TimeToNow time={group.createdAt} />
+        </Box>
 
-    </div>
+      </HeaderBoxes>
+    </PageHeader>
 
     <Tabs>
       <TabList>

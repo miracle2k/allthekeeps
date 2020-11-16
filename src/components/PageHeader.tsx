@@ -2,7 +2,7 @@ import {css} from "emotion";
 import React from "react";
 
 export function PageHeader(props: {
-  label: string,
+  label: any,
   subtitle?: any,
   buttons?: any,
   children?: any

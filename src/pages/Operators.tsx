@@ -15,6 +15,8 @@ import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {getSatoshiesAsTBTC} from "../utils/getSatoshisAsTBTC";
 import {useQueryWithTimeTravel} from "../TimeTravel";
 import {FormattedTime, TimeToNow} from "../components/FormattedTime";
+import {HeaderBoxes} from "../components/HeaderBoxes";
+import {PageHeader} from "../components/PageHeader";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -63,30 +65,25 @@ export function Operators() {
     <Helmet>
       <title>Operators</title>
     </Helmet>
-    <h1 style={{marginTop: 0, marginBottom: 5}}>Operators</h1>
-    <div className={css`
-      display: flex;
-      flex-direction: row;
-      & > * {
-        margin-right: 20px;
-      }
-  `}>
-      <Box
-        label={"total bonded"}
-        tooltip={"The amount of collateral backing active deposits."}
-      >
-        <div>{formatterSimple.format(data!.stats!.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
-      </Box>
-      <Box
-        label={"available for bonding"}
-        tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
-      >
-        <div>{formatterSimple.format(data!.stats!.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
-        {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
-          capacity ~{formatter.format(remainingCapacityBTC)} BTC
-        </div> : null}
-      </Box>
-    </div>
+    <PageHeader label={"Operators"}>
+      <HeaderBoxes>
+        <Box
+            label={"total bonded"}
+            tooltip={"The amount of collateral backing active deposits."}
+        >
+          <div>{formatterSimple.format(data!.stats!.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+        </Box>
+        <Box
+            label={"available for bonding"}
+            tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
+        >
+          <div>{formatterSimple.format(data!.stats!.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+          {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
+            capacity ~{formatter.format(remainingCapacityBTC)} BTC
+          </div> : null}
+        </Box>
+      </HeaderBoxes>
+    </PageHeader>
     <Paper padding>
       <OperatorsTable data={data} sortState={sortState} />
     </Paper>

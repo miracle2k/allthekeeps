@@ -56,7 +56,7 @@ export function Hash(props: {
   hash: string,
   to?: string,
   includeExternalIcon?: boolean,
-  long?: boolean
+  long?: boolean,
   children?: any
 }) {
   // #tokentxnsErc721
@@ -64,14 +64,17 @@ export function Hash(props: {
   let linkProps: any = {};
 
   let C: any;
+  let isLink = false;
   if (!props.to) {
     C = 'span';
   }
   else if (!(props.to).startsWith('http')) {
     C = Link;
+    isLink = true;
     linkProps.to = props.to;
   } else {
     C = 'a';
+    isLink = true;
     linkProps = {
       ...linkProps,
       href: props.to
@@ -90,7 +93,7 @@ export function Hash(props: {
     children = props.children;
   } else {
     children = <>
-      {hasHexPrefix ? <span className={css`color: #bda8e9`}>0x</span> : null}
+      {hasHexPrefix ? <span style={{color: isLink ? '#bda8e9' : undefined}}>0x</span> : null}
       {props.long ? longAddress : shortAddress}
     </>;
   }

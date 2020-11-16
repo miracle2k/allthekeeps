@@ -29,6 +29,7 @@ import {usePriceFeed} from "../../components/PriceFeed";
 import {useQueryWithTimeTravel, useTimeTravelSafeSubscription} from "../../TimeTravel";
 import {PageHeader} from "../../components/PageHeader";
 import Tippy from "@tippyjs/react";
+import {HeaderBoxes} from "../../components/HeaderBoxes";
 
 
 const DEPOSIT_QUERY = gql`
@@ -164,26 +165,17 @@ export function Content() {
         </>
       }
     >
-      <div className={css`
-        display: flex;
-        flex-direction: row;
-        & > * {
-          margin-right: 40px;
-        }
-        & > :last-child {
-          margin-right: 0px;
-        }
-      `}>
-        <Box label={"lot size"} noPadding>
+      <HeaderBoxes>
+        <Box label={"lot size"}>
           {getSatoshisAsBitcoin(data.deposit.lotSizeSatoshis)} BTC
         </Box>
 
-        <StatusBox deposit={data.deposit} noPadding />
+        <StatusBox deposit={data.deposit} />
 
-        <Box label={"creation date"} noPadding>
+        <Box label={"creation date"}>
           <TimeToNow time={data.deposit.createdAt} />
         </Box>
-      </div>
+      </HeaderBoxes>
     </PageHeader>
 
     <div style={{

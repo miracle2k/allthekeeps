@@ -89,7 +89,7 @@ export function StatusBox(props: {
     }
   }
 
-  return <Box label={"state"} noPadding={props.noPadding}>
+  return <Box label={"state"}>
     <LabelWithBackgroundProgress
         progress={timing?.percentage}
     >
