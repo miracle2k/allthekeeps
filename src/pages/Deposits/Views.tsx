@@ -123,7 +123,7 @@ export function useDepositQuery(view: DepositViewID, pageNumber?: number) {
     "": {},
     active: {'filter_activeLikeState': true},
     liquidations: {'filter_liquidationLikeOrSignerFailureState': true},
-    redeemable: {'filter_redeemableAsOf_gt': Math.round(DateTime.utc().toMillis() / 1000)},
+    redeemable: {'filter_redeemableAsOf_lt': Math.round(DateTime.utc().toMillis() / 1000)},
     unminted: {'filter_unmintedTDT': true},
     notifiable: {'currentStateTimesOutAt_lt': Math.round(DateTime.utc().toMillis() / 1000)},
     redemptions: {'redemptionStartedAt_not': null},
