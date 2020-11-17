@@ -60,6 +60,9 @@ export function Hash(props: {
   children?: any
 }) {
   // #tokentxnsErc721
+  if (!props.hash) {
+    return null;
+  }
 
   let linkProps: any = {};
 
@@ -82,7 +85,7 @@ export function Hash(props: {
   }
 
   let longAddress = props.hash;
-  let hasHexPrefix = longAddress.indexOf('0x') ==- 0;
+  let hasHexPrefix = longAddress?.indexOf('0x') == 0;
   if (hasHexPrefix) {
     longAddress = longAddress.slice(2)
   }
