@@ -31,6 +31,8 @@ import {PageHeader} from "../../components/PageHeader";
 import Tippy from "@tippyjs/react";
 import {HeaderBoxes} from "../../components/HeaderBoxes";
 import {PageHeaderMenu} from "../../components/PageHeaderMenu";
+import {AuctionDetailsFragment, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
+import {ETHValue} from "../../components/ETHValue";
 
 
 const DEPOSIT_QUERY = gql`
@@ -75,11 +77,13 @@ const DEPOSIT_QUERY = gql`
                 cause
             }
             
-            ...NiceStateLabel
+            ...NiceStateLabel,
+            ...AuctionDetails
         }
     }
   
     ${NiceStateLabel}
+    ${AuctionDetailsFragment}
 `;
 
 const DEPOSIT_SUBSCRIPTION = gql`
@@ -128,11 +132,7 @@ export function Content() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
-  if (!data.deposit) return <p>Not found.</p>;
-
-  const canBeRedeemed = ['ACTIVE', 'COURTESY_CALL'].indexOf(data.deposit.currentState) > -1;
-  const isAtTerm = false;  // XXX still needs to be fixed
-  const canBeRedeemedByAnyone = canBeRedeemed && (data.deposit.currentState == 'COURTESY_CALL' || isAtTerm || isVendingMachine(data.deposit.tdtToken.owner));
+  if (!data.deposit) return <p>Not found.</p>;  
 
   return <div>
     <PageHeader
@@ -165,50 +165,7 @@ export function Content() {
       marginTop: '20px'
     }}>
       <div style={{marginRight: '20px', flex: 1}}>
-        <Paper padding>
-          <div className={css`
-            font-weight: bold;
-            margin-bottom: 0.5em;
-          `}>
-            Ownership <InfoTooltip>
-              For every deposit, a non-fungible TDT Token is minted. Whoever owns this token, owns the deposit.
-            </InfoTooltip>
-          </div>
-          <div className={css`
-          `}>
-            {
-              hasDepositBeenUsedToMint(data.deposit.tdtToken.owner, data.deposit.currentState)
-                  ? <div>
-                    This deposit has been used to mint TBTC. The corresponding TDT token is now
-                    owned by the <a href={`https://${etherscan}/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
-                  </div>
-                  : (data.deposit.tdtToken.owner == data.deposit.tdtToken.minter) ? <div>
-                    The TDT Token representing ownership over this deposit is owned by the original
-                    deposit creator, <Address address={data.deposit.tdtToken.owner} />.
-                  </div> : <div>
-                    The TDT Token representing ownership over this deposit is owned by <Address address={data.deposit.tdtToken.owner} />.
-                  </div>
-            }
-          </div>
-          <div className={css`
-            font-size: 0.8em;
-            margin-top: 10px;
-            & a, a:visited {
-              color: gray;
-            }            
-          `}>
-            <a href={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${data.deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
-          </div>
-
-          {(canBeRedeemedByAnyone) ?
-            <div style={{marginTop: 20}}>
-              This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange TBTC for the Bitcoin deposited here.</InfoTooltip>
-              <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://${dAppDomain}/deposit/${data.deposit.contractAddress}/redeem`}>
-                Redeem
-              </Button></div>
-            </div>
-          : null }
-        </Paper>
+        <Summary deposit={data.deposit} />
 
         <Paper style={{marginTop: '20px'}}>
           <div className={css`           
@@ -344,6 +301,84 @@ export function Content() {
       </div>
     </div>
   </div>
+}
+
+
+function Summary(props: {
+  deposit: any
+}) {
+  const {deposit} = props;
+  const etherscan = useEtherscanDomain();
+  const dAppDomain = useDAppDomain();
+
+  const canBeRedeemed = ['ACTIVE', 'COURTESY_CALL'].indexOf(deposit.currentState) > -1;
+  const isAtTerm = false;  // XXX still needs to be fixed
+  const canBeRedeemedByAnyone = canBeRedeemed && (deposit.currentState == 'COURTESY_CALL' || isAtTerm || isVendingMachine(deposit.tdtToken.owner));
+
+  let content: any;
+  if (deposit.currentState === 'LIQUIDATION_IN_PROGRESS') {
+    content = <LiquidationSummary deposit={deposit} />
+  } else {
+    content = <>
+      <div className={css`
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    `}>
+      Ownership <InfoTooltip>
+        For every deposit, a non-fungible TDT Token is minted. Whoever owns this token, owns the deposit.
+      </InfoTooltip>
+    </div>
+    <div className={css`
+    `}>
+      {
+        hasDepositBeenUsedToMint(deposit.tdtToken.owner, deposit.currentState)
+            ? <div>
+              This deposit has been used to mint TBTC. The corresponding TDT token is now
+              owned by the <a href={`https://${etherscan}/address/${getVendingMachineAddress()}`}>Vending Machine contract</a>.
+            </div>
+            : (deposit.tdtToken.owner == deposit.tdtToken.minter) ? <div>
+              The TDT Token representing ownership over this deposit is owned by the original
+              deposit creator, <Address address={deposit.tdtToken.owner} />.
+            </div> : <div>
+              The TDT Token representing ownership over this deposit is owned by <Address address={deposit.tdtToken.owner} />.
+            </div>
+      }
+    </div>
+    <div className={css`
+      font-size: 0.8em;
+      margin-top: 10px;
+      & a, a:visited {
+        color: gray;
+      }            
+    `}>
+      <a href={`https://${etherscan}/token/${getTDTTokenAddress()}?a=${deposit.tdtToken.tokenID}`}>TDT Token on Etherscan</a>
+    </div>
+
+    {(canBeRedeemedByAnyone) ?
+      <div style={{marginTop: 20}}>
+        This deposit can be redeemed by anyone, even non-owners. <InfoTooltip>Because it is owned by the Vending Machine, has been courtesy called, or is at-term, anyone can exchange TBTC for the Bitcoin deposited here.</InfoTooltip>
+        <div style={{marginTop: '8px'}}><Button size={"small"} to={`https://${dAppDomain}/deposit/${deposit.contractAddress}/redeem`}>
+          Redeem
+        </Button></div>
+      </div>
+    : null }
+    </>;
+  }
+
+
+  return <Paper padding>
+     {content}
+  </Paper>
+}
+
+
+function LiquidationSummary(props: {deposit: any}) {
+  const details = getAuctionDetailsFromDeposit(props.deposit);
+  return <>
+    <div>
+      This deposit is currently in liquidation. <ETHValue wei={details.value} /> ETH are on offer - {details.percentage}% of the total bond.
+    </div>
+  </>
 }
 
 
