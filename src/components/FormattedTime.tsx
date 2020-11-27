@@ -47,11 +47,27 @@ export function formatSeconds(seconds: number) {
 
 
 export function FormattedTime(props: {
-  time: string|number|DateTime
+  time: string|number|DateTime,
+  format: 'long'|'simple'
 }) {
   const dateTime = dateTimeFrom(props.time);
-  return <span>{dateTime.toLocaleString({ weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+
+  const longFormat = { weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+  let formatOpts = props.format === 'long' ?
+      longFormat
+      : props.format === 'simple'
+          ? { month: 'short', day: '2-digit' }
+          : props.format;
+
+  const tooltip = props.format === 'long' ? "" : dateTime.toLocaleString(longFormat);
+  return <span title={tooltip}>
+    {dateTime.toLocaleString(formatOpts)}
+  </span>
 }
+FormattedTime.defaultProps = {
+  format: 'long'
+};
+
 
 export function TimeBetween(props: {
   earlier: string|number

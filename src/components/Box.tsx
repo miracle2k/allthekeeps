@@ -6,9 +6,10 @@ export function Box(props: {
   label: string,
   tooltip?: string,
   children: any,
+  style?: any
 }) {
   return (
-    <div className={css`
+    <div style={props.style} className={css`
       font-size: 35px;
       color: #0A0806;
       

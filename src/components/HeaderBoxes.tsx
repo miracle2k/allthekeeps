@@ -2,9 +2,10 @@ import {css} from "emotion";
 import React from "react";
 
 export function HeaderBoxes(props: {
-  children: any
+  children: any,
+  style?: any
 }) {
-  return <div className={css`
+  return <div style={props.style} className={css`
     display: flex;
     flex-direction: row;
     & > * {

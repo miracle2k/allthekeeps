@@ -74,8 +74,8 @@ export function getAuctionDetailsFromDeposit(deposit: AuctionDetailsF) {
 }
 
 export function calculateAuctionUSDValues(value: AuctionDetails, coinPrices: CoinPrices, opts: {lotSizeSatoshis: number}) {
-  const btcPrice = coinPrices.bitcoin;
-  const ethPrice = coinPrices.ethereum;
+  const btcPrice = coinPrices.bitcoin!;
+  const ethPrice = coinPrices.ethereum!;
   const cost = getSatoshisAsBitcoin(opts.lotSizeSatoshis) * btcPrice;
   const income = ethPrice * getWeiAsEth(value.value);
   const nextIncome = ethPrice * getWeiAsEth(value.nextValue ?? 0);

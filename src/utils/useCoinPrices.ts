@@ -1,18 +1,23 @@
 import {EventEmitter} from "events";
 import {useEffect, useState} from "react";
 
-const fetcher: any = {
+const fetcher: {
+  events: EventEmitter,
+  prices: null|CoinPrices,
+  handle?: any
+} = {
   prices: null,
   events: new EventEmitter()
 };
 
 function setupInterval() {
   const get = async () => {
-    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=usd')
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ckeep-network&vs_currencies=usd')
     const data = await response.json();
     fetcher.prices = {
       bitcoin: data.bitcoin.usd,
       ethereum: data.ethereum.usd,
+      keep: data['keep-network'].usd
     };
     fetcher.events.emit('update');
   }
@@ -24,7 +29,7 @@ function setupInterval() {
 
 setupInterval();
 
-export function useCoinPrices() {
+export function useCoinPrices(): CoinPrices {
   const [counter, setCounter] = useState(0);
   useEffect(() => {
     const handleUpdate = () => {
@@ -39,6 +44,7 @@ export function useCoinPrices() {
 }
 
 export type CoinPrices = {
-  ethereum: number,
-  bitcoin: number
+  ethereum?: number,
+  bitcoin?: number,
+  keep?: number
 }
