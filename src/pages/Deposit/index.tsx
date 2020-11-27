@@ -28,7 +28,6 @@ import {StatusBox} from "./StatusBox";
 import {usePriceFeed} from "../../components/PriceFeed";
 import {useQueryWithTimeTravel, useTimeTravelSafeSubscription} from "../../TimeTravel";
 import {PageHeader} from "../../components/PageHeader";
-import Tippy from "@tippyjs/react";
 import {HeaderBoxes} from "../../components/HeaderBoxes";
 import {PageHeaderMenu} from "../../components/PageHeaderMenu";
 import {AuctionDetailsFragment, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
@@ -71,6 +70,7 @@ const DEPOSIT_QUERY = gql`
                     id,
                     address
                 }
+                pubkeySubmissions { address },
             },
             
             depositLiquidation {
@@ -171,11 +171,8 @@ export function Content() {
           <div className={css`           
             padding: 20px;
           `}>
+            <NextStep deposit={data.deposit} />
             <h3 style={{marginTop: 0}}>Log</h3>
-            {/*<div style={{marginBottom: '20px'}}>*/}
-            {/*  <div><strong>Next Step</strong></div>*/}
-            {/*  The depositor must submit proof of having sent to Bitcoin to the deposit address, once at least 6 confirmations have been reached. <TimeToNow time={data.deposit.currentStateTimesOutAt} /> left to do so.*/}
-            {/*</div>*/}
             <Log depositId={data.deposit.id} />
           </div>
         </Paper>
@@ -300,6 +297,69 @@ export function Content() {
         </Paper>
       </div>
     </div>
+  </div>
+}
+
+
+function NextStep(props: {
+  deposit: any
+}) {
+  const {deposit} = props;
+
+  let Component: any;
+  if (deposit.currentState == 'AWAITING_BTC_FUNDING_PROOF') {
+    Component = WaitingForFundingProof;
+  }
+  if (deposit.currentState == 'AWAITING_SIGNER_SETUP') {
+    Component = WaitingForSignerSetup;
+  }
+
+  if (!Component) {
+    return <div>
+      sdf {deposit.currentState}
+      </div>
+    return null;
+  }
+
+  return <div style={{marginBottom: '20px'}} className={css`
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 1px solid #64c4aa;
+  `}>
+    <div style={{marginTop: 0, color: '#64c4aa', fontWeight: 'bold', marginBottom: '10px'}}>
+      What happens next?
+    </div>
+    <Component deposit={deposit} />
+  </div>
+}
+
+function WaitingForFundingProof(props: {
+  deposit: any
+}) {
+  return <div>
+    The depositor must submit proof of having sent to Bitcoin to the deposit address, once at least 6 confirmations have been reached. <TimeToNow time={props.deposit.currentStateTimesOutAt} /> left to do so.
+  </div>
+}
+
+function WaitingForSignerSetup(props: {
+  deposit: any
+}) {
+  // Can be tested at: http://localhost:3000/deposit/0x30c717eee21c9362f3ac5606f5db0af9f5aa0c0a?block=11160875
+  const allSigners = props.deposit.bondedECDSAKeep.members.map((s: any) => s.address);
+  const goodSigners = new Set(props.deposit.bondedECDSAKeep.pubkeySubmissions.map((s: any) => s.address));
+  const badSigners: string[] = allSigners.filter((s: any) => !goodSigners.has(s));
+
+  return <div>
+    <p>
+      The signers chosen to back this deposit will lock up ETH collateral and then submit a Bitcoin deposit address.
+    </p>
+    <p>
+      {props.deposit.bondedECDSAKeep.pubkeySubmissions.length}/3 have done so. We are still waiting for {" "}
+      {badSigners
+          .map(
+              address => <Address key={address} to={`/operator/${address}`} address={address} />)
+          .reduce((prev, curr) => [prev, ', ', curr] as any)}.
+    </p>
   </div>
 }
 
