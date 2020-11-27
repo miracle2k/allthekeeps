@@ -311,13 +311,14 @@ function NextStep(props: {
     Component = WaitingForFundingProof;
   }
   if (deposit.currentState == 'AWAITING_SIGNER_SETUP') {
-    Component = WaitingForSignerSetup;
+    if (deposit.bondedECDSAKeep.publicKey) {
+      Component = WaitingForFundingStart;
+    } else {
+      Component = WaitingForSignerSetup;
+    }
   }
 
   if (!Component) {
-    return <div>
-      sdf {deposit.currentState}
-      </div>
     return null;
   }
 
@@ -330,6 +331,15 @@ function NextStep(props: {
       What happens next?
     </div>
     <Component deposit={deposit} />
+  </div>
+}
+
+function WaitingForFundingStart(props: {
+  deposit: any
+}) {
+  return <div>
+    The depositor must notify the contract that the signers have setup the Bitcoin deposit address, and that they want to
+    continue the deposit process.
   </div>
 }
 
