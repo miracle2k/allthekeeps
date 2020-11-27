@@ -15,6 +15,7 @@ import {Box} from "../components/Box";
 import {CoinPrices, useCoinPrices} from "../utils/useCoinPrices";
 import {DollarValue} from "../components/DollarValue";
 import {css} from "emotion";
+import {SkeletonWord} from "../components/SkeletonLoader";
 
 const STAKEDROP_QUERY = gql`
     query GetStakedropData($block: Block_height) {
@@ -47,14 +48,13 @@ export function Stakedrop() {
   const { loading, error, data } = useQueryWithTimeTravel<GetStakedropDataQuery>(STAKEDROP_QUERY, {variables: {id}});
   const coinPrices = useCoinPrices();
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :( {""+ error}</p>;
 
   const intervals = [...(data?.stakedropIntervals ?? [])];
   intervals.reverse();
 
-  const keepTotal = (parseInt(data!.stats!.totalStakedropECDSARewards) + parseInt(data!.stats!.totalStakedropBeaconRewards)) / (10**18);
-  const keepDispensed = (parseInt(data!.stats!.dispensedStakedropBeaconRewards) + parseInt(data!.stats!.dispensedStakedropECDSARewards)) / (10**18);
+  const keepTotal = data?.stats ? (parseInt(data!.stats!.totalStakedropECDSARewards) + parseInt(data!.stats!.totalStakedropBeaconRewards)) / (10**18) : null;
+  const keepDispensed =  data?.stats ? (parseInt(data!.stats!.dispensedStakedropBeaconRewards) + parseInt(data!.stats!.dispensedStakedropECDSARewards)) / (10**18) : null;
 
   return  <div style={{padding: '20px', maxWidth: '1000px', margin: '0 auto'}}>
     <Helmet>
@@ -67,12 +67,16 @@ export function Stakedrop() {
     <div style={{margin: '0 auto 60px'}}>
       <HeaderBoxes style={{justifyContent: 'center'}}>
         <Box label={"total KEEP rewards"} tooltip={"Total rewards to be distributed to node  operators over the 2-year stakedrop period."}>
-          <strong>{keepFormatter.format(keepTotal)}</strong>
-          <KeepAsDollarValue coinPrices={coinPrices} keep={keepTotal} style={{display: 'block'}} />
+          {keepTotal !== null ? <>
+            <strong>{keepFormatter.format(keepTotal)}</strong>
+            <KeepAsDollarValue coinPrices={coinPrices} keep={keepTotal} style={{display: 'block'}} />
+           </> : <SkeletonWord />}
         </Box>
         <Box label={"KEEP dispensed so far"} tooltip={"Total rewards distributed in past stakedrop intervals."}>
-          <strong>{keepFormatter.format(keepDispensed)}</strong>
-          <KeepAsDollarValue coinPrices={coinPrices} keep={keepDispensed} style={{display: 'block'}} />
+          {keepDispensed !== null ? <>
+            <strong>{keepFormatter.format(keepDispensed)}</strong>
+            <KeepAsDollarValue coinPrices={coinPrices} keep={keepDispensed} style={{display: 'block'}} />
+          </> : <SkeletonWord />}
         </Box>
         {/*<Box label={"remaining rewards"}>*/}
         {/*  {keepFormatter.format((parseInt(data!.stats!.unallocatedStakedropECDSARewards) + parseInt(data!.stats!.unallocatedStakedropBeaconRewards)) / (10**18))} KEEP*/}

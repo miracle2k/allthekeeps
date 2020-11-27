@@ -4,7 +4,7 @@ import {css} from "emotion";
 
 const skeletonLineStyle = css`
   width: 140px;
-  height: 16px;
+  height: 1em;
   border-radius: 3px;
   background-color: #eee;
   background-image: linear-gradient(90deg, #eee 0px, #e8e8e8 40px, #eee 80px);
@@ -41,6 +41,13 @@ const skeletonAvatarStyle =`
 }
 
 `;
+
+
+export function SkeletonWord(props: {
+
+}) {
+  return <div className={skeletonLineStyle} style={{width: '140px'}} />;
+}
 
 
 export function SkeletonTableRow(props: {
