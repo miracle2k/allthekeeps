@@ -126,7 +126,7 @@ export function Content() {
           </div>
         </Box>
 
-        <Box label={"rewards withdrawn"} tooltip={"Stakedrop awards that have already been dispensed."}>
+        <Box label={"rewards dispensed"} tooltip={"Stakedrop awards which have already been dispensed to this operator (whether withdrawn or not)."}>
           <div>
             {keepFormatter.format(operator.stakedropRewardsDispensed / (10**18))} KEEP
           </div>

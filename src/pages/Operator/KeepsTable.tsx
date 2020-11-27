@@ -201,10 +201,10 @@ const StakeDropIcons = ({
 
 
 const StakeDropStatusExplainer = ({
-  "INELIGABLE": "There is no reward for this keep, but it needs to be notified to have the reward transferred back into the pool.",
+  "INELIGABLE": "There is no reward for this keep, but it needs to be notified to have the reward allocation added back into the pool for future intervals.",
   "TERMINATION_REPORTED": "There is no reward for this keep, and the amount initially allocated for it has been transferred back into the pool.",
-  "DISPENSED": "The reward for this keep has been dispensed to the beneficiary account.",
-  "WITHDRAWABLE": "The reward for this keep has not net been withdrawn.",
+  "DISPENSED": "The reward for this keep has been dispensed (but may not have been withdrawn).",
+  "WITHDRAWABLE": "The reward for this keep has not yet been dispensed.",
 } as any);
 
 function RewardStatus(props: {
