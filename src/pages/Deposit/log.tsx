@@ -246,7 +246,10 @@ function SetupFailedEvent(props: {
       <LogTitle>Failed: Signer Setup</LogTitle>
       <div>
         The signers failed to coordinate to provide a Bitcoin deposit address. Specifically, nothing was
-        submitted by the following signer(s): {badSigners.map(address => <Address to={`/operator/${address}`} address={address} />).reduce((prev, curr) => [prev, ', ', curr] as any, "")}
+        submitted by the following signer(s): {badSigners
+          .map(
+            address => <Address key={address} to={`/operator/${address}`} address={address} />)
+          .reduce((prev, curr) => [prev, ', ', curr] as any)}
       </div>
       {/*<div style={{color: 'gray', fontSize: '0.9em'}}>*/}
       {/*  The depositor has 3 hours to send the desired amount of Bitcoins to the address provided by the signers.*/}
