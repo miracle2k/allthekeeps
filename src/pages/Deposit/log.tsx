@@ -30,6 +30,11 @@ export function Log(props: {
                   cause
               },
 
+              ...on RedemptionRequestedEvent {
+                  redeemerOutputScript,
+                  requestedFee
+              },
+
               ...on LiquidatedEvent {
                   deposit {
                       ...AuctionDetails
@@ -127,10 +132,13 @@ function FundedEvent(props: {
 function RedemptionRequestedEvent(props: {
   event: any
 }) {
+  const address = BitcoinHelpers.Address.fromScript(props.event.redeemerOutputScript);
+
   return <div>
     <LogTitle>Redemption Requested</LogTitle>
     <div>
-
+      <Address address={props.event.submitter}/> paid back the TBTC tokens to the system and is asking for
+      the deposited bitcoin to be sent to <BitcoinAddress address={address} />.
     </div>
   </div>
 }

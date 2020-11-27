@@ -248,6 +248,16 @@ const BitcoinHelpers = {
       return BitcoinHelpers.Address.toRawScript(address).toString("hex")
     },
     /**
+     * Used to convert `redeemerOutputScript` to a BTC address.
+     */
+    fromScript: function(script) {
+      // We receive the script with a 0x prefix
+      script = script.slice(2)
+      // The first byte is a length-prefix added by the client when requesting the redemption to the Script.toRaw() output.
+      script = script.slice(2)
+      return Script.fromRaw(Buffer.from(script, 'hex')).getAddress().toString()
+    },
+    /**
      * Converts a Bitcoin ScriptPubKey address string to a raw script
      * buffer.
      *
