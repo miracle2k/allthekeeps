@@ -288,5 +288,8 @@ function RedeemedEvent(props: {
   // # Triggered when provideRedemptionProof() is called - confirmations
   return <div>
     <LogTitle>Redeemed</LogTitle>
+    <div>
+      Proof was submitted that the signers have paid the held Bitcoin to the requested withdrawal address.
+    </div>
   </div>
 }
