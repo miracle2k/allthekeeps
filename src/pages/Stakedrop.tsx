@@ -102,7 +102,7 @@ export function Stakedrop() {
           <div style={{fontFamily: "Roboto Slab", color: '#4e8778', fontWeight: 900, fontSize: 60, lineHeight: 1}}>
             {interval.number}
             <span style={{fontSize: '0.4em'}}>
-              {interval.number == 2 ? 'st' : interval.number == 2 ? 'nd' : interval.number == 3 ? 'rd' : 'th'}
+              {interval.number == 1 ? 'st' : interval.number == 2 ? 'nd' : interval.number == 3 ? 'rd' : 'th'}
             </span>
           </div>
           <div style={{color: '#4e8778'}}>Interval</div>
