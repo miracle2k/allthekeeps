@@ -20,6 +20,9 @@ import {HeaderBoxes} from "../../components/HeaderBoxes";
 import {Hash} from "../../components/Address";
 import {PageHeaderMenu} from "../../components/PageHeaderMenu";
 import {useEtherscanDomain} from "../../NetworkContext";
+import { useMemo } from "react";
+import {act} from "react-dom/test-utils";
+import {useHistory} from "react-router-dom";
 
 
 const OPERATOR_QUERY = gql`
@@ -71,12 +74,25 @@ const formatterBTC = new Intl.NumberFormat("en-US", {
 
 
 export function Content() {
-  let { operatorId } = useParams<any>();
+  const { operatorId, tabId } = useParams<any>();
+  const history = useHistory();
   const etherscan = useEtherscanDomain();
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
 
-  if (loading) return <p>Loading...</p>;
-  if (error || !data) return <p>Error :( {""+ error}</p>;
+  const activeTabIndex = useMemo(() => {
+    const activeTab = (["", "beacongroups", "log"]).indexOf(tabId);
+    if (activeTab == -1) {
+      return 0;
+    }
+    return activeTab;
+  }, [tabId]);
+  const handleSelect = (index: number) => {
+    const id = ["", "beacongroups", "log"][index];
+    history.replace(`/operator/${operatorId}/${id}`)
+  }
+
+  if (loading) { return <p>Loading...</p>; }
+  if (error || !data) { return <p>Error :( {""+ error}</p>; }
   const operator = data.operator;
   if (!operator) {
     return <p>No such operator.</p>
@@ -134,7 +150,7 @@ export function Content() {
       </HeaderBoxes>
     </PageHeader>
 
-    <Tabs>
+    <Tabs selectedIndex={activeTabIndex} onSelect={handleSelect}>
       <TabList>
         <Tab>
           Keeps

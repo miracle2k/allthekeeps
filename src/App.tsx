@@ -120,6 +120,9 @@ function AppInternal() {
                   <Route path="/operator/:operatorId" exact>
                     <Operator />
                   </Route>
+                  <Route path="/operator/:operatorId/:tabId" exact>
+                    <Operator />
+                  </Route>
                   <Route path="/deposit/:depositId" exact>
                     <Deposit />
                   </Route>
