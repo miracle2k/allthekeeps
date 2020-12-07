@@ -96,9 +96,9 @@ function UnbondedValueDepositedEvent(props: {
 }) {
   return <div>
     <LogTitle>ETH Collateral Deposited</LogTitle>
-    <p>
+    <div>
       <ETHValue wei={props.event.amount} /> ETH of additional collateral was deposited.
-    </p>
+    </div>
   </div>
 }
 
@@ -107,9 +107,9 @@ function UnbondedValueWithdrawnEvent(props: {
 }) {
   return <div>
     <LogTitle>ETH Collateral Withdrawn</LogTitle>
-    <p>
+    <div>
       <ETHValue wei={props.event.amount} /> ETH of collateral was withdrawn.
-    </p>
+    </div>
   </div>
 }
 
@@ -118,9 +118,9 @@ function BondSeizedEvent(props: {
 }) {
   return <div>
     <LogTitle>Bond Seized</LogTitle>
-    <p>
+    <div>
       <ETHValue wei={props.event.amount} /> ETH of bonded collateral was seized by the system (and sent to <Address address={props.event.destination} />).
-    </p>
+    </div>
   </div>
 }
 
@@ -145,9 +145,9 @@ function TopUpInitiatedEvent(props: {
 }) {
   return <div>
     <LogTitle>Topup initiated</LogTitle>
-    <p>
+    <div>
       A topup of {keepFormatter.format(props.event.amount / (10**18))} KEEP was initiated.
-    </p>
+    </div>
   </div>
 }
 
@@ -156,9 +156,9 @@ function TopUpCompletedEvent(props: {
 }) {
   return <div>
     <LogTitle>Topup Completed</LogTitle>
-    <p>
+    <div>
       The topup completed. The total amount staked is now {keepFormatter.format(props.event.newAmount / (10**18))} KEEP.
-    </p>
+    </div>
   </div>
 }
 
@@ -167,9 +167,9 @@ function TokensSeizedEvent(props: {
 }) {
   return <div>
     <LogTitle>Tokens Seized</LogTitle>
-    <p>
+    <div>
       {keepFormatter.format(props.event.amount / (10**18))} KEEP were seized.
-    </p>
+    </div>
   </div>
 }
 
@@ -187,10 +187,9 @@ function OperatorAuthorizationEvent(props: {
   event: any
 }) {
   return <div>
-    <LogTitle>Contract Authorized</LogTitle>
-    <p>
-      {props.event.authorizationType} //
-      {props.event.isDeauthorization}
-    </p>
+    <LogTitle>Contract {props.event.isDeauthorization ? "Deauthorized" : "Authorized"}</LogTitle>
+    <div>
+      The {props.event.authorizationType} contract has been {props.event.isDeauthorization ? "deauthorized" : "authorized"}.
+    </div>
   </div>
 }

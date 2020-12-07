@@ -24,7 +24,6 @@ export function LogEntry(props: {
 
   return <div className={css`
     &:not(:last-child) {
-    
        margin-bottom: 20px;
        border-bottom: 1px dotted silver;
        padding-bottom: 20px;
