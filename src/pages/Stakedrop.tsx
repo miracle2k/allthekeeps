@@ -328,12 +328,12 @@ export function getStakedropRewardFormula(opts: {
       ? (Math.sqrt(opts.ethLocked * 3000) * 2) - 3000
       : opts.ethLocked;
 
-  const MinStake = 80000;
+  const MinStake = 70000;
   // This will start to be wrong once MinStake changes. We might have to calculate the value for
   // all min stake values, or come up with a clever formula.
   // =IF(B11=0,0,1+MIN(C11/70000,SQRT(C11/(B11*500))))
   const boostFactor1 = opts.stakedAmount / MinStake;
-  const boostFactor2 = opts.ethLocked == 0 ? 0 : Math.sqrt(opts.stakedAmount / opts.ethLocked * 500);
+  const boostFactor2 = opts.ethLocked == 0 ? 0 : Math.sqrt(opts.stakedAmount / (opts.ethLocked * 500));
   const boost = 1 + Math.min(boostFactor1, boostFactor2);
 
   const rewardWeight = ethScore * boost;
