@@ -8,6 +8,7 @@ import {Address} from "../../components/Address";
 import {GetOperatorDataQuery} from "../../generated/graphql";
 import {FormattedTime} from "../../components/FormattedTime";
 import {formatNumber, formatPercentage} from "../../utils/formatNumber";
+import {ETHValue} from "../../components/ETHValue";
 
 
 const OPERATOR_INFO_QUERY = gql`
@@ -19,6 +20,7 @@ const OPERATOR_INFO_QUERY = gql`
         beneficiary,
         authorizer,
         
+        ethLocked,
         stakedAt,
         stakeLockExpiresAt,
         
@@ -72,6 +74,16 @@ export default function OverviewTab(props: {
               //   tooltip: "The stake can only be withdrawn after this date. This will change when keeps are redeemed early.",
               //   value: <FormattedTime format={"full"} time={operator.stakeLockExpiresAt} />
               // },
+            ],
+          },
+          {
+            title: "ETH",
+            properties: [
+              {
+                key: 'ethLocked',
+                label: "ETH Locked",
+                value: <ETHValue eth={operator.ethLocked} />
+              },
             ],
           },
           {

@@ -8178,7 +8178,7 @@ export type GetOperatorDataQuery = (
   { __typename?: 'Query' }
   & { operator?: Maybe<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'owner' | 'beneficiary' | 'authorizer' | 'stakedAt' | 'stakeLockExpiresAt' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized' | 'stakedropEthScore' | 'stakedropBoost' | 'stakedropRewardWeight'>
+    & Pick<Operator, 'id' | 'address' | 'owner' | 'beneficiary' | 'authorizer' | 'ethLocked' | 'stakedAt' | 'stakeLockExpiresAt' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized' | 'stakedropEthScore' | 'stakedropBoost' | 'stakedropRewardWeight'>
   )>, status?: Maybe<(
     { __typename?: 'StatusRecord' }
     & Pick<StatusRecord, 'totalRewardWeight'>
@@ -8943,6 +8943,7 @@ export const GetOperatorDataDocument = gql`
     owner
     beneficiary
     authorizer
+    ethLocked
     stakedAt
     stakeLockExpiresAt
     randomBeaconOperatorAuthorized
