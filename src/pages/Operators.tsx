@@ -37,7 +37,10 @@ const OPERATOR_QUERY = gql`
             totalFaultCount,
             attributableFaultCount,
             totalTBTCRewards,
-            totalETHRewards
+            totalETHRewards,
+            randomBeaconOperatorAuthorized,
+            bondedECDSAKeepFactoryAuthorized,
+            tbtcSystemSortitionPoolAuthorized
         },
         stats: statsRecord(id: "current", block: $block) {
             availableToBeBonded,
@@ -161,6 +164,15 @@ export function OperatorsTable(props: {
           Staked At <InfoTooltip>The date this operator joined based on having stake delegated to it.</InfoTooltip>
         </SortableHeader>
       </th>
+      <th>
+        1
+      </th>
+      <th>
+        2
+      </th>
+      <th>
+        3
+      </th>
     </tr>
     </thead>
     <tbody>
@@ -212,6 +224,15 @@ export function OperatorsTable(props: {
         </td>
         <td>
           <TimeToNow time={member.stakedAt} />
+        </td>
+        <td>
+          {member.randomBeaconOperatorAuthorized ? 'true' : 'false'}
+        </td>
+        <td>
+          {member.bondedECDSAKeepFactoryAuthorized ? 'true' : 'false'}
+        </td>
+        <td>
+          {member.tbtcSystemSortitionPoolAuthorized ? 'true' : 'false'}
         </td>
       </tr>
     })}

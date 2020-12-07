@@ -679,6 +679,8 @@ export type Deposit = {
   bondedECDSAKeep?: Maybe<BondedEcdsaKeep>;
   /** The ratio of backing ETH to lot size. This allows you to sort by collateralization-ratio. */
   etcToBtcRatio: Scalars['BigInt'];
+  /** The oracle price (price of BTC in ETH) at the time of redemption. */
+  finalBtcPrice?: Maybe<Scalars['BigInt']>;
   depositLiquidation?: Maybe<DepositLiquidation>;
   depositRedemption?: Maybe<DepositRedemption>;
   depositSetup?: Maybe<DepositSetup>;
@@ -1173,6 +1175,14 @@ export type Deposit_Filter = {
   etcToBtcRatio_lte?: Maybe<Scalars['BigInt']>;
   etcToBtcRatio_in?: Maybe<Array<Scalars['BigInt']>>;
   etcToBtcRatio_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  finalBtcPrice?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_not?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_gt?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_lt?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_gte?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_lte?: Maybe<Scalars['BigInt']>;
+  finalBtcPrice_in?: Maybe<Array<Scalars['BigInt']>>;
+  finalBtcPrice_not_in?: Maybe<Array<Scalars['BigInt']>>;
   depositLiquidation?: Maybe<Scalars['String']>;
   depositLiquidation_not?: Maybe<Scalars['String']>;
   depositLiquidation_gt?: Maybe<Scalars['String']>;
@@ -1254,6 +1264,7 @@ export enum Deposit_OrderBy {
   EndOfTerm = 'endOfTerm',
   BondedEcdsaKeep = 'bondedECDSAKeep',
   EtcToBtcRatio = 'etcToBtcRatio',
+  FinalBtcPrice = 'finalBtcPrice',
   DepositLiquidation = 'depositLiquidation',
   DepositRedemption = 'depositRedemption',
   DepositSetup = 'depositSetup',
@@ -2464,6 +2475,11 @@ export type Operator = {
   owner?: Maybe<Scalars['Bytes']>;
   beneficiary?: Maybe<Scalars['Bytes']>;
   authorizer?: Maybe<Scalars['Bytes']>;
+  randomBeaconOperatorAuthorized: Scalars['Boolean'];
+  bondedECDSAKeepFactoryAuthorized: Scalars['Boolean'];
+  tbtcSystemSortitionPoolAuthorized: Scalars['Boolean'];
+  /** Amount of ETH locked in total by this operator, both bonded to a keep and available to be bonded. */
+  ethLocked: Scalars['BigDecimal'];
   bonded: Scalars['BigDecimal'];
   unboundAvailable: Scalars['BigDecimal'];
   totalKeepCount: Scalars['Int'];
@@ -2478,10 +2494,13 @@ export type Operator = {
   totalBeaconRewards: Scalars['BigInt'];
   /** The total stakedrop rewards dispensed to this operator, including ECDSA and beacon. They may be eligible for further unclaimed rewards. */
   stakedropRewardsDispensed: Scalars['BigInt'];
-  /** The ECDSA stakedrop rewards dispensed to this operator. They may be eligible for further unclaimed rewards. */
+  /** The ECDSA stakedrop rewards dispensed to this operator. They may be eligible for further unclaimed rewards. Only used in interval one and two. */
   stakedropECDSARewardsDispensed: Scalars['BigInt'];
   /** The beacon stakedrop rewards dispensed to this operator. They may be eligible for further unclaimed rewards. */
   stakedropBeaconRewardsDispensed: Scalars['BigInt'];
+  stakedropEthScore: Scalars['BigDecimal'];
+  stakedropBoost: Scalars['BigDecimal'];
+  stakedropRewardWeight: Scalars['BigDecimal'];
   /** How often this operator was involved in a fault, attributable to them. */
   attributableFaultCount: Scalars['Int'];
   /** How often this operator was involved in a fault, attributable to them. */
@@ -2564,6 +2583,109 @@ export type OperatorBeaconGroupMembershipsArgs = {
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<RandomBeaconGroupMembership_Filter>;
 };
+
+/** This combines multiple authorization actions, i.e. a node operator authorizing the random beacon contract or others. */
+export type OperatorAuthorizationEvent = Event & {
+  __typename?: 'OperatorAuthorizationEvent';
+  id: Scalars['ID'];
+  submitter: Scalars['Bytes'];
+  transactionHash: Scalars['String'];
+  timestamp: Scalars['BigInt'];
+  deposit?: Maybe<Deposit>;
+  operator?: Maybe<Operator>;
+  authorizationType: OperatorAuthorizationType;
+  isDeauthorization: Scalars['Boolean'];
+};
+
+export type OperatorAuthorizationEvent_Filter = {
+  id?: Maybe<Scalars['ID']>;
+  id_not?: Maybe<Scalars['ID']>;
+  id_gt?: Maybe<Scalars['ID']>;
+  id_lt?: Maybe<Scalars['ID']>;
+  id_gte?: Maybe<Scalars['ID']>;
+  id_lte?: Maybe<Scalars['ID']>;
+  id_in?: Maybe<Array<Scalars['ID']>>;
+  id_not_in?: Maybe<Array<Scalars['ID']>>;
+  submitter?: Maybe<Scalars['Bytes']>;
+  submitter_not?: Maybe<Scalars['Bytes']>;
+  submitter_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_not_in?: Maybe<Array<Scalars['Bytes']>>;
+  submitter_contains?: Maybe<Scalars['Bytes']>;
+  submitter_not_contains?: Maybe<Scalars['Bytes']>;
+  transactionHash?: Maybe<Scalars['String']>;
+  transactionHash_not?: Maybe<Scalars['String']>;
+  transactionHash_gt?: Maybe<Scalars['String']>;
+  transactionHash_lt?: Maybe<Scalars['String']>;
+  transactionHash_gte?: Maybe<Scalars['String']>;
+  transactionHash_lte?: Maybe<Scalars['String']>;
+  transactionHash_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_not_in?: Maybe<Array<Scalars['String']>>;
+  transactionHash_contains?: Maybe<Scalars['String']>;
+  transactionHash_not_contains?: Maybe<Scalars['String']>;
+  transactionHash_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_not_starts_with?: Maybe<Scalars['String']>;
+  transactionHash_ends_with?: Maybe<Scalars['String']>;
+  transactionHash_not_ends_with?: Maybe<Scalars['String']>;
+  timestamp?: Maybe<Scalars['BigInt']>;
+  timestamp_not?: Maybe<Scalars['BigInt']>;
+  timestamp_gt?: Maybe<Scalars['BigInt']>;
+  timestamp_lt?: Maybe<Scalars['BigInt']>;
+  timestamp_gte?: Maybe<Scalars['BigInt']>;
+  timestamp_lte?: Maybe<Scalars['BigInt']>;
+  timestamp_in?: Maybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  deposit?: Maybe<Scalars['String']>;
+  deposit_not?: Maybe<Scalars['String']>;
+  deposit_gt?: Maybe<Scalars['String']>;
+  deposit_lt?: Maybe<Scalars['String']>;
+  deposit_gte?: Maybe<Scalars['String']>;
+  deposit_lte?: Maybe<Scalars['String']>;
+  deposit_in?: Maybe<Array<Scalars['String']>>;
+  deposit_not_in?: Maybe<Array<Scalars['String']>>;
+  deposit_contains?: Maybe<Scalars['String']>;
+  deposit_not_contains?: Maybe<Scalars['String']>;
+  deposit_starts_with?: Maybe<Scalars['String']>;
+  deposit_not_starts_with?: Maybe<Scalars['String']>;
+  deposit_ends_with?: Maybe<Scalars['String']>;
+  deposit_not_ends_with?: Maybe<Scalars['String']>;
+  operator?: Maybe<Scalars['String']>;
+  operator_not?: Maybe<Scalars['String']>;
+  operator_gt?: Maybe<Scalars['String']>;
+  operator_lt?: Maybe<Scalars['String']>;
+  operator_gte?: Maybe<Scalars['String']>;
+  operator_lte?: Maybe<Scalars['String']>;
+  operator_in?: Maybe<Array<Scalars['String']>>;
+  operator_not_in?: Maybe<Array<Scalars['String']>>;
+  operator_contains?: Maybe<Scalars['String']>;
+  operator_not_contains?: Maybe<Scalars['String']>;
+  operator_starts_with?: Maybe<Scalars['String']>;
+  operator_not_starts_with?: Maybe<Scalars['String']>;
+  operator_ends_with?: Maybe<Scalars['String']>;
+  operator_not_ends_with?: Maybe<Scalars['String']>;
+  authorizationType?: Maybe<OperatorAuthorizationType>;
+  authorizationType_not?: Maybe<OperatorAuthorizationType>;
+  isDeauthorization?: Maybe<Scalars['Boolean']>;
+  isDeauthorization_not?: Maybe<Scalars['Boolean']>;
+  isDeauthorization_in?: Maybe<Array<Scalars['Boolean']>>;
+  isDeauthorization_not_in?: Maybe<Array<Scalars['Boolean']>>;
+};
+
+export enum OperatorAuthorizationEvent_OrderBy {
+  Id = 'id',
+  Submitter = 'submitter',
+  TransactionHash = 'transactionHash',
+  Timestamp = 'timestamp',
+  Deposit = 'deposit',
+  Operator = 'operator',
+  AuthorizationType = 'authorizationType',
+  IsDeauthorization = 'isDeauthorization'
+}
+
+export enum OperatorAuthorizationType {
+  RandomBeaconOperator = 'RandomBeaconOperator',
+  BondedEcdsaKeepFactory = 'BondedECDSAKeepFactory',
+  TbtcSystemSortitionPool = 'TBTCSystemSortitionPool'
+}
 
 export type OperatorStakedEvent = Event & {
   __typename?: 'OperatorStakedEvent';
@@ -2692,6 +2814,26 @@ export type Operator_Filter = {
   authorizer_not_in?: Maybe<Array<Scalars['Bytes']>>;
   authorizer_contains?: Maybe<Scalars['Bytes']>;
   authorizer_not_contains?: Maybe<Scalars['Bytes']>;
+  randomBeaconOperatorAuthorized?: Maybe<Scalars['Boolean']>;
+  randomBeaconOperatorAuthorized_not?: Maybe<Scalars['Boolean']>;
+  randomBeaconOperatorAuthorized_in?: Maybe<Array<Scalars['Boolean']>>;
+  randomBeaconOperatorAuthorized_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  bondedECDSAKeepFactoryAuthorized?: Maybe<Scalars['Boolean']>;
+  bondedECDSAKeepFactoryAuthorized_not?: Maybe<Scalars['Boolean']>;
+  bondedECDSAKeepFactoryAuthorized_in?: Maybe<Array<Scalars['Boolean']>>;
+  bondedECDSAKeepFactoryAuthorized_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  tbtcSystemSortitionPoolAuthorized?: Maybe<Scalars['Boolean']>;
+  tbtcSystemSortitionPoolAuthorized_not?: Maybe<Scalars['Boolean']>;
+  tbtcSystemSortitionPoolAuthorized_in?: Maybe<Array<Scalars['Boolean']>>;
+  tbtcSystemSortitionPoolAuthorized_not_in?: Maybe<Array<Scalars['Boolean']>>;
+  ethLocked?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_not?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_gt?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_lt?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_gte?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_lte?: Maybe<Scalars['BigDecimal']>;
+  ethLocked_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  ethLocked_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   bonded?: Maybe<Scalars['BigDecimal']>;
   bonded_not?: Maybe<Scalars['BigDecimal']>;
   bonded_gt?: Maybe<Scalars['BigDecimal']>;
@@ -2788,6 +2930,30 @@ export type Operator_Filter = {
   stakedropBeaconRewardsDispensed_lte?: Maybe<Scalars['BigInt']>;
   stakedropBeaconRewardsDispensed_in?: Maybe<Array<Scalars['BigInt']>>;
   stakedropBeaconRewardsDispensed_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  stakedropEthScore?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_not?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_gt?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_lt?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_gte?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_lte?: Maybe<Scalars['BigDecimal']>;
+  stakedropEthScore_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  stakedropEthScore_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  stakedropBoost?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_not?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_gt?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_lt?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_gte?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_lte?: Maybe<Scalars['BigDecimal']>;
+  stakedropBoost_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  stakedropBoost_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  stakedropRewardWeight?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_not?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_gt?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_lt?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_gte?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_lte?: Maybe<Scalars['BigDecimal']>;
+  stakedropRewardWeight_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  stakedropRewardWeight_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
   attributableFaultCount?: Maybe<Scalars['Int']>;
   attributableFaultCount_not?: Maybe<Scalars['Int']>;
   attributableFaultCount_gt?: Maybe<Scalars['Int']>;
@@ -2837,6 +3003,10 @@ export enum Operator_OrderBy {
   Owner = 'owner',
   Beneficiary = 'beneficiary',
   Authorizer = 'authorizer',
+  RandomBeaconOperatorAuthorized = 'randomBeaconOperatorAuthorized',
+  BondedEcdsaKeepFactoryAuthorized = 'bondedECDSAKeepFactoryAuthorized',
+  TbtcSystemSortitionPoolAuthorized = 'tbtcSystemSortitionPoolAuthorized',
+  EthLocked = 'ethLocked',
   Bonded = 'bonded',
   UnboundAvailable = 'unboundAvailable',
   TotalKeepCount = 'totalKeepCount',
@@ -2849,6 +3019,9 @@ export enum Operator_OrderBy {
   StakedropRewardsDispensed = 'stakedropRewardsDispensed',
   StakedropEcdsaRewardsDispensed = 'stakedropECDSARewardsDispensed',
   StakedropBeaconRewardsDispensed = 'stakedropBeaconRewardsDispensed',
+  StakedropEthScore = 'stakedropEthScore',
+  StakedropBoost = 'stakedropBoost',
+  StakedropRewardWeight = 'stakedropRewardWeight',
   AttributableFaultCount = 'attributableFaultCount',
   InvolvedInFaultCount = 'involvedInFaultCount',
   TotalFaultCount = 'totalFaultCount',
@@ -2971,6 +3144,8 @@ export type Query = {
   users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
+  operatorAuthorizationEvent?: Maybe<OperatorAuthorizationEvent>;
+  operatorAuthorizationEvents: Array<OperatorAuthorizationEvent>;
   operatorStakedEvent?: Maybe<OperatorStakedEvent>;
   operatorStakedEvents: Array<OperatorStakedEvent>;
   tokensSlashedEvent?: Maybe<TokensSlashedEvent>;
@@ -3352,6 +3527,22 @@ export type QueryOperatorsArgs = {
   orderBy?: Maybe<Operator_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Operator_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryOperatorAuthorizationEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type QueryOperatorAuthorizationEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<OperatorAuthorizationEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<OperatorAuthorizationEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -4937,8 +5128,15 @@ export enum StakedropInterval_OrderBy {
   Keeps = 'keeps'
 }
 
+/** The stakedrop reward status for an individual group of keep. */
 export enum StakedropRewardStatus {
+  /** The entity will not be rewarded because the stakers did not operate it correctly. */
+  Ineligable = 'INELIGABLE',
+  /** The reward is available and can be withdrawn. */
+  Withdrawable = 'WITHDRAWABLE',
+  /** The reward was withdrawn. */
   Dispensed = 'DISPENSED',
+  /** The reward meant for an ineligable entity was returned back to the pool. */
   TerminationReported = 'TERMINATION_REPORTED'
 }
 
@@ -5309,6 +5507,8 @@ export type StatusRecord = {
   currentRequestedRelayEntry?: Maybe<RelayEntry>;
   remainingStakedropBeaconAllocation: Scalars['BigInt'];
   remainingStakedropECDSAAllocation: Scalars['BigInt'];
+  /** The current total reward weight, as used in the Stakedrop rewards formula starting with interval 3. */
+  totalRewardWeight: Scalars['BigDecimal'];
 };
 
 export type StatusRecord_Filter = {
@@ -5350,13 +5550,22 @@ export type StatusRecord_Filter = {
   remainingStakedropECDSAAllocation_lte?: Maybe<Scalars['BigInt']>;
   remainingStakedropECDSAAllocation_in?: Maybe<Array<Scalars['BigInt']>>;
   remainingStakedropECDSAAllocation_not_in?: Maybe<Array<Scalars['BigInt']>>;
+  totalRewardWeight?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_not?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_gt?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_lt?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_gte?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_lte?: Maybe<Scalars['BigDecimal']>;
+  totalRewardWeight_in?: Maybe<Array<Scalars['BigDecimal']>>;
+  totalRewardWeight_not_in?: Maybe<Array<Scalars['BigDecimal']>>;
 };
 
 export enum StatusRecord_OrderBy {
   Id = 'id',
   CurrentRequestedRelayEntry = 'currentRequestedRelayEntry',
   RemainingStakedropBeaconAllocation = 'remainingStakedropBeaconAllocation',
-  RemainingStakedropEcdsaAllocation = 'remainingStakedropECDSAAllocation'
+  RemainingStakedropEcdsaAllocation = 'remainingStakedropECDSAAllocation',
+  TotalRewardWeight = 'totalRewardWeight'
 }
 
 export type Subscription = {
@@ -5401,6 +5610,8 @@ export type Subscription = {
   users: Array<User>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
+  operatorAuthorizationEvent?: Maybe<OperatorAuthorizationEvent>;
+  operatorAuthorizationEvents: Array<OperatorAuthorizationEvent>;
   operatorStakedEvent?: Maybe<OperatorStakedEvent>;
   operatorStakedEvents: Array<OperatorStakedEvent>;
   tokensSlashedEvent?: Maybe<TokensSlashedEvent>;
@@ -5782,6 +5993,22 @@ export type SubscriptionOperatorsArgs = {
   orderBy?: Maybe<Operator_OrderBy>;
   orderDirection?: Maybe<OrderDirection>;
   where?: Maybe<Operator_Filter>;
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionOperatorAuthorizationEventArgs = {
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+};
+
+
+export type SubscriptionOperatorAuthorizationEventsArgs = {
+  skip?: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<OperatorAuthorizationEvent_OrderBy>;
+  orderDirection?: Maybe<OrderDirection>;
+  where?: Maybe<OperatorAuthorizationEvent_Filter>;
   block?: Maybe<Block_Height>;
 };
 
@@ -7573,12 +7800,16 @@ export type GetDepositQuery = (
       & { members: Array<(
         { __typename?: 'Operator' }
         & Pick<Operator, 'id' | 'address'>
-      )> }
+      )>, pubkeySubmissions: Array<Maybe<(
+        { __typename?: 'Operator' }
+        & Pick<Operator, 'address'>
+      )>> }
     )>, depositLiquidation?: Maybe<(
       { __typename?: 'DepositLiquidation' }
       & Pick<DepositLiquidation, 'cause'>
     )> }
     & NiceStateLabelFragment
+    & AuctionDetailsFragment
   )> }
 );
 
@@ -7632,6 +7863,9 @@ export type GetDepositLogsQuery = (
       & AuctionDetailsFragment
     )> }
   ) | (
+    { __typename: 'OperatorAuthorizationEvent' }
+    & Pick<OperatorAuthorizationEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'OperatorStakedEvent' }
     & Pick<OperatorStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
@@ -7642,7 +7876,7 @@ export type GetDepositLogsQuery = (
     & Pick<RedemptionFeeIncreasedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
     { __typename: 'RedemptionRequestedEvent' }
-    & Pick<RedemptionRequestedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+    & Pick<RedemptionRequestedEvent, 'redeemerOutputScript' | 'requestedFee' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
     { __typename: 'RegisteredPubKeyEvent' }
     & Pick<RegisteredPubKeyEvent, 'signingGroupPubkeyX' | 'signingGroupPubkeyY' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
@@ -7869,6 +8103,9 @@ export type GetOperatorLogQuery = (
     { __typename: 'LiquidatedEvent' }
     & Pick<LiquidatedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
+    { __typename: 'OperatorAuthorizationEvent' }
+    & Pick<OperatorAuthorizationEvent, 'authorizationType' | 'isDeauthorization' | 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
+  ) | (
     { __typename: 'OperatorStakedEvent' }
     & Pick<OperatorStakedEvent, 'id' | 'transactionHash' | 'submitter' | 'timestamp'>
   ) | (
@@ -7931,6 +8168,23 @@ export type GetOperatorLogQuery = (
   )> }
 );
 
+export type GetOperatorDataQueryVariables = Exact<{
+  id: Scalars['ID'];
+  block?: Maybe<Block_Height>;
+}>;
+
+
+export type GetOperatorDataQuery = (
+  { __typename?: 'Query' }
+  & { operator?: Maybe<(
+    { __typename?: 'Operator' }
+    & Pick<Operator, 'id' | 'address' | 'owner' | 'beneficiary' | 'authorizer' | 'stakedAt' | 'stakeLockExpiresAt' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized' | 'stakedropEthScore' | 'stakedropBoost' | 'stakedropRewardWeight'>
+  )>, status?: Maybe<(
+    { __typename?: 'StatusRecord' }
+    & Pick<StatusRecord, 'totalRewardWeight'>
+  )> }
+);
+
 export type GetOperatorPropertiesQueryVariables = Exact<{
   id: Scalars['ID'];
   address: Scalars['Bytes'];
@@ -7985,7 +8239,7 @@ export type GetOperatorsQuery = (
   { __typename?: 'Query' }
   & { operators: Array<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'stakedAt' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards'>
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'stakedAt' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized'>
   )>, stats?: Maybe<(
     { __typename?: 'StatsRecord' }
     & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
@@ -8231,14 +8485,19 @@ export const GetDepositDocument = gql`
         id
         address
       }
+      pubkeySubmissions {
+        address
+      }
     }
     depositLiquidation {
       cause
     }
     ...NiceStateLabel
+    ...AuctionDetails
   }
 }
-    ${NiceStateLabelFragmentDoc}`;
+    ${NiceStateLabelFragmentDoc}
+${AuctionDetailsFragmentDoc}`;
 
 /**
  * __useGetDepositQuery__
@@ -8310,6 +8569,10 @@ export const GetDepositLogsDocument = gql`
     }
     ... on StartedLiquidationEvent {
       cause
+    }
+    ... on RedemptionRequestedEvent {
+      redeemerOutputScript
+      requestedFee
     }
     ... on LiquidatedEvent {
       deposit {
@@ -8630,6 +8893,10 @@ export const GetOperatorLogDocument = gql`
     ... on TopUpCompletedEvent {
       newAmount
     }
+    ... on OperatorAuthorizationEvent {
+      authorizationType
+      isDeauthorization
+    }
   }
 }
     `;
@@ -8662,6 +8929,55 @@ export function useGetOperatorLogLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetOperatorLogQueryHookResult = ReturnType<typeof useGetOperatorLogQuery>;
 export type GetOperatorLogLazyQueryHookResult = ReturnType<typeof useGetOperatorLogLazyQuery>;
 export type GetOperatorLogQueryResult = Apollo.QueryResult<GetOperatorLogQuery, GetOperatorLogQueryVariables>;
+export const GetOperatorDataDocument = gql`
+    query GetOperatorData($id: ID!, $block: Block_height) {
+  operator(id: $id) {
+    id
+    address
+    owner
+    beneficiary
+    authorizer
+    stakedAt
+    stakeLockExpiresAt
+    randomBeaconOperatorAuthorized
+    bondedECDSAKeepFactoryAuthorized
+    tbtcSystemSortitionPoolAuthorized
+    stakedropEthScore
+    stakedropBoost
+    stakedropRewardWeight
+  }
+  status: statusRecord(id: "current") {
+    totalRewardWeight
+  }
+}
+    `;
+
+/**
+ * __useGetOperatorDataQuery__
+ *
+ * To run a query within a React component, call `useGetOperatorDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOperatorDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOperatorDataQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      block: // value for 'block'
+ *   },
+ * });
+ */
+export function useGetOperatorDataQuery(baseOptions?: Apollo.QueryHookOptions<GetOperatorDataQuery, GetOperatorDataQueryVariables>) {
+        return Apollo.useQuery<GetOperatorDataQuery, GetOperatorDataQueryVariables>(GetOperatorDataDocument, baseOptions);
+      }
+export function useGetOperatorDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOperatorDataQuery, GetOperatorDataQueryVariables>) {
+          return Apollo.useLazyQuery<GetOperatorDataQuery, GetOperatorDataQueryVariables>(GetOperatorDataDocument, baseOptions);
+        }
+export type GetOperatorDataQueryHookResult = ReturnType<typeof useGetOperatorDataQuery>;
+export type GetOperatorDataLazyQueryHookResult = ReturnType<typeof useGetOperatorDataLazyQuery>;
+export type GetOperatorDataQueryResult = Apollo.QueryResult<GetOperatorDataQuery, GetOperatorDataQueryVariables>;
 export const GetOperatorPropertiesDocument = gql`
     query GetOperatorProperties($id: ID!, $address: Bytes!) {
   operator(id: $id) {
@@ -8771,6 +9087,9 @@ export const GetOperatorsDocument = gql`
     attributableFaultCount
     totalTBTCRewards
     totalETHRewards
+    randomBeaconOperatorAuthorized
+    bondedECDSAKeepFactoryAuthorized
+    tbtcSystemSortitionPoolAuthorized
   }
   stats: statsRecord(id: "current", block: $block) {
     availableToBeBonded

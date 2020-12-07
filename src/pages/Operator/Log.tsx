@@ -44,6 +44,10 @@ const OPERATOR_LOG_QUERY = gql`
 
             ...on TopUpCompletedEvent {
                 newAmount
+            },
+            ...on OperatorAuthorizationEvent {
+                authorizationType,
+                isDeauthorization
             }
         }
     }
@@ -67,8 +71,8 @@ export function OperatorLog(props: {
   if (error || !data) return <p>Error :( {""+ error}</p>;
 
   return <div>
-    {data?.events.map(event => {
-      return <LogEntry event={event} Components={LogComponents} />
+    {data?.events.map((event, idx) => {
+      return <LogEntry key={event.id} event={event} Components={LogComponents} />
     })}
   </div>
 }
@@ -83,6 +87,7 @@ const LogComponents = {
   'TopUpCompletedEvent': TopUpCompletedEvent,
   'UndelegatedEvent': UndelegatedEvent,
   'OperatorStakedEvent': OperatorStakedEvent,
+  'OperatorAuthorizationEvent': OperatorAuthorizationEvent
 }
 
 
@@ -174,5 +179,18 @@ function UndelegatedEvent(props: {
 }) {
   return <div>
     <LogTitle>Undelegated</LogTitle>
+  </div>
+}
+
+
+function OperatorAuthorizationEvent(props: {
+  event: any
+}) {
+  return <div>
+    <LogTitle>Contract Authorized</LogTitle>
+    <p>
+      {props.event.authorizationType} //
+      {props.event.isDeauthorization}
+    </p>
   </div>
 }

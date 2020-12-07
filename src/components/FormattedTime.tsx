@@ -48,16 +48,16 @@ export function formatSeconds(seconds: number) {
 
 export function FormattedTime(props: {
   time: string|number|DateTime,
-  format: 'long'|'simple'
+  format: 'full'|'long'|'simple'
 }) {
   const dateTime = dateTimeFrom(props.time);
 
   const longFormat = { weekday: 'short', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-  let formatOpts = props.format === 'long' ?
-      longFormat
-      : props.format === 'simple'
-          ? { month: 'short', day: '2-digit' }
-          : props.format;
+  let formatOpts = {
+    'full': { weekday: 'short', month: 'short', year: 'numeric', day: '2-digit', hour: '2-digit', minute: '2-digit' },
+    'long': longFormat,
+    'simple': { month: 'short', day: '2-digit' }
+  }[props.format];
 
   const tooltip = props.format === 'long' ? "" : dateTime.toLocaleString(longFormat);
   return <span title={tooltip}>

@@ -32,6 +32,7 @@ import {HeaderBoxes} from "../../components/HeaderBoxes";
 import {PageHeaderMenu} from "../../components/PageHeaderMenu";
 import {AuctionDetailsFragment, getAuctionDetailsFromDeposit} from "../../utils/getAuctionDetails";
 import {ETHValue} from "../../components/ETHValue";
+import {PropertyTable} from "../../components/PropertyTable";
 
 
 const DEPOSIT_QUERY = gql`
@@ -189,7 +190,7 @@ export function Content() {
               The  BTC is custodied by a group of randomly chosen signing nodes which stake ETH as a security bond.
             </InfoTooltip>
           </div>
-          <PropertyTable data={[
+          <PropertyTable style={{padding: '15px'}} data={[
             {
               key: 'signers',
               label: "Signers",
@@ -246,6 +247,7 @@ export function Content() {
         </Paper>
         <Paper style={{marginTop: '20px'}}>
           <PropertyTable
+              style={{padding: '15px'}}
               data={[
                 {
                   key: 'tokenOwner',
@@ -451,37 +453,3 @@ function LiquidationSummary(props: {deposit: any}) {
   </>
 }
 
-
-
-function PropertyTable(props: {
-  data: (undefined|{
-    key: string,
-    label: string,
-    tooltip?: string,
-    value: any
-  })[]
-}) {
-  return <table className={css`
-      color: #0A0806;
-      padding: 15px;
-      
-      & td, th {
-        font-weight: normal;
-        padding: 5px;
-        text-align: left;
-        vertical-align: top;
-      }
-    `}>
-      <tbody>
-      {props.data.map(row => {
-        if (!row) { return null; }
-        return <tr key={row.key}>
-          <th>
-            {row.label} {row.tooltip ? <InfoTooltip>{row.tooltip}</InfoTooltip> : null}
-          </th>
-          <td>{row.value}</td>
-        </tr>
-      })}
-      </tbody>
-    </table>
-}

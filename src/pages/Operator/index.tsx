@@ -11,9 +11,7 @@ import {GetOperatorQuery} from "../../generated/graphql";
 import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
-import {Properties} from "./Properties";
 import {OperatorLog} from "./Log";
-import {KeepTag} from "../../components/CurrencyTags";
 import {keepFormatter} from "../../components/KeepValue";
 import {PageHeader} from "../../components/PageHeader";
 import {HeaderBoxes} from "../../components/HeaderBoxes";
@@ -21,8 +19,8 @@ import {Hash} from "../../components/Address";
 import {PageHeaderMenu} from "../../components/PageHeaderMenu";
 import {useEtherscanDomain} from "../../NetworkContext";
 import { useMemo } from "react";
-import {act} from "react-dom/test-utils";
 import {useHistory} from "react-router-dom";
+import OverviewTab from "./OverviewTab";
 
 
 const OPERATOR_QUERY = gql`
@@ -79,15 +77,16 @@ export function Content() {
   const etherscan = useEtherscanDomain();
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
 
+  const TAB_IDS = ["", "beacongroups", "log"];
   const activeTabIndex = useMemo(() => {
-    const activeTab = (["", "beacongroups", "log"]).indexOf(tabId);
+    const activeTab = TAB_IDS.indexOf(tabId);
     if (activeTab == -1) {
       return 0;
     }
     return activeTab;
   }, [tabId]);
   const handleSelect = (index: number) => {
-    const id = ["", "beacongroups", "log"][index];
+    const id = TAB_IDS[index];
     history.replace(`/operator/${operatorId}/${id}`)
   }
 
@@ -153,16 +152,19 @@ export function Content() {
     <Tabs selectedIndex={activeTabIndex} onSelect={handleSelect}>
       <TabList>
         <Tab>
+          Overview
+        </Tab>
+        <Tab>
           Keeps
         </Tab>
         <Tab>
           Beacon Groups
         </Tab>
-        <Tab>
-          Log
-        </Tab>
       </TabList>
 
+      <TabPanel>
+        <OverviewTab operatorId={operatorId} />
+      </TabPanel>
       <TabPanel>
         <Paper padding>
           <h3 style={{marginTop: 0}}>Keeps</h3>
@@ -173,12 +175,6 @@ export function Content() {
         <Paper padding>
           <h3 style={{marginTop: 0}}>Random Beacon Groups</h3>
           <BeaconGroupsTable memberships={operator.beaconGroupMemberships} />
-        </Paper>
-      </TabPanel>
-      <TabPanel>
-        <Paper padding>
-          <h3 style={{marginTop: 0}}>Log</h3>
-          <OperatorLog operatorId={operatorId} />
         </Paper>
       </TabPanel>
     </Tabs>
