@@ -264,14 +264,14 @@ function APYCalculatorUI(props: {
   }, [share])
 
   return <div className={css`
+    border: 1px silver dotted;
+    padding: 20px;
+    background: white;
+    
     .inputs {
       display: flex;
       flex-direction: row;
       align-items: center;
-      
-      border: 1px silver dotted;
-      padding: 20px;
-      background: white;
     }
     h3 {
       margin-right: 15px;
@@ -311,6 +311,9 @@ function APYCalculatorUI(props: {
         {share !== null ? <><div><strong>{formatPercentage(share)}</strong></div>
         of rewards</> : null}
       </div>
+    </div>
+    <div style={{fontSize: '14px', marginTop: 15}}>
+      <a href={"https://blog.keep.network/a-new-rewards-mechanism-deef3412c3e1"}>Read about the new rewards mechanism.</a>
     </div>
   </div>
 }
