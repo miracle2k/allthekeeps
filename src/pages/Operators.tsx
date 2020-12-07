@@ -18,6 +18,7 @@ import {FormattedTime, TimeToNow} from "../components/FormattedTime";
 import {HeaderBoxes} from "../components/HeaderBoxes";
 import {PageHeader} from "../components/PageHeader";
 import {SkeletonTableRow} from "../components/SkeletonLoader";
+import {formatPercentage} from "../utils/formatNumber";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -40,11 +41,15 @@ const OPERATOR_QUERY = gql`
             totalETHRewards,
             randomBeaconOperatorAuthorized,
             bondedECDSAKeepFactoryAuthorized,
-            tbtcSystemSortitionPoolAuthorized
+            tbtcSystemSortitionPoolAuthorized,
+            stakedropRewardWeight
         },
         stats: statsRecord(id: "current", block: $block) {
             availableToBeBonded,
             totalBonded
+        },
+        status: statusRecord(id: "current", block: $block) {
+            totalRewardWeight
         }
     }
 `;
@@ -146,12 +151,12 @@ export function OperatorsTable(props: {
       </th>
       <th>
         <SortableHeader fieldId={"totalTBTCRewards"} state={props.sortState}>
-          BTC Rewards <InfoTooltip>The BTC fees earned by this operator.</InfoTooltip>
+          BTC Earnings <InfoTooltip>The BTC fees earned by this operator.</InfoTooltip>
         </SortableHeader>
       </th>
       <th>
         <SortableHeader fieldId={"totalETHRewards"} state={props.sortState}>
-          ETH Rewards <InfoTooltip>The ETH fees earned by this operator.</InfoTooltip>
+          ETH Earnings <InfoTooltip>The ETH fees earned by this operator.</InfoTooltip>
         </SortableHeader>
       </th>
       <th>
@@ -165,18 +170,14 @@ export function OperatorsTable(props: {
         </SortableHeader>
       </th>
       <th>
-        1
-      </th>
-      <th>
-        2
-      </th>
-      <th>
-        3
+        <SortableHeader fieldId={"stakedropRewardWeight"} state={props.sortState}>
+          Reward Share <InfoTooltip>Share of Stakedrop rewards going to this operator.</InfoTooltip>
+        </SortableHeader>
       </th>
     </tr>
     </thead>
     <tbody>
-    {props.loading ? <SkeletonTableRow columns={9} /> : null}
+    {props.loading ? <SkeletonTableRow columns={10} /> : null}
     {data?.operators.map((member: any) => {
       const unbound = parseFloat(member.unboundAvailable);
       const total = (unbound + parseFloat(member.bonded));
@@ -226,13 +227,7 @@ export function OperatorsTable(props: {
           <TimeToNow time={member.stakedAt} />
         </td>
         <td>
-          {member.randomBeaconOperatorAuthorized ? 'true' : 'false'}
-        </td>
-        <td>
-          {member.bondedECDSAKeepFactoryAuthorized ? 'true' : 'false'}
-        </td>
-        <td>
-          {member.tbtcSystemSortitionPoolAuthorized ? 'true' : 'false'}
+          {formatPercentage(parseFloat(member.stakedropRewardWeight) / parseFloat(data.status!.totalRewardWeight))}
         </td>
       </tr>
     })}

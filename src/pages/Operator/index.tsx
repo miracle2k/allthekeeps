@@ -11,7 +11,6 @@ import {GetOperatorQuery} from "../../generated/graphql";
 import {KeepsTable} from "./KeepsTable";
 import {BeaconGroupsTable} from "./BeaconGroupTable";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
-import {OperatorLog} from "./Log";
 import {keepFormatter} from "../../components/KeepValue";
 import {PageHeader} from "../../components/PageHeader";
 import {HeaderBoxes} from "../../components/HeaderBoxes";
