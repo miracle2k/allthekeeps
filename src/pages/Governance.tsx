@@ -13,6 +13,9 @@ import {ExplainerIcon} from "../components/ExplainerIcon";
 import {usePriceFeed} from "../components/PriceFeed";
 import {getWeiAsEth} from "../utils/getWeiAsEth";
 import {useQueryWithTimeTravel} from "../TimeTravel";
+import {calculateMinStake} from "../utils/calculateMinStake";
+import {keepFormatter} from "../components/KeepValue";
+import {KeepTag} from "../components/CurrencyTags";
 
 const GOVERNANCE_QUERY = gql`
     query GetGovernance($block: Block_height) {
@@ -139,6 +142,8 @@ export function Content() {
 
       <div style={{marginLeft: 20}}>
         <PriceInfo />
+        <div style={{height: '20px'}}></div>
+        <FixedParams />
       </div>
     </div>
 
@@ -189,6 +194,15 @@ function PriceInfo() {
   return <Paper padding>
     <Block title={"ETH Price Feed"} tooltip={"The price of 1 Ether in BTC - affects collateralization ratios. Updates live."}>
       {content}
+    </Block>
+  </Paper>
+}
+
+
+function FixedParams() {
+  return <Paper padding>
+    <Block title={"Minimum Stake"}>
+      <KeepTag /> {keepFormatter.format(calculateMinStake() / 10 ** 18)}
     </Block>
   </Paper>
 }
