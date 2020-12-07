@@ -14,6 +14,7 @@ import {DollarValue} from "../components/DollarValue";
 import {css} from "emotion";
 import {SkeletonWord} from "../components/SkeletonLoader";
 import {formatPercentage} from "../utils/formatNumber";
+import {toNumber} from 'lodash';
 
 
 const STAKEDROP_QUERY = gql`
@@ -51,7 +52,7 @@ export function Stakedrop() {
   const coinPrices = useCoinPrices();
 
   const [rewardShare, setRewardShare] = useState<number|null>(null);
-  const handleRewardShareChanged = useCallback((share: number) => {
+  const handleRewardShareChanged = useCallback((share: number|null) => {
     setRewardShare(share);
   }, [])
 
@@ -222,14 +223,41 @@ function KeepAsDollarValue(props: {
 
 
 function APYCalculatorUI(props: {
-  onRewardShareChanged: (rewardShare: number) => void,
+  onRewardShareChanged: (rewardShare: number|null) => void,
   totalWeight: number,
 }) {
-  const eth: number = 100;
-  const keep: number = 80000;
+  const defaultEth = 300;
+  const defaultKeep = 80000;
+  const [eth, setEth] = useState<number|null>(defaultEth);
+  const [ethText, setEthText] = useState(defaultEth);
+  const [keep, setKeep] = useState<number|null>(defaultKeep);
+  const [keepText, setKeepText] = useState(defaultKeep);
 
-  const {rewardWeight} = getStakedropRewardFormula({ethLocked: eth, stakedAmount: keep})
-  const share = rewardWeight / props.totalWeight;
+  const handleKeep = useCallback((e: any) => {
+    const value = e.target.value;
+    setKeepText(e.value);
+    const num = toNumber(value);
+    if (!Number.isNaN(num)) {
+      setKeep(num);
+    } else {
+      setKeep(null)
+    }
+  }, []);
+
+  const handleEth = useCallback((e: any) => {
+    const value = e.target.value;
+    setEthText(e.value);
+    const num = toNumber(value);
+    if (!Number.isNaN(num)) {
+      setEth(num);
+    } else {
+      setEth(null)
+    }
+  }, []);
+
+  const {rewardWeight} = (keep === null || eth === null) ? {rewardWeight: null}
+  : getStakedropRewardFormula({ethLocked: eth, stakedAmount: keep})
+  const share = rewardWeight === null ? null : rewardWeight / (props.totalWeight + rewardWeight);
 
   useEffect(() => {
     props.onRewardShareChanged(share);
@@ -273,15 +301,15 @@ function APYCalculatorUI(props: {
       <h3>Rewards Calculator</h3>
       <div>
         <label>KEEP Staked</label>
-        <input value={"80000"} />
+        <input value={keepText} onChange={handleKeep} />
       </div>
       <div>
         <label>ETH Locked</label>
-        <input value={"300"} />
+        <input value={ethText} onChange={handleEth} />
       </div>
       <div className={"result"}>
-        <div><strong>{formatPercentage(share)}</strong></div>
-        of rewards
+        {share !== null ? <><div><strong>{formatPercentage(share)}</strong></div>
+        of rewards</> : null}
       </div>
     </div>
   </div>
