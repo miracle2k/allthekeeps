@@ -1,14 +1,11 @@
 import {gql} from "@apollo/client";
-import React from "react";
+import React, {Fragment, useCallback, useEffect, useState} from "react";
 import {Helmet} from "react-helmet";
 import type {GetStakedropDataQuery} from "../generated/graphql";
 import {useParams} from "react-router";
-import {InfoTooltip} from "../components/InfoTooltip";
-import {Table} from "../components/Table";
 import {useQueryWithTimeTravel} from "../TimeTravel";
 import {dateTimeFrom, formatSeconds, FormattedTime} from "../components/FormattedTime";
 import {keepFormatter} from "../components/KeepValue";
-import {KeepTag} from "../components/CurrencyTags";
 import { DateTime } from "luxon";
 import {HeaderBoxes} from "../components/HeaderBoxes";
 import {Box} from "../components/Box";
@@ -16,6 +13,8 @@ import {CoinPrices, useCoinPrices} from "../utils/useCoinPrices";
 import {DollarValue} from "../components/DollarValue";
 import {css} from "emotion";
 import {SkeletonWord} from "../components/SkeletonLoader";
+import {formatPercentage} from "../utils/formatNumber";
+
 
 const STAKEDROP_QUERY = gql`
     query GetStakedropData($block: Block_height) {
@@ -38,6 +37,9 @@ const STAKEDROP_QUERY = gql`
             unallocatedStakedropBeaconRewards,
             dispensedStakedropBeaconRewards,
             dispensedStakedropECDSARewards
+        },
+        status: statusRecord(id: "current") {
+          totalRewardWeight
         }
     }
 `;
@@ -47,6 +49,11 @@ export function Stakedrop() {
   const {id} = useParams<any>();
   const { loading, error, data } = useQueryWithTimeTravel<GetStakedropDataQuery>(STAKEDROP_QUERY, {variables: {id}});
   const coinPrices = useCoinPrices();
+
+  const [rewardShare, setRewardShare] = useState<number|null>(null);
+  const handleRewardShareChanged = useCallback((share: number) => {
+    setRewardShare(share);
+  }, [])
 
   if (error) return <p>Error :( {""+ error}</p>;
 
@@ -84,6 +91,11 @@ export function Stakedrop() {
       </HeaderBoxes>
     </div>
 
+    {data?.status ? <APYCalculatorUI
+        totalWeight={parseFloat(data.status.totalRewardWeight)}
+        onRewardShareChanged={handleRewardShareChanged}
+    /> : null}
+
     {intervals.map((interval) => {
       const totalKeep = (parseInt(interval.allocationECDSA) + parseInt(interval.allocationBeacon ?? 0))
       const perKeepPerOperator = interval.allocationECDSA / Math.max(interval.keepCount, 1000) / 3;
@@ -97,7 +109,9 @@ export function Stakedrop() {
 
       const bothDone = secondsToBeaconEnd < 0 && secondsToEcdsaEnd < 0;
 
-      return <><div style={{margin: '30px 0 30px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
+      const newFormulaRewards = rewardShare != null ? rewardShare * parseInt(interval.allocationECDSA) : null;
+
+      return <Fragment key={interval.number}><div style={{margin: '30px 0 30px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
         <div>
           <div style={{fontFamily: "Roboto Slab", color: '#4e8778', fontWeight: 900, fontSize: 60, lineHeight: 1}}>
             {interval.number}
@@ -116,22 +130,27 @@ export function Stakedrop() {
             </Box>
 
             {interval.number >= 3 ? <>
-              <div style={{color: 'gray'}}>The way rewards are distributed is changing in this interval, and the details are still being finalized.</div>
+              <Box label={"You earn KEEP"}  style={{flex: 2}}>
+                {newFormulaRewards != null ? <>
+                  {keepFormatter.format(newFormulaRewards)}
+                  <KeepAsDollarValue coinPrices={coinPrices}  keep={newFormulaRewards} />
+                </> : null}
+              </Box>
             </> : <>
               <Box label={"KEEP per deposit"}  style={{flex: 2}}
                    tooltip={`Reward an operator earns for each deposit they are collateralizing in the interval. For interval ${interval.number} this is based on ${interval.keepCount} keeps created.`}>
                 {keepFormatter.format(perKeepPerOperator)}
                 <KeepAsDollarValue coinPrices={coinPrices}  keep={perKeepPerOperator} />
               </Box>
-
-              <Box label={"KEEP per beacon group"}  style={{flex: 2}}
-                   tooltip={`Reward an operator earns for each beacon group they are participating in. For interval ${interval.number} this is based on ${interval.beaconGroupCount} groups.`}>
-                {perBeaconGroup === null ? <>-</> : <>
-                  {keepFormatter.format(perBeaconGroup)}
-                  <KeepAsDollarValue coinPrices={coinPrices}  keep={perBeaconGroup} />
-                </>}
-              </Box>
             </>}
+
+            <Box label={"KEEP per beacon group"}  style={{flex: 2}}
+                 tooltip={`Reward an operator earns for each beacon group they are participating in. For interval ${interval.number} this is based on ${interval.beaconGroupCount} groups.`}>
+              {perBeaconGroup === null ? <>-</> : <>
+                {keepFormatter.format(perBeaconGroup)}
+                <KeepAsDollarValue coinPrices={coinPrices}  keep={perBeaconGroup} />
+              </>}
+            </Box>
           </HeaderBoxes>
 
           <div style={{marginTop: '16px', fontSize: '14px'}}>
@@ -182,7 +201,7 @@ export function Stakedrop() {
         height: 1px;
         border: 0px;
       `}/> : null}
-      </>
+      </Fragment>
     })}
   </div>
 }
@@ -199,4 +218,93 @@ function KeepAsDollarValue(props: {
   return <span style={{color: 'gray', fontSize: '0.5em', paddingLeft: '0.3em',  ...props.style}}>
     <DollarValue dollar={usdValue} showCents={false} />
   </span>
+}
+
+
+function APYCalculatorUI(props: {
+  onRewardShareChanged: (rewardShare: number) => void,
+  totalWeight: number,
+}) {
+  const eth: number = 100;
+  const keep: number = 80000;
+
+  const {rewardWeight} = getStakedropRewardFormula({ethLocked: eth, stakedAmount: keep})
+  const share = rewardWeight / props.totalWeight;
+
+  useEffect(() => {
+    props.onRewardShareChanged(share);
+  }, [share])
+
+  return <div className={css`
+    .inputs {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      
+      border: 1px silver dotted;
+      padding: 20px;
+      background: white;
+    }
+    h3 {
+      margin-right: 15px;
+      font-size: 18px;
+    }
+    .inputs > div {
+      margin: 5px;
+    }
+    .inputs label {
+      color: gray;
+      display: block;
+    }
+    input {
+      text-align: center;
+      font-size: 22px;
+      padding: 0.4em;
+    }
+    .result {
+      flex: 1;
+      text-align: center;
+    }
+    .result strong {
+      font-size: 24px;
+    }
+  `}>
+    <div className={"inputs"}>
+      <h3>Rewards Calculator</h3>
+      <div>
+        <label>KEEP Staked</label>
+        <input value={"80000"} />
+      </div>
+      <div>
+        <label>ETH Locked</label>
+        <input value={"300"} />
+      </div>
+      <div className={"result"}>
+        <div><strong>{formatPercentage(share)}</strong></div>
+        of rewards
+      </div>
+    </div>
+  </div>
+}
+
+
+export function getStakedropRewardFormula(opts: {
+  ethLocked: number,
+  stakedAmount: number
+}) {
+  // =IF(B11>3000,2*SQRT(B11*3000)-3000,B11)
+  const ethScore = opts.ethLocked > 3000
+      ? (Math.sqrt(opts.ethLocked * 3000) * 2) - 3000
+      : opts.ethLocked;
+
+  const MinStake = 80000;
+  // This will start to be wrong once MinStake changes. We might have to calculate the value for
+  // all min stake values, or come up with a clever formula.
+  // =IF(B11=0,0,1+MIN(C11/70000,SQRT(C11/(B11*500))))
+  const boostFactor1 = opts.stakedAmount / MinStake;
+  const boostFactor2 = opts.ethLocked == 0 ? 0 : Math.sqrt(opts.stakedAmount / opts.ethLocked * 500);
+  const boost = 1 + Math.min(boostFactor1, boostFactor2);
+
+  const rewardWeight = ethScore * boost;
+  return {rewardWeight, boost, ethScore};
 }

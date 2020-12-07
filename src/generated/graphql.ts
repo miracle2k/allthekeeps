@@ -8239,10 +8239,13 @@ export type GetOperatorsQuery = (
   { __typename?: 'Query' }
   & { operators: Array<(
     { __typename?: 'Operator' }
-    & Pick<Operator, 'id' | 'address' | 'bonded' | 'stakedAt' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized'>
+    & Pick<Operator, 'id' | 'address' | 'bonded' | 'stakedAt' | 'unboundAvailable' | 'totalKeepCount' | 'activeKeepCount' | 'stakedAmount' | 'totalFaultCount' | 'attributableFaultCount' | 'totalTBTCRewards' | 'totalETHRewards' | 'randomBeaconOperatorAuthorized' | 'bondedECDSAKeepFactoryAuthorized' | 'tbtcSystemSortitionPoolAuthorized' | 'stakedropRewardWeight'>
   )>, stats?: Maybe<(
     { __typename?: 'StatsRecord' }
     & Pick<StatsRecord, 'availableToBeBonded' | 'totalBonded'>
+  )>, status?: Maybe<(
+    { __typename?: 'StatusRecord' }
+    & Pick<StatusRecord, 'totalRewardWeight'>
   )> }
 );
 
@@ -8259,6 +8262,9 @@ export type GetStakedropDataQuery = (
   )>, stats?: Maybe<(
     { __typename?: 'StatsRecord' }
     & Pick<StatsRecord, 'totalStakedropECDSARewards' | 'unallocatedStakedropECDSARewards' | 'totalStakedropBeaconRewards' | 'unallocatedStakedropBeaconRewards' | 'dispensedStakedropBeaconRewards' | 'dispensedStakedropECDSARewards'>
+  )>, status?: Maybe<(
+    { __typename?: 'StatusRecord' }
+    & Pick<StatusRecord, 'totalRewardWeight'>
   )> }
 );
 
@@ -9090,10 +9096,14 @@ export const GetOperatorsDocument = gql`
     randomBeaconOperatorAuthorized
     bondedECDSAKeepFactoryAuthorized
     tbtcSystemSortitionPoolAuthorized
+    stakedropRewardWeight
   }
   stats: statsRecord(id: "current", block: $block) {
     availableToBeBonded
     totalBonded
+  }
+  status: statusRecord(id: "current", block: $block) {
+    totalRewardWeight
   }
 }
     `;
@@ -9146,6 +9156,9 @@ export const GetStakedropDataDocument = gql`
     unallocatedStakedropBeaconRewards
     dispensedStakedropBeaconRewards
     dispensedStakedropECDSARewards
+  }
+  status: statusRecord(id: "current") {
+    totalRewardWeight
   }
 }
     `;
