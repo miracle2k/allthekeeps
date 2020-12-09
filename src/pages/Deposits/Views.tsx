@@ -94,7 +94,8 @@ const DEPOSITS_QUERY = gql`
             redemptionStartedAt,
             currentStateTimesOutAt,
             creator,
-            lastActor
+            lastActor,
+            finalBtcPrice,
 
             tdtToken {
                 owner

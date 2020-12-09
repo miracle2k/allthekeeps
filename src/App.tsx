@@ -62,9 +62,9 @@ function AppInternal() {
   }
   else {
     // DEV:
-    //url = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
+    url = 'api.thegraph.com/subgraphs/name/miracle2k/keep-network';
     // LIVE
-    url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
+    //url = 'api.thegraph.com/subgraphs/name/miracle2k/all-the-keeps';
   }
 
   const client = useMemo(() => {

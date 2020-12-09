@@ -70,7 +70,11 @@ export function DepositsTable(props: {
           State
         </th>
         <th>
-          <SortableHeader fieldId={"etcToBtcRatio"} state={sortState}>C-Ratio</SortableHeader>
+          <SortableHeader fieldId={"etcToBtcRatio"} state={sortState}>
+            C-Ratio <InfoTooltip>
+            The current collateralization ratio, or for completed deposits, the ratio at the time of completion.
+          </InfoTooltip>
+          </SortableHeader>
         </th>
         <th>
           Actor <InfoTooltip>

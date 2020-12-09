@@ -1,4 +1,4 @@
-import {PriceData, usePriceFeed} from "./PriceFeed";
+import {convertPriceFeedVal, PriceData, usePriceFeed} from "./PriceFeed";
 import React from "react";
 
 
@@ -32,13 +32,15 @@ export function CollaterizationStatusWithPrice(props: {
 }) {
   const {deposit} = props;
 
-  if (!props.price) {
+  const price = deposit.finalBtcPrice ? convertPriceFeedVal(deposit.finalBtcPrice) : props.price;
+
+  if (!price) {
     return <span>-</span>;
   }
 
   const bondValueWei = parseInt(deposit.bondedECDSAKeep.totalBondAmount);
   const lotValueSatoshis = parseInt(deposit.lotSizeSatoshis);
-  const lotValueWei = lotValueSatoshis * props.price.weiPerSat;
+  const lotValueWei = lotValueSatoshis * price.weiPerSat;
 
   const ratio = bondValueWei / lotValueWei;
 

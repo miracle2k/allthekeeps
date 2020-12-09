@@ -58,16 +58,26 @@ export function usePriceFeed() {
       return null;
     }
 
-    // Given with 18 decimal places
-    const btcPerEth = parseInt(price.val) / 10 ** 18;
-    const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
-    const weiPerSat = 1 / satPerWei;
+    const convertedPrices = convertPriceFeedVal(price.val);
 
     return {
       ...price,
-      val: btcPerEth,
-      satPerWei,
-      weiPerSat
+      ...convertedPrices,
+      val: convertedPrices.btcPerEth,
     };
   }, [data]);
+}
+
+// Convert the rate given in the price feed (price of 1 ETH in BTC) into other useful units.
+export function convertPriceFeedVal(val: string) {
+  // Given with 18 decimal places
+  const btcPerEth = parseInt(val) / 10 ** 18;
+  const satPerWei = btcPerEth * 100000000 * 0.000000000000000001;
+  const weiPerSat = 1 / satPerWei;
+
+  return {
+    weiPerSat,
+    satPerWei,
+    btcPerEth
+  }
 }
