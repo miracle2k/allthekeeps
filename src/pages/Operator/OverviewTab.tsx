@@ -9,6 +9,8 @@ import {GetOperatorDataQuery} from "../../generated/graphql";
 import {FormattedTime} from "../../components/FormattedTime";
 import {formatNumber, formatPercentage} from "../../utils/formatNumber";
 import {ETHValue} from "../../components/ETHValue";
+import {keepFormatter} from "../../components/KeepValue";
+import {KeepTag} from "../../components/CurrencyTags";
 
 
 const OPERATOR_INFO_QUERY = gql`
@@ -20,6 +22,7 @@ const OPERATOR_INFO_QUERY = gql`
         beneficiary,
         authorizer,
         
+        stakedAmount,
         ethLocked,
         stakedAt,
         stakeLockExpiresAt,
@@ -63,17 +66,23 @@ export default function OverviewTab(props: {
             title: "Stake",
             properties: [
               {
+                key: 'amountstaked',
+                label: "Stake",
+                tooltip: "Amount of KEEP staked by this operator. A larger keep stake means the operator will be selected for work more frequently.",
+                value: <><KeepTag /> {keepFormatter.format(operator.stakedAmount)}</>
+              },
+              {
                 key: 'dateStaked',
                 label: "Date",
                 tooltip: "When KEEP was originally staked for this operator.",
                 value: <FormattedTime format={"full"} time={operator.stakedAt} />
               },
-              // {
-              //   key: 'stakeLockedUntil',
-              //   label: "Locked Until",
-              //   tooltip: "The stake can only be withdrawn after this date. This will change when keeps are redeemed early.",
-              //   value: <FormattedTime format={"full"} time={operator.stakeLockExpiresAt} />
-              // },
+              {
+                key: 'stakeLockedUntil',
+                label: "Locked Until",
+                tooltip: "The stake can only be withdrawn after this date. This date will change when keeps are redeemed early. Note that there is a two-month undelegation period in any case.",
+                value: (!operator.stakeLockExpiresAt || operator.stakeLockExpiresAt == '0') ? <>Not Locked</> : <FormattedTime format={"full"} time={operator.stakeLockExpiresAt} />
+              },
             ],
           },
           {
