@@ -137,11 +137,11 @@ export default function OverviewTab(props: {
                 label: "ECDSA Factory",
                 value: operator.bondedECDSAKeepFactoryAuthorized ? 'Yes' : 'No'
               },
-              // {
-              //   key: 'tbtc',
-              //   label: "TBTC System",
-              //   value: operator.tbtcSystemSortitionPoolAuthorized ? 'Yes' : 'No'
-              // },
+              {
+                key: 'tbtc',
+                label: "TBTC System",
+                value: operator.tbtcSystemSortitionPoolAuthorized ? 'Yes' : 'No'
+              },
             ]
           },
           {
