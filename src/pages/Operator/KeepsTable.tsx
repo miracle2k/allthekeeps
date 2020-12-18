@@ -40,7 +40,8 @@ const KEEPS_QUERY = gql`
                     createdAt,
                     tdtToken {
                         owner
-                    }
+                    },
+                    finalBtcPrice
 
                     undercollateralizedThresholdPercent,
                     severelyUndercollateralizedThresholdPercent,
@@ -106,7 +107,11 @@ export function KeepsTable(props: {
           Lot Size
         </th>
         <th>State</th>
-        <th>Collateralization</th>
+        <th>
+          C-Ratio <InfoTooltip>
+            The current collateralization ratio, or for completed deposits, the ratio at the time of completion.
+          </InfoTooltip>
+        </th>
         <th>
           <SortableHeader fieldId={"totalBondAmount"} state={sortState}>
             Bond

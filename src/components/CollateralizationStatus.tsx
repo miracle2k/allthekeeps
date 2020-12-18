@@ -33,6 +33,7 @@ export function CollaterizationStatusWithPrice(props: {
   const {deposit} = props;
 
   const price = deposit.finalBtcPrice ? convertPriceFeedVal(deposit.finalBtcPrice) : props.price;
+  const isFinalized = !!deposit.finalBtcPrice;
 
   if (!price) {
     return <span>-</span>;
@@ -53,13 +54,15 @@ export function CollaterizationStatusWithPrice(props: {
     status = 'undercollaterized'
   }
 
-  const color = ({
+  // Color-code unless finalized.
+  const color = isFinalized ? null : ({
     'normal': props.highlightNormal ? 'green' : undefined,
     'courtesy': 'orange',
     'undercollaterized': 'red'
   } as any)[status]
 
-  let extraStyle = !props.highlightNormal && status == 'normal' ? {
+  // Show as gray in the normal/non-highlight case, or when finalized.
+  let extraStyle = ((!props.highlightNormal && status == 'normal') || isFinalized) ? {
     fontSize: '0.9em',
     color: 'gray'
   }  : {};
