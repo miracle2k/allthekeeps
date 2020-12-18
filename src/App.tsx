@@ -185,7 +185,7 @@ function Header() {
       Beacon
     </NavigationButton>
 
-    <NavigationButton to={"/beacon"}>
+    <NavigationButton to={"/grants"}>
       Grants
     </NavigationButton>
 
