@@ -17,6 +17,7 @@ import {gql} from "@apollo/client";
 import {GetOperatorKeepsQuery} from "../../generated/graphql";
 import {useQueryWithTimeTravel} from "../../TimeTravel";
 import { Link } from "../../components/Link";
+import {SkeletonTableRow} from "../../components/SkeletonLoader";
 
 const formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2
@@ -123,6 +124,7 @@ export function KeepsTable(props: {
       </tr>
       </thead>
       <tbody>
+      {loading ? <SkeletonTableRow columns={7} /> : null}
       {keeps?.map((keep: any) => {
         const deposit = keep.deposit;
         return <tr key={deposit.id}>
