@@ -76,7 +76,7 @@ export function Content() {
   const etherscan = useEtherscanDomain();
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
 
-  const TAB_IDS = ["", "beacongroups", "log"];
+  const TAB_IDS = ["", "keeps", "beacongroups"];
   const activeTabIndex = useMemo(() => {
     const activeTab = TAB_IDS.indexOf(tabId);
     if (activeTab == -1) {
