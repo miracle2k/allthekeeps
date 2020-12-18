@@ -40,15 +40,18 @@ export function formatSeconds(seconds: number) {
   else if (seconds < (3600 * 24 * 1.5)) {
     return Duration.fromObject({seconds }).toFormat("h'h' m'm'")
   }
-  else {
+  else if (seconds < (3600 * 24 * 265)) {
     return Duration.fromObject({seconds }).toFormat("d'd 'h'h'")
+  }
+  else {
+    return Duration.fromObject({seconds }).toFormat("y'y 'd'd'")
   }
 }
 
 
 export function FormattedTime(props: {
   time: string|number|DateTime,
-  format: 'full'|'long'|'simple'
+  format: 'full'|'long'|'simple'|'day-full'
 }) {
   const dateTime = dateTimeFrom(props.time);
 
@@ -56,7 +59,9 @@ export function FormattedTime(props: {
   let formatOpts = {
     'full': { weekday: 'short', month: 'short', year: 'numeric', day: '2-digit', hour: '2-digit', minute: '2-digit' },
     'long': longFormat,
-    'simple': { month: 'short', day: '2-digit' }
+    'simple': { month: 'short', day: '2-digit' },
+    // Precision=date, show in which year
+    'day-full': { month: 'short', day: '2-digit', year: 'numeric' }
   }[props.format];
 
   const tooltip = props.format === 'long' ? "" : dateTime.toLocaleString(longFormat);

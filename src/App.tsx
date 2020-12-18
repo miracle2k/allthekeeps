@@ -26,6 +26,7 @@ import {Paper} from "./design-system/Paper";
 import Tippy from "@tippyjs/react";
 import {Button} from "./design-system/Button";
 import {Stakedrop} from "./pages/Stakedrop";
+import {Grants} from "./pages/Grants";
 
 
 function makeApolloLink(uri: string) {
@@ -129,6 +130,9 @@ function AppInternal() {
                   <Route path="/stakedrop" exact>
                     <Stakedrop />
                   </Route>
+                  <Route path="/grants" exact>
+                    <Grants />
+                  </Route>
                 </Switch>
               </div>
             </UseWalletProvider>
@@ -179,6 +183,10 @@ function Header() {
 
     <NavigationButton to={"/beacon"}>
       Beacon
+    </NavigationButton>
+
+    <NavigationButton to={"/beacon"}>
+      Grants
     </NavigationButton>
 
     <NavigationButton to={'/stakedrop'}>

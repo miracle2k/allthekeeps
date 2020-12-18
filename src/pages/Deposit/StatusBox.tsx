@@ -122,6 +122,7 @@ export function StatusBox(props: {
 
 export function LabelWithBackgroundProgress(props: {
   children: any,
+  singleColor?: string,
   progress: number|undefined,
 }) {
   if (props.progress === undefined) {
@@ -129,7 +130,10 @@ export function LabelWithBackgroundProgress(props: {
   }
 
   let color: string = '';
-  if (props.progress <= 0.5) {
+  if (props.singleColor) {
+    color = props.singleColor;
+  }
+  else if (props.progress <= 0.5) {
     color = '#d3f7ce';
   }
   else if (props.progress <= 0.8) {
@@ -141,7 +145,8 @@ export function LabelWithBackgroundProgress(props: {
 
   return <div style={{
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    backgroundColor: 'whitesmoke'
   }}>
     {props.children}
     <div style={{

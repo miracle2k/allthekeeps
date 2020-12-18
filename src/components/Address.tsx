@@ -10,7 +10,8 @@ export function Address(props: {
   address: string,
   to?: string,
   includeExternalIcon?: boolean,
-  long?: boolean
+  long?: boolean,
+  children?: any
 }) {
   const etherscan = useEtherscanDomain();
   let knownAddress: string|undefined;
@@ -22,7 +23,7 @@ export function Address(props: {
     hash={props.address}
     to={props.to || `https://${etherscan}/address/${props.address}`}
     includeExternalIcon={props.includeExternalIcon}
-    children={knownAddress}
+    children={props.children || knownAddress}
     long={props.long}
   />
 }

@@ -11,10 +11,12 @@ const InfoIcon = React.forwardRef((props: React.SVGProps<SVGSVGElement>, ref) =>
 
 export function InfoTooltip(props: {
   children: any,
-  size?: number
+  size?: number,
+  // If used with a singleton
+  singleton?: any
 }) {
   const size = props.size ? `${props.size}em` : '1em';
-  return <Tippy content={props.children}>
+  return <Tippy content={props.children} singleton={props.singleton}>
     <InfoIcon width={size} height={size} />
   </Tippy>
 }
