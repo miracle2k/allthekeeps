@@ -4,8 +4,10 @@ export function BTCTag() {
   return <CurrencyTag currency={"BTC"} />;
 }
 
-export function ETHTag() {
-  return <CurrencyTag currency={"ETH"} />;
+export function ETHTag(props: {
+  symbol?: boolean
+}) {
+  return <CurrencyTag currency={props.symbol ? "Ξ" : "ETH"} />;
 }
 
 export function KeepTag() {

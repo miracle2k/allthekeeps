@@ -19,6 +19,7 @@ import {HeaderBoxes} from "../components/HeaderBoxes";
 import {PageHeader} from "../components/PageHeader";
 import {SkeletonTableRow} from "../components/SkeletonLoader";
 import {formatPercentage} from "../utils/formatNumber";
+import {ETHTag} from "../components/CurrencyTags";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -76,16 +77,26 @@ export function Operators() {
     <PageHeader label={"Operators"}>
       {data?.stats ? <HeaderBoxes>
         <Box
-            label={"total bonded"}
-            tooltip={"The amount of collateral backing active deposits."}
+            label={"total collateral locked"}
+            tooltip={"The amount of ETH collateral in the system (bonded + available for new deposits)"}
         >
-          <div>{formatterSimple.format(data!.stats!.totalBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+          <div>
+            <ETHTag symbol /> {formatterSimple.format(parseInt(data!.stats!.totalBonded) + parseInt(data!.stats!.availableToBeBonded))}
+          </div>
         </Box>
         <Box
-            label={"available for bonding"}
+            label={"collateral bonded"}
+            tooltip={"The amount of collateral currently in use backing active deposits."}
+        >
+          <div>
+            <ETHTag symbol /> {formatterSimple.format(data!.stats!.totalBonded)}</div>
+        </Box>
+        <Box
+            label={"free collateral"}
             tooltip={`The amount of collateral put up by signers still available for new deposits. BTC value is based on a 150% collateralization ratio.`}
         >
-          <div>{formatterSimple.format(data!.stats!.availableToBeBonded)} <span style={{fontSize: '0.8em'}}>ETH</span></div>
+          <div>
+            <ETHTag symbol /> {formatterSimple.format(data!.stats!.availableToBeBonded)}</div>
           {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
             capacity ~{formatter.format(remainingCapacityBTC)} BTC
           </div> : null}
