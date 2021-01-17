@@ -20,6 +20,8 @@ import {PageHeader} from "../components/PageHeader";
 import {SkeletonTableRow} from "../components/SkeletonLoader";
 import {formatPercentage} from "../utils/formatNumber";
 import {ETHTag} from "../components/CurrencyTags";
+import {useCoinPrices} from "../utils/useCoinPrices";
+import {DollarValue} from "../components/DollarValue";
 
 const OPERATOR_QUERY = gql`
     query GetOperators(
@@ -58,6 +60,7 @@ const OPERATOR_QUERY = gql`
 
 export function Operators() {
   const sortState = useSort("activeKeepCount");
+  const rates = useCoinPrices()
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorsQuery>(OPERATOR_QUERY, {
     variables: {
       orderBy: sortState.column,
@@ -69,6 +72,7 @@ export function Operators() {
   if (error) return <p>Error :( {""+ error}</p>;
 
   const remainingCapacityBTC = price?.val ? parseFloat(data?.stats?.availableToBeBonded) / 1.5 * price.val : null;
+  const totalETH = parseInt(data?.stats?.totalBonded) + parseInt(data?.stats?.availableToBeBonded);
 
   return  <div style={{padding: '20px'}}>
     <Helmet>
@@ -81,7 +85,10 @@ export function Operators() {
             tooltip={"The amount of ETH collateral in the system (bonded + available for new deposits)"}
         >
           <div>
-            <ETHTag symbol /> {formatterSimple.format(parseInt(data!.stats!.totalBonded) + parseInt(data!.stats!.availableToBeBonded))}
+            <ETHTag symbol /> {formatterSimple.format(totalETH)}
+            {rates?.ethereum ? <div style={{fontSize: '20px', color: 'gray'}}>
+              <DollarValue dollar={rates.ethereum * totalETH} />
+            </div> : null}
           </div>
         </Box>
         <Box
@@ -97,9 +104,9 @@ export function Operators() {
         >
           <div>
             <ETHTag symbol /> {formatterSimple.format(data!.stats!.availableToBeBonded)}</div>
-          {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
-            capacity ~{formatter.format(remainingCapacityBTC)} BTC
-          </div> : null}
+            {remainingCapacityBTC !== null ? <div style={{fontSize: '20px', color: 'gray'}}>
+              capacity ~{formatter.format(remainingCapacityBTC)} BTC
+            </div> : null}
         </Box>
       </HeaderBoxes> : null}
     </PageHeader>
