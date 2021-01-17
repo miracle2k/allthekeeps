@@ -141,9 +141,10 @@ export function Content() {
       subtitle={data.deposit.contractAddress}
       buttons={
         <PageHeaderMenu>
-          <div><a href={"https://keepscan.com/deposits/0xf602ec2bf5874ac2e1cd2a1068a866d36f53f134"}>Open in KeepScan</a></div>
+          <div><a href={`https://keepscan.com/deposits/${data.deposit.contractAddress}`}>Open in KeepScan</a></div>
           <div><a href={`https://tbtcdeposit.auction/#/liquidations/${data.deposit.contractAddress}`}>Open in Auction Tool</a></div>
           <div><a href={`https://tbtcexplorer.com/detail/${data.deposit.contractAddress}`}>Open in tBTCExplorer</a></div>
+          <div><a href={`https://${etherscan}/address/${data.deposit.contractAddress}`}>Find on Etherscan</a></div>
         </PageHeaderMenu>
       }
     >
