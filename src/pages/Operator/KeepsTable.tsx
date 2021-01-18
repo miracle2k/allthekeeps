@@ -109,9 +109,11 @@ export function KeepsTable(props: {
         </th>
         <th>State</th>
         <th>
-          C-Ratio <InfoTooltip>
+          <SortableHeader fieldId={"etcToBtcRatio"} state={sortState}>
+            C-Ratio <InfoTooltip>
             The current collateralization ratio, or for completed deposits, the ratio at the time of completion.
           </InfoTooltip>
+          </SortableHeader>
         </th>
         <th>
           <SortableHeader fieldId={"totalBondAmount"} state={sortState}>
