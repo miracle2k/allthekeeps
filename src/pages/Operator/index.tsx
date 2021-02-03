@@ -71,7 +71,8 @@ const formatterBTC = new Intl.NumberFormat("en-US", {
 
 
 export function Content() {
-  const { operatorId, tabId } = useParams<any>();
+  let { operatorId, tabId } = useParams<any>();
+  operatorId = operatorId.toLowerCase()
   const history = useHistory();
   const etherscan = useEtherscanDomain();
   const { loading, error, data } = useQueryWithTimeTravel<GetOperatorQuery>(OPERATOR_QUERY, {variables: {id: operatorId}});
