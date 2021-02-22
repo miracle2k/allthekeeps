@@ -95,7 +95,7 @@ export function useQueryWithTimeTravel<TData = any, TVariables = OperationVariab
     variables: {
       ...options?.variables,
       block: block ? {number: block} : undefined
-    } as TVariables
+    } as unknown as TVariables
   });
 }
 
